@@ -125,75 +125,73 @@ module.exports = (repo) => {
       })
     })
 
-    describe('across linked objects', () => {
-      describe('where links are multihashes', () => {
-        const aliceName = 'Alice'
-        const aliceAbout = {
-          age: 22
-        }
-        const bob = {
-          name: 'Bob'
-        }
-        const alice = {
-          name: {
-            '@link': ipld.multihash(aliceName)
-          },
-          about: {
-            '@link': ipld.multihash(ipld.marshal(aliceAbout))
-          },
-          friends: [{
-            '@link': ipld.multihash(ipld.marshal(bob))
-          }]
-        }
-        const mh = ipld.multihash(ipld.marshal(alice))
+    describe('links are hashes', () => {
+      const aliceName = 'Alice'
+      const aliceAbout = {
+        age: 22
+      }
+      const bob = {
+        name: 'Bob'
+      }
+      const alice = {
+        name: {
+          '@link': ipld.multihash(aliceName)
+        },
+        about: {
+          '@link': ipld.multihash(ipld.marshal(aliceAbout))
+        },
+        friends: [{
+          '@link': ipld.multihash(ipld.marshal(bob))
+        }]
+      }
+      const mh = ipld.multihash(ipld.marshal(alice))
 
-        before((done) => {
-          async.series([
-            (cb) => ipldService.add(aliceName, cb),
-            (cb) => ipldService.add(aliceAbout, cb),
-            (cb) => ipldService.add(alice, cb),
-            (cb) => ipldService.add(bob, cb)
-          ], done)
+      before((done) => {
+        async.series([
+          (cb) => ipldService.add(aliceName, cb),
+          (cb) => ipldService.add(aliceAbout, cb),
+          (cb) => ipldService.add(alice, cb),
+          (cb) => ipldService.add(bob, cb)
+        ], done)
+      })
+
+      it('resolves link to string', (done) => {
+        resolve(ipldService, `${mh}/name`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(aliceName)
+          done()
         })
+      })
 
-        it('resolves link to string', (done) => {
-          resolve(ipldService, `${mh}/name`, (err, res) => {
-            expect(err).to.not.exist
-            expect(res).to.be.eql(aliceName)
-            done()
-          })
+      it('resolves link to object', (done) => {
+        resolve(ipldService, `${mh}/about`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(aliceAbout)
+          done()
         })
+      })
 
-        it('resolves link to object', (done) => {
-          resolve(ipldService, `${mh}/about`, (err, res) => {
-            expect(err).to.not.exist
-            expect(res).to.be.eql(aliceAbout)
-            done()
-          })
+      it('resolves link to property in a different object', (done) => {
+        resolve(ipldService, `${mh}/about/age`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(aliceAbout.age)
+          done()
         })
+      })
 
-        it('resolves link to property in a different object', (done) => {
-          resolve(ipldService, `${mh}/about/age`, (err, res) => {
-            expect(err).to.not.exist
-            expect(res).to.be.eql(aliceAbout.age)
-            done()
-          })
+      it('resolves link to an element in array', (done) => {
+        resolve(ipldService, `${mh}/friends/0`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(bob)
+          done()
         })
+      })
 
-        it('resolves link to an element in array', (done) => {
-          resolve(ipldService, `${mh}/friends/0`, (err, res) => {
-            expect(err).to.not.exist
-            expect(res).to.be.eql(bob)
-            done()
-          })
-        })
-
-        it('resolves link to property in an element in array', (done) => {
-          resolve(ipldService, `${mh}/friends/0/name`, (err, res) => {
-            expect(err).to.not.exist
-            expect(res).to.be.eql(bob.name)
-            done()
-          })
+      it('resolves link to property in an element in array', (done) => {
+        resolve(ipldService, `${mh}/friends/0/name`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(bob.name)
+          done()
         })
       })
     })
