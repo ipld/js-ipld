@@ -16,9 +16,29 @@ const ipfsIPLD = require('ipfs-ipld')
 
 // available components
 ipfsIPLD.IPLDService
+ipfsIPLD.resolve
 ```
 
 ## API
+
+### `resolve`
+
+> Resolve IPLD paths against a given IPLDService
+
+```js
+const node = {
+  hello: {
+    world: 11,
+    some: 12
+  }
+}
+const mh = ipld.multihash(ipld.marshal(node))
+ipldService.add(node, (err) => {
+  resolve(ipldService, `${mh}/hello/world`, (err, res) => {
+  console.log(res)
+  // => 11
+})
+```
 
 ### IPLDService
 

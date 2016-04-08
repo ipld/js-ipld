@@ -8,17 +8,13 @@ const multihash = require('multihashing')
 const async = require('async')
 
 const IPLDService = require('../src').IPLDService
+const resolve = require('../src').resolve
 
 module.exports = (repo) => {
+  const bs = new BlockService(repo)
+  const ipldService = new IPLDService(bs)
+
   describe('IPLDService', () => {
-    let bs
-    let ipldService
-
-    before(() => {
-      bs = new BlockService(repo)
-      ipldService = new IPLDService(bs)
-    })
-
     it('throws when not passed a repo', () => {
       expect(() => new IPLDService()).to.throw(/requires a BlockService/)
     })
@@ -106,6 +102,53 @@ module.exports = (repo) => {
           })
         })
       })
+    })
+  })
+
+  describe('resolve', () => {
+    it('resolves inside a single object', (done) => {
+      const node = {
+        hello: {
+          world: 11,
+          some: 12
+        }
+      }
+      const mh = ipld.multihash(ipld.marshal(node))
+      ipldService.add(node, (err) => {
+        expect(err).to.not.exist
+
+        resolve(ipldService, `${mh}/hello/world`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(11)
+          done()
+        })
+      })
+    })
+
+    it('resolves two linked objects', (done) => {
+      const file = {
+        name: 'world.txt',
+        size: 12
+      }
+      const dir = {
+        name: 'hello',
+        files: [
+          {'@link': ipld.multihash(ipld.marshal(file))}
+        ]
+      }
+
+      async.series([
+        (cb) => ipldService.add(file, cb),
+        (cb) => ipldService.add(dir, cb),
+        (cb) => {
+          const mh = ipld.multihash(ipld.marshal(dir))
+          resolve(ipldService, `${mh}/files/0/name`, (err, res) => {
+            expect(err).to.not.exist
+            expect(res).to.be.eql('world.txt')
+            cb()
+          })
+        }
+      ], done)
     })
   })
 }
