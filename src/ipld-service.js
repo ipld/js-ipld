@@ -5,6 +5,8 @@ const Block = require('ipfs-blocks').Block
 const ipld = require('ipld')
 const base58 = require('bs58')
 
+const utils = require('./utils')
+
 class IPLDService {
   constructor (blockService) {
     if (!blockService) {
@@ -31,20 +33,20 @@ class IPLDService {
     }
 
     if (isMhash) {
-      this.getWith(multihash, cb)
+      this._getWith(multihash, cb)
     }
 
     if (isPath) {
       const ipfsKey = multihash.replace('/ipfs/', '')
-      this.getWith(ipfsKey, cb)
+      this._getWith(ipfsKey, cb)
     }
   }
 
-  getWith (key, cb) {
+  _getWith (key, cb) {
     let formatted = key
 
     if (typeof key === 'string') {
-      formatted = new Buffer(base58(key))
+      formatted = new Buffer(base58.decode(key))
     }
 
     this.bs.getBlock(formatted, 'ipld', (err, block) => {
@@ -65,6 +67,31 @@ class IPLDService {
   }
 
   getRecursive (multihash, cb) {
+    const self = this
+    function getter (multihash, linkStack, nodeStack, cb) {
+      self.get(multihash, (err, node) => {
+        if (err && nodeStack.length > 0) {
+          return cb(new Error('Could not complete the recursive get', nodeStack))
+        }
+
+        if (err) {
+          return cb(err)
+        }
+
+        nodeStack.push(node)
+        linkStack = linkStack.concat(utils.getKeys(node))
+
+        const next = linkStack.pop()
+
+        if (next) {
+          return getter(next, linkStack, nodeStack, cb)
+        }
+
+        cb(null, nodeStack)
+      })
+    }
+
+    getter(multihash, [], [], cb)
   }
 
   remove (multihash, cb) {
@@ -72,7 +99,7 @@ class IPLDService {
       return cb(new Error('Invalid multihash'))
     }
 
-    this.bs.deleteBlock(multihash, cb)
+    this.bs.deleteBlock(multihash, 'ipld', cb)
   }
 }
 
