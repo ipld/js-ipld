@@ -125,30 +125,54 @@ module.exports = (repo) => {
       })
     })
 
-    it('resolves two linked objects', (done) => {
-      const file = {
-        name: 'world.txt',
-        size: 12
-      }
-      const dir = {
-        name: 'hello',
-        files: [
-          {'@link': ipld.multihash(ipld.marshal(file))}
-        ]
-      }
-
-      async.series([
-        (cb) => ipldService.add(file, cb),
-        (cb) => ipldService.add(dir, cb),
-        (cb) => {
-          const mh = ipld.multihash(ipld.marshal(dir))
-          resolve(ipldService, `${mh}/files/0/name`, (err, res) => {
-            expect(err).to.not.exist
-            expect(res).to.be.eql('world.txt')
-            cb()
-          })
+    describe('across linked objects', () => {
+      describe('where links are multihashes', () => {
+        const aliceName = 'Alice'
+        const aliceAbout = {
+          age: 22
         }
-      ], done)
+        const alice = {
+          name: {
+            '@link': ipld.multihash(ipld.marshal(aliceName))
+          },
+          about: {
+            '@link': ipld.multihash(ipld.marshal(aliceAbout))
+          }
+        }
+        const mh = ipld.multihash(ipld.marshal(alice))
+
+        before((done) => {
+          async.series([
+            (cb) => ipldService.add(aliceName, cb),
+            (cb) => ipldService.add(aliceAbout, cb),
+            (cb) => ipldService.add(alice, cb)
+          ], done)
+        })
+
+        it('resolves link to string', (done) => {
+          resolve(ipldService, `${mh}/name`, (err, res) => {
+            expect(err).to.not.exist
+            expect(res).to.be.eql('Alice')
+            done()
+          })
+        })
+
+        it('resolves link to object', (done) => {
+          resolve(ipldService, `${mh}/about`, (err, res) => {
+            expect(err).to.not.exist
+            expect(res).to.be.eql({age: 22})
+            done()
+          })
+        })
+
+        it('resolves link to property in a different object', (done) => {
+          resolve(ipldService, `${mh}/about/age`, (err, res) => {
+            expect(err).to.not.exist
+            expect(res).to.be.eql(22)
+            done()
+          })
+        })
+      })
     })
   })
 }
