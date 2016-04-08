@@ -37,7 +37,7 @@
     "dignified.js": "^1.0.0",
     "fs-blob-store": "^5.2.1",
     "idb-plus-blob-store": "^1.0.0",
-    "ipfs-repo": "^0.5.3",
+    "ipfs-repo": "github:ipfs/js-ipfs-repo#ipld",
     "lodash": "^4.8.2",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
@@ -45,8 +45,8 @@
   },
   "dependencies": {
     "bs58": "^3.0.0",
-    "ipfs-blocks": "^0.1.0",
-    "ipld": "^0.4.0",
+    "ipfs-blocks": "github:ipfs/js-ipfs-blocks#ipld",
+    "ipld": "github:dignifiedquire/js-ipld#next",
     "is-ipfs": "^0.2.0",
     "lodash.flatten": "^4.1.1",
     "lodash.includes": "^4.1.2"
