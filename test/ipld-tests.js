@@ -6,6 +6,7 @@ const BlockService = require('ipfs-blocks').BlockService
 const ipld = require('ipld')
 const multihash = require('multihashing')
 const async = require('async')
+const path = require('path')
 
 const IPLDService = require('../src').IPLDService
 const resolve = require('../src').resolve
@@ -149,6 +150,66 @@ module.exports = (repo) => {
           })
         }
       ], done)
+    })
+
+    describe('links are merkle paths', () => {
+      const draft = {
+        title: 'Title of the blogpost'
+      }
+
+      const alice = {
+        name: 'Alice'
+      }
+
+      const author = {
+        name: {
+          '@link': path.join('/', ipld.multihash(ipld.marshal(alice)), 'name')
+        }
+      }
+
+      const blogpost = {
+        title: {
+          '@link': path.join('/', ipld.multihash(ipld.marshal(draft)), 'title')
+        },
+        author: {
+          '@link': path.join('/', ipld.multihash(ipld.marshal(author)))
+        }
+      }
+
+      const mh = ipld.multihash(ipld.marshal(blogpost))
+
+      before((done) => {
+        async.series([
+          (cb) => ipldService.add(draft, cb),
+          (cb) => ipldService.add(alice, cb),
+          (cb) => ipldService.add(author, cb),
+          (cb) => ipldService.add(blogpost, cb)
+        ], done)
+      })
+
+      it('resolves link to merkle-link pointing to a string', (done) => {
+        resolve(ipldService, `${mh}/title`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(draft.title)
+          done()
+        })
+      })
+
+      it('resolves link to merkle-link pointing to an object', (done) => {
+        resolve(ipldService, `${mh}/author`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(author)
+          done()
+        })
+      })
+
+      it('resolves link to merkle-link pointing to link to an object', (done) => {
+        resolve(ipldService, `${mh}/author/name`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(alice.name)
+          done()
+        })
+      })
     })
   })
 }
