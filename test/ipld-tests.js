@@ -106,20 +106,75 @@ module.exports = (repo) => {
   })
 
   describe('resolve', () => {
-    it('resolves inside a single object', (done) => {
+    describe('inside a single object', (done) => {
       const node = {
-        hello: {
-          world: 11,
-          some: 12
+        string: 'hello',
+        number: 42,
+        object: {
+          title: 'world'
+        },
+        numbers: [0, 1, 2],
+        objects: [{
+          title: 'test'
+        }],
+        multiple: {
+          levels: {
+            down: 'all good!'
+          }
         }
       }
       const mh = ipld.multihash(ipld.marshal(node))
-      ipldService.add(node, (err) => {
-        expect(err).to.not.exist
 
-        resolve(ipldService, `${mh}/hello/world`, (err, res) => {
+      before((done) => {
+        ipldService.add(node, done)
+      })
+
+      it('resolves direct leaves of type string', (done) => {
+        resolve(ipldService, `${mh}/string`, (err, res) => {
           expect(err).to.not.exist
-          expect(res).to.be.eql(11)
+          expect(res).to.be.eql('hello')
+          done()
+        })
+      })
+
+      it('resolves direct leaves of type number', (done) => {
+        resolve(ipldService, `${mh}/number`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(42)
+          done()
+        })
+      })
+
+      it('resolves direct leaves of type object', (done) => {
+        resolve(ipldService, `${mh}/object`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql({
+            title: 'world'
+          })
+          done()
+        })
+      })
+
+      it('resolves subpaths', (done) => {
+        resolve(ipldService, `${mh}/multiple/levels/down`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql('all good!')
+          done()
+        })
+      })
+
+      it('resolves arrays of primitives', (done) => {
+        resolve(ipldService, `${mh}/numbers/1`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql(1)
+          done()
+        })
+      })
+
+      it('resolves arrays of objects', (done) => {
+        resolve(ipldService, `${mh}/objects/0/title`, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.be.eql('test')
           done()
         })
       })
