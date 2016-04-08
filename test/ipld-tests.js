@@ -136,7 +136,7 @@ module.exports = (repo) => {
         }
         const alice = {
           name: {
-            '@link': ipld.multihash(ipld.marshal(aliceName))
+            '@link': ipld.multihash(aliceName)
           },
           about: {
             '@link': ipld.multihash(ipld.marshal(aliceAbout))
@@ -159,7 +159,7 @@ module.exports = (repo) => {
         it('resolves link to string', (done) => {
           resolve(ipldService, `${mh}/name`, (err, res) => {
             expect(err).to.not.exist
-            expect(res).to.be.eql(alice.name)
+            expect(res).to.be.eql(aliceName)
             done()
           })
         })
