@@ -1,0 +1,44 @@
+{
+  "name": "js-ipfs-ipld",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
+  "scripts": {
+    "lint": "dignified-lint",
+    "build": "dignified-build",
+    "test": "dignified-test",
+    "test:node": "dignified-test node",
+    "test:browser": "dignified-test browser",
+    "release": "dignified-release",
+    "coverage": "dignified-coverage"
+  },
+  "keywords": [
+    "IPFS"
+  ],
+  "author": "Friedel Ziegelmayer dignifiedquire<@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipfs/js-ipfs-ipld.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ipfs/js-ipfs-ipld/issues"
+  },
+  "homepage": "https://github.com/ipfs/js-ipfs-ipld#readme",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "dignified.js": "^1.0.0",
+    "ipfs-repo": "^0.5.3",
+    "ncp": "^2.0.0",
+    "pre-commit": "^1.1.2",
+    "rimraf": "^2.5.2"
+  },
+  "dependencies": {
+    "ipfs-blocks": "^0.1.0"
+  }
+}
