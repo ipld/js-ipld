@@ -33,12 +33,16 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "dignified.js": "^1.0.0",
+    "fs-blob-store": "^5.2.1",
     "ipfs-repo": "^0.5.3",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
     "rimraf": "^2.5.2"
   },
   "dependencies": {
-    "ipfs-blocks": "^0.1.0"
+    "bs58": "^3.0.0",
+    "ipfs-blocks": "^0.1.0",
+    "ipld": "^0.4.0",
+    "is-ipfs": "^0.2.0"
   }
 }
