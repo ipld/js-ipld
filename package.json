@@ -31,10 +31,14 @@
   "homepage": "https://github.com/ipfs/js-ipfs-ipld#readme",
   "license": "MIT",
   "devDependencies": {
+    "async": "^2.0.0-rc.3",
+    "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "dignified.js": "^1.0.0",
     "fs-blob-store": "^5.2.1",
+    "idb-plus-blob-store": "^1.0.0",
     "ipfs-repo": "^0.5.3",
+    "lodash": "^4.8.2",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.2",
     "rimraf": "^2.5.2"
