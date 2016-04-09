@@ -181,7 +181,6 @@ module.exports = (repo) => {
     })
 
     describe('links are hashes', () => {
-      const aliceName = 'Alice'
       const aliceAbout = {
         age: 22
       }
@@ -189,9 +188,7 @@ module.exports = (repo) => {
         name: 'Bob'
       }
       const alice = {
-        name: {
-          '@link': ipld.multihash(aliceName)
-        },
+        name: 'Alice',
         about: {
           '@link': ipld.multihash(ipld.marshal(aliceAbout))
         },
@@ -203,22 +200,13 @@ module.exports = (repo) => {
 
       before((done) => {
         async.series([
-          (cb) => ipldService.add(aliceName, cb),
           (cb) => ipldService.add(aliceAbout, cb),
           (cb) => ipldService.add(alice, cb),
           (cb) => ipldService.add(bob, cb)
         ], done)
       })
 
-      it('resolves link to string', (done) => {
-        resolve(ipldService, `${mh}/name`, (err, res) => {
-          expect(err).to.not.exist
-          expect(res).to.be.eql(aliceName)
-          done()
-        })
-      })
-
-      it('resolves link to object', (done) => {
+      it('link to object', (done) => {
         resolve(ipldService, `${mh}/about`, (err, res) => {
           expect(err).to.not.exist
           expect(res).to.be.eql(aliceAbout)
@@ -226,7 +214,7 @@ module.exports = (repo) => {
         })
       })
 
-      it('resolves link to property in a different object', (done) => {
+      it('link to property in a different object', (done) => {
         resolve(ipldService, `${mh}/about/age`, (err, res) => {
           expect(err).to.not.exist
           expect(res).to.be.eql(aliceAbout.age)
@@ -234,7 +222,7 @@ module.exports = (repo) => {
         })
       })
 
-      it('resolves link to an element in array', (done) => {
+      it('link to an element in array', (done) => {
         resolve(ipldService, `${mh}/friends/0`, (err, res) => {
           expect(err).to.not.exist
           expect(res).to.be.eql(bob)
@@ -242,7 +230,7 @@ module.exports = (repo) => {
         })
       })
 
-      it('resolves link to property in an element in array', (done) => {
+      it('link to property in an element in array', (done) => {
         resolve(ipldService, `${mh}/friends/0/name`, (err, res) => {
           expect(err).to.not.exist
           expect(res).to.be.eql(bob.name)
