@@ -1,5 +1,5 @@
 {
-  "name": "js-ipfs-ipld",
+  "name": "ipfs-ipld",
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
