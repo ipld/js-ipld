@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "bs58": "^3.0.0",
-    "ipfs-blocks": "github:ipfs/js-ipfs-blocks#ipld",
+    "ipfs-blocks": "^0.1.1",
     "ipld": "github:dignifiedquire/js-ipld#next",
     "is-ipfs": "^0.2.0",
     "lodash.flatten": "^4.1.1",
