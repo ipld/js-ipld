@@ -37,7 +37,7 @@
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "fs-blob-store": "^5.2.1",
-    "idb-plus-blob-store": "^1.0.0",
+    "idb-plus-blob-store": "^1.1.2",
     "ipfs-repo": "^0.6.1",
     "lodash": "^4.8.2",
     "ncp": "^2.0.0",
