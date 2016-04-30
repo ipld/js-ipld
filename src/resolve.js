@@ -65,7 +65,6 @@ module.exports = function resolve (is, path, cb) {
       cb(null, obj)
     }
   }
-
   access(splitLink(path), null, cb)
 }
 
