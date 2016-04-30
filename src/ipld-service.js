@@ -1,7 +1,7 @@
 'use strict'
 
 const isIPFS = require('is-ipfs')
-const Block = require('ipfs-blocks').Block
+const Block = require('ipfs-block')
 const ipld = require('ipld')
 const base58 = require('bs58')
 
