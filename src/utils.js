@@ -1,13 +1,16 @@
 'use strict'
 
 const flatten = require('lodash.flatten')
+const ipld = require('ipld')
+
+const LINK_SYMBOL = ipld.LINK_SYMBOL
 
 exports = module.exports
 
 // Recursively find all '@link' values in a given node
 exports.getKeys = (node) => {
   return flatten(Object.keys(node).map((key) => {
-    if (key === '@link') {
+    if (key === LINK_SYMBOL) {
       return node[key]
     }
 
