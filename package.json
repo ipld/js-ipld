@@ -48,7 +48,7 @@
     "babel-runtime": "^6.6.1",
     "bs58": "^3.0.0",
     "ipfs-blocks": "^0.1.2",
-    "ipld": "^0.5.2",
+    "ipld": "^0.6.0",
     "is-ipfs": "^0.2.0",
     "lodash.flatten": "^4.1.1",
     "lodash.includes": "^4.1.2"
