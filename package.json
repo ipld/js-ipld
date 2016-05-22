@@ -1,6 +1,6 @@
 {
   "name": "ipfs-ipld",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "IPLD implementation in JavaScript",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
