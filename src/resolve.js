@@ -2,8 +2,11 @@
 
 const isIPFS = require('is-ipfs')
 const includes = require('lodash.includes')
+const ipld = require('ipld')
 
 const IPLDService = require('./ipld-service')
+
+const LINK_SYMBOL = ipld.LINK_SYMBOL
 
 module.exports = function resolve (is, path, cb) {
   if (!(is instanceof IPLDService)) {
@@ -13,14 +16,14 @@ module.exports = function resolve (is, path, cb) {
   function access (parts, obj, cb) {
     const isRoot = obj === null && (isIPFS.multihash(parts[0]) || isIPFS.ipfsPath('/' + parts.join('/')))
     const next = parts.shift()
-    const isLink = obj && obj['@link']
+    const isLink = obj && Object.keys(obj).length === 1 && obj[LINK_SYMBOL]
     const fetchLink = obj && (next ? !includes(Object.keys(obj), next) : true)
 
     if (!obj && !isRoot) {
       cb(new Error('No root object provided'))
     } else if (isLink && fetchLink) {
-      // resolve links in objects with an @link property
-      const link = obj['@link']
+      // resolve links in objects with an / property
+      const link = obj[LINK_SYMBOL]
       const linkParts = splitLink(link)
       let blockLink = ''
 

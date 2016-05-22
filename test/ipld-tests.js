@@ -2,7 +2,7 @@
 'use strict'
 
 const expect = require('chai').expect
-const BlockService = require('ipfs-blocks').BlockService
+const BlockService = require('ipfs-block-service')
 const ipld = require('ipld')
 const multihash = require('multihashing')
 const async = require('async')
@@ -57,11 +57,11 @@ module.exports = (repo) => {
       const node3 = {data: '3'}
 
       node2.ref = {
-        '@link': ipld.multihash(ipld.marshal(node3))
+        '/': ipld.multihash(ipld.marshal(node3))
       }
 
       node1.ref = {
-        '@link': ipld.multihash(ipld.marshal(node2))
+        '/': ipld.multihash(ipld.marshal(node2))
       }
 
       async.series([
@@ -190,10 +190,10 @@ module.exports = (repo) => {
       const alice = {
         name: 'Alice',
         about: {
-          '@link': ipld.multihash(ipld.marshal(aliceAbout))
+          '/': ipld.multihash(ipld.marshal(aliceAbout))
         },
         friends: [{
-          '@link': ipld.multihash(ipld.marshal(bob))
+          '/': ipld.multihash(ipld.marshal(bob))
         }]
       }
       const mh = ipld.multihash(ipld.marshal(alice))
@@ -250,16 +250,16 @@ module.exports = (repo) => {
 
       const author = {
         name: {
-          '@link': `/${ipld.multihash(ipld.marshal(alice))}/name`
+          '/': `/${ipld.multihash(ipld.marshal(alice))}/name`
         }
       }
 
       const blogpost = {
         title: {
-          '@link': `/${ipld.multihash(ipld.marshal(draft))}/title`
+          '/': `/${ipld.multihash(ipld.marshal(draft))}/title`
         },
         author: {
-          '@link': `/ipfs/${ipld.multihash(ipld.marshal(author))}`
+          '/': `/ipfs/${ipld.multihash(ipld.marshal(author))}`
         }
       }
 

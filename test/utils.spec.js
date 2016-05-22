@@ -11,12 +11,12 @@ describe('utils', () => {
       expect(
         utils.getKeys({
           hello: 'world',
-          '@link': 'link-1',
+          l1: {'/': 'link-1'},
           nested: {
-            '@link': 'link-2',
+            l2: {'/': 'link-2'},
             even: {
               deeper: true,
-              '@link': 'link-3'
+              l3: {'/': 'link-3'}
             }
           }
         })
