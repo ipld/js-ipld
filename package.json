@@ -38,9 +38,7 @@
     "async": "^2.0.1",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
-    "fs-blob-store": "^5.2.1",
     "fs-pull-blob-store": "^0.3.0",
-    "idb-plus-blob-store": "^1.1.2",
     "idb-pull-blob-store": "^0.4.0",
     "ipfs-block-service": "^0.4.0",
     "ipfs-repo": "^0.8.0",
@@ -51,7 +49,6 @@
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",
-    "bs58": "^3.0.0",
     "ipfs-block": "^0.3.0",
     "ipld": "^0.6.0",
     "is-ipfs": "^0.2.0",
