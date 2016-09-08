@@ -8,8 +8,8 @@ const IPLDService = require('./ipld-service')
 
 const LINK_SYMBOL = ipld.LINK_SYMBOL
 
-module.exports = function resolve (is, path, cb) {
-  if (!(is instanceof IPLDService)) {
+module.exports = function resolve (service, path, cb) {
+  if (!(service instanceof IPLDService)) {
     return cb(new Error('Missing IPLDService'))
   }
 
@@ -40,7 +40,7 @@ module.exports = function resolve (is, path, cb) {
         return cb(new Error(`Invalid link: "${link}"`))
       }
 
-      is.get(blockLink, (err, block) => {
+      service.get(blockLink, (err, block) => {
         if (err) {
           return cb(err)
         }
@@ -55,7 +55,7 @@ module.exports = function resolve (is, path, cb) {
       if (next === 'ipfs') {
         blockLink = parts.shift()
       }
-      is.get(blockLink, (err, block) => {
+      service.get(blockLink, (err, block) => {
         if (err) {
           return cb(err)
         }

@@ -7,7 +7,7 @@ const LINK_SYMBOL = ipld.LINK_SYMBOL
 
 exports = module.exports
 
-// Recursively find all '@link' values in a given node
+// Recursively find all LINK_SYMBOL values in a given node
 exports.getKeys = (node) => {
   return flatten(Object.keys(node).map((key) => {
     if (key === LINK_SYMBOL) {

@@ -3,11 +3,13 @@
 const isIPFS = require('is-ipfs')
 const Block = require('ipfs-block')
 const ipld = require('ipld')
-const base58 = require('bs58')
+const pull = require('pull-stream')
+const traverse = require('pull-traverse')
+const mh = require('multihashes')
 
 const utils = require('./utils')
 
-class IPLDService {
+module.exports = class IPLDService {
   constructor (blockService) {
     if (!blockService) {
       throw new Error('IPLDService requires a BlockService instance')
@@ -16,91 +18,98 @@ class IPLDService {
     this.bs = blockService
   }
 
-  add (node, cb) {
-    if (!(node instanceof Buffer)) {
-      node = ipld.marshal(node)
-    }
-
-    this.bs.addBlock(new Block(node, 'ipld'), cb)
+  put (node, cb) {
+    cb = cb || noop
+    pull(
+      pull.values([node]),
+      this.putStream(cb)
+    )
   }
 
-  get (multihash, cb) {
-    const isMhash = isIPFS.multihash(multihash)
-    const isPath = isIPFS.path(multihash)
+  putStream (cb) {
+    cb = cb || noop
+    return pull(
+      pull.map((node) => {
+        if (!(node instanceof Buffer)) {
+          node = ipld.marshal(node)
+        }
 
-    if (!isMhash && !isPath) {
-      return cb(new Error('Invalid Key'))
-    }
-
-    if (isMhash) {
-      this._getWith(multihash, cb)
-    }
-
-    if (isPath) {
-      const ipfsKey = multihash.replace('/ipfs/', '')
-      this._getWith(ipfsKey, cb)
-    }
+        return new Block(node, 'ipld')
+      }),
+      this.bs.putStream(),
+      pull.onEnd(cb)
+    )
   }
 
-  _getWith (key, cb) {
-    let formatted = key
-
-    if (typeof key === 'string') {
-      formatted = new Buffer(base58.decode(key))
-    }
-
-    this.bs.getBlock(formatted, 'ipld', (err, block) => {
-      if (err) {
-        return cb(err)
-      }
-
-      let node
-
-      try {
-        node = ipld.unmarshal(block.data)
-      } catch (err) {
-        return cb(err)
-      }
-
-      return cb(null, node)
-    })
-  }
-
-  getRecursive (multihash, cb) {
-    const self = this
-    function getter (multihash, linkStack, nodeStack, cb) {
-      self.get(multihash, (err, node) => {
-        if (err && nodeStack.length > 0) {
-          return cb(new Error('Could not complete the recursive get', nodeStack))
-        }
-
-        if (err) {
-          return cb(err)
-        }
-
-        nodeStack.push(node)
-        linkStack = linkStack.concat(utils.getKeys(node))
-
-        const next = linkStack.pop()
-
-        if (next) {
-          return getter(next, linkStack, nodeStack, cb)
-        }
-
-        cb(null, nodeStack)
+  get (key, cb) {
+    pull(
+      this.getStream(key),
+      pull.collect((err, res) => {
+        if (err) return cb(err)
+        cb(null, res[0])
       })
-    }
-
-    getter(multihash, [], [], cb)
+    )
   }
 
-  remove (multihash, cb) {
-    if (!multihash || !isIPFS.multihash(multihash)) {
-      return cb(new Error('Invalid multihash'))
+  getStream (key) {
+    const normalizedKey = normalizeKey(key)
+
+    if (!normalizedKey) {
+      return pull.error(new Error('Invalid Key'))
     }
 
-    this.bs.deleteBlock(multihash, 'ipld', cb)
+    return pull(
+      this.bs.getStream(normalizedKey, 'ipld'),
+      pull.map((block) => ipld.unmarshal(block.data))
+    )
+  }
+
+  getRecursive (key, cb) {
+    pull(
+      this.getRecursiveStream(key),
+      pull.collect(cb)
+    )
+  }
+
+  getRecursiveStream (key) {
+    return pull(
+      this.getStream(key),
+      pull.map((node) => traverse.widthFirst(node, (node) => {
+        return pull(
+          pull.values(utils.getKeys(node)),
+          pull.map((link) => this.getStream(link)),
+          pull.flatten()
+        )
+      })),
+      pull.flatten()
+    )
+  }
+
+  remove (keys, cb) {
+    this.bs.delete(keys, 'ipld', cb)
   }
 }
 
-module.exports = IPLDService
+function noop () {}
+
+function normalizeKey (key) {
+  let res
+  const isMhash = isIPFS.multihash(key)
+  const isPath = isIPFS.path(key)
+
+  if (!isMhash && !isPath) {
+    return null
+  }
+
+  if (isMhash) {
+    res = key
+  } else if (isPath) {
+    res = key.replace('/ipfs/', '')
+  }
+
+  if (typeof res === 'string') {
+    return mh.fromB58String(res)
+  }
+
+  return res
+}

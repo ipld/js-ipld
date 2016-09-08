@@ -5,7 +5,7 @@ const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
 const expect = require('chai').expect
 const IPFSRepo = require('ipfs-repo')
-const fsb = require('fs-blob-store')
+const Store = require('fs-pull-blob-store')
 
 const tests = require('./ipld-tests')
 
@@ -28,7 +28,7 @@ describe('node test blocks', () => {
     })
   })
 
-  const repo = new IPFSRepo(repoTests, {stores: fsb})
+  const repo = new IPFSRepo(repoTests, {stores: Store})
 
   tests(repo)
 })
