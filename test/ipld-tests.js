@@ -5,7 +5,8 @@ const expect = require('chai').expect
 const BlockService = require('ipfs-block-service')
 const ipld = require('ipld')
 const multihash = require('multihashing')
-const async = require('async')
+const series = require('async/series')
+const pull = require('pull-stream')
 
 const IPLDService = require('../src').IPLDService
 const resolve = require('../src').resolve
@@ -25,10 +26,14 @@ module.exports = (repo) => {
         size: 11
       }
 
-      ipldService.add(node, (err) => {
-        expect(err).to.not.exist
-        done()
-      })
+      ipldService.put(node, done)
+    })
+
+    it('putStream', (done) => {
+      pull(
+        pull.values([{name: 'pull.txt', size: 12}]),
+        ipldService.putStream(done)
+      )
     })
 
     it('gets an ipld node', (done) => {
@@ -37,7 +42,7 @@ module.exports = (repo) => {
         size: 11
       }
 
-      ipldService.add(node, (err) => {
+      ipldService.put(node, (err) => {
         expect(err).to.not.exist
 
         const mh = multihash(ipld.marshal(node), 'sha2-256')
@@ -48,6 +53,30 @@ module.exports = (repo) => {
           done()
         })
       })
+    })
+
+    it('getStream', (done) => {
+      const node = {
+        name: 'put.txt',
+        size: 15
+      }
+      const mh = multihash(ipld.marshal(node), 'sha2-256')
+      pull(
+        pull.values([node]),
+        ipldService.putStream(read)
+      )
+
+      function read (err) {
+        expect(err).to.not.exist
+        pull(
+          ipldService.getStream(mh),
+          pull.collect((err, res) => {
+            expect(err).to.not.exist
+            expect(res[0]).to.be.eql(node)
+            done()
+          })
+        )
+      }
     })
 
     it('get ipld nodes recursively', (done) => {
@@ -64,15 +93,15 @@ module.exports = (repo) => {
         '/': ipld.multihash(ipld.marshal(node2))
       }
 
-      async.series([
-        (cb) => ipldService.add(node1, cb),
-        (cb) => ipldService.add(node2, cb),
-        (cb) => ipldService.add(node3, cb),
+      series([
+        (cb) => ipldService.put(node1, cb),
+        (cb) => ipldService.put(node2, cb),
+        (cb) => ipldService.put(node3, cb),
         (cb) => {
           const mh = multihash(ipld.marshal(node1), 'sha2-256')
           ipldService.getRecursive(mh, (err, nodes) => {
             expect(err).to.not.exist
-            expect(nodes.length).to.equal(3)
+            expect(nodes).to.have.length(3)
             cb()
           })
         }
@@ -84,24 +113,17 @@ module.exports = (repo) => {
 
     it('removes and ipld node', (done) => {
       const node = {data: 'short lived node'}
+      const mh = multihash(ipld.marshal(node), 'sha2-256')
 
-      ipldService.add(node, (err) => {
-        expect(err).to.not.exist
-        const mh = multihash(ipld.marshal(node), 'sha2-256')
-
-        ipldService.get(mh, (err, fetchedNode) => {
-          expect(err).to.not.exist
-
-          ipldService.remove(mh, (err) => {
-            expect(err).to.not.exist
-
-            ipldService.get(mh, (err) => {
-              expect(err).to.exist
-              done()
-            })
-          })
+      series([
+        (cb) => ipldService.put(node, cb),
+        (cb) => ipldService.get(mh, cb),
+        (cb) => ipldService.remove(mh, cb),
+        (cb) => ipldService.get(mh, (err) => {
+          expect(err).to.exist
+          cb()
         })
-      })
+      ], done)
     })
   })
 
@@ -126,7 +148,7 @@ module.exports = (repo) => {
       const mh = ipld.multihash(ipld.marshal(node))
 
       before((done) => {
-        ipldService.add(node, done)
+        ipldService.put(node, done)
       })
 
       it('resolves direct leaves of type string', (done) => {
@@ -199,10 +221,10 @@ module.exports = (repo) => {
       const mh = ipld.multihash(ipld.marshal(alice))
 
       before((done) => {
-        async.series([
-          (cb) => ipldService.add(aliceAbout, cb),
-          (cb) => ipldService.add(alice, cb),
-          (cb) => ipldService.add(bob, cb)
+        series([
+          (cb) => ipldService.put(aliceAbout, cb),
+          (cb) => ipldService.put(alice, cb),
+          (cb) => ipldService.put(bob, cb)
         ], done)
       })
 
@@ -266,11 +288,11 @@ module.exports = (repo) => {
       const mh = ipld.multihash(ipld.marshal(blogpost))
 
       before((done) => {
-        async.series([
-          (cb) => ipldService.add(draft, cb),
-          (cb) => ipldService.add(alice, cb),
-          (cb) => ipldService.add(author, cb),
-          (cb) => ipldService.add(blogpost, cb)
+        series([
+          (cb) => ipldService.put(draft, cb),
+          (cb) => ipldService.put(alice, cb),
+          (cb) => ipldService.put(author, cb),
+          (cb) => ipldService.put(blogpost, cb)
         ], done)
       })
 

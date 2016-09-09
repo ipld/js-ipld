@@ -13,17 +13,20 @@
 
 ## Table of Contents
 
-- [Install](#install)
-- [Usage](#usage)
-- [API](#api)
-  - [`resolve`](#resolve)
-  - [IPLDService](#ipldservice)
-    - [`.add(node, cb)`](#addnode-cb)
+* [Install](#install)
+* [Usage](#usage)
+* [API](#api)
+  + [`resolve`](#resolve)
+  + [IPLDService](#ipldservice)
+    - [`.put(node, cb)`](#putnode-cb)
+    - [`.putStream([cb])`](#putstreamcb)
     - [`.get(multihash, cb)`](#getmultihash-cb)
+    - [`.getStream(multihash)`](#getstreammultihash)
     - [`.getRecursive(multihash, cb)`](#getrecursivemultihash-cb)
+    - [`.getRecursiveStream(multihash)`](#getrecursivestreammultihash)
     - [`.remove(multihash, cb)`](#removemultihash-cb)
-- [Contribute](#contribute)
-- [License](#license)
+* [Contribute](#contribute)
+* [License](#license)
 
 ## Install
 
@@ -64,17 +67,30 @@ ipldService.add(node, (err) => {
 
 ### IPLDService
 
-#### `.add(node, cb)`
+#### `.put(node, cb)`
 
 > Store the given node (any JavaScript object).
+
+#### `.putStream([cb])`
+
+Returns a sink pull-stream, to write IPLD objects to.
 
 #### `.get(multihash, cb)`
 
 > Retrieve a node by the given `multihash`.
 
+#### `.getStream(multihash)`
+
+Returns a source pull-stream of the requested IPLD object.
+
 #### `.getRecursive(multihash, cb)`
 
 > Retrieve a node by the given `multihash` and all linked nodes.
+
+#### `.getRecursiveStream(multihash)`
+
+Returns a source pull-stream, which emits the requested node, and
+all linked nodes.
 
 #### `.remove(multihash, cb)`
 

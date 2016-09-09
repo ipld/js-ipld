@@ -1,10 +1,11 @@
 /* eslint-env mocha */
 'use strict'
 
-const async = require('async')
-const store = require('idb-plus-blob-store')
+const eachSeries = require('async/eachSeries')
+const Store = require('idb-pull-blob-store')
 const _ = require('lodash')
 const IPFSRepo = require('ipfs-repo')
+const pull = require('pull-stream')
 const repoContext = require.context('buffer!./example-repo', true)
 
 const tests = require('./ipld-tests')
@@ -29,10 +30,10 @@ describe('ipfs merkle dag browser tests', function () {
       })
     })
 
-    const mainBlob = store('ipfs')
-    const blocksBlob = store('ipfs/blocks')
+    const mainBlob = new Store('ipfs')
+    const blocksBlob = new Store('ipfs/blocks')
 
-    async.eachSeries(repoData, (file, cb) => {
+    eachSeries(repoData, (file, cb) => {
       if (_.startsWith(file.key, 'datastore/')) {
         return cb()
       }
@@ -41,12 +42,13 @@ describe('ipfs merkle dag browser tests', function () {
       const blob = blocks ? blocksBlob : mainBlob
       const key = blocks ? file.key.replace(/^blocks\//, '') : file.key
 
-      blob.createWriteStream({
-        key: key
-      }).end(file.value, cb)
+      pull(
+        pull.values([file.value]),
+        blob.write(key, cb)
+      )
     }, done)
   })
 
-  const repo = new IPFSRepo('ipfs', {stores: store})
+  const repo = new IPFSRepo('ipfs', {stores: Store})
   tests(repo)
 })

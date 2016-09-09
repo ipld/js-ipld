@@ -34,27 +34,29 @@
   "homepage": "https://github.com/ipfs/js-ipfs-ipld#readme",
   "license": "MIT",
   "devDependencies": {
-    "aegir": "^5.0.1",
-    "async": "^2.0.0-rc.5",
+    "aegir": "^8.0.1",
+    "async": "^2.0.1",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
-    "fs-blob-store": "^5.2.1",
-    "idb-plus-blob-store": "^1.1.2",
-    "ipfs-block-service": "^0.4.0",
-    "ipfs-repo": "^0.8.0",
-    "lodash": "^4.12.0",
+    "fs-pull-blob-store": "^0.3.0",
+    "idb-pull-blob-store": "^0.4.0",
+    "ipfs-block-service": "^0.5.0",
+    "ipfs-repo": "^0.9.0",
+    "lodash": "^4.15.0",
     "ncp": "^2.0.0",
     "pre-commit": "^1.1.3",
-    "rimraf": "^2.5.2"
+    "rimraf": "^2.5.4"
   },
   "dependencies": {
-    "babel-runtime": "^6.9.0",
-    "bs58": "^3.0.0",
+    "babel-runtime": "^6.11.6",
     "ipfs-block": "^0.3.0",
     "ipld": "^0.6.0",
     "is-ipfs": "^0.2.0",
-    "lodash.flatten": "^4.2.0",
-    "lodash.includes": "^4.1.3"
+    "lodash.flatten": "^4.4.0",
+    "lodash.includes": "^4.3.0",
+    "multihashes": "^0.2.2",
+    "pull-stream": "^3.4.5",
+    "pull-traverse": "^1.0.3"
   },
   "contributors": [
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
