@@ -58,7 +58,7 @@ const node = {
   }
 }
 const mh = ipld.multihash(ipld.marshal(node))
-ipldService.add(node, (err) => {
+ipldService.put(node, (err) => {
   resolve(ipldService, `${mh}/hello/world`, (err, res) => {
   console.log(res)
   // => 11
