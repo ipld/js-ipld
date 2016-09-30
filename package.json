@@ -1,7 +1,7 @@
 {
-  "name": "ipfs-ipld",
+  "name": "ipld-resolver",
   "version": "3.0.0",
-  "description": "IPLD implementation in JavaScript",
+  "description": "IPLD Resolver Implementation in JavaScript",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "pre-commit": [
@@ -34,7 +34,7 @@
   "homepage": "https://github.com/ipfs/js-ipfs-ipld#readme",
   "license": "MIT",
   "devDependencies": {
-    "aegir": "^8.0.1",
+    "aegir": "^8.1.2",
     "async": "^2.0.1",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",

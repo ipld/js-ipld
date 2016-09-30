@@ -31,7 +31,9 @@ module.exports = (repo) => {
 
     it('putStream', (done) => {
       pull(
-        pull.values([{name: 'pull.txt', size: 12}]),
+        pull.values([
+          {name: 'pull.txt', size: 12}
+        ]),
         ipldService.putStream(done)
       )
     })
