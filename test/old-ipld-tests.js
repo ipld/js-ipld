@@ -15,7 +15,7 @@ module.exports = (repo) => {
   const bs = new BlockService(repo)
   const ipldService = new IPLDService(bs)
 
-  describe('IPLDService', () => {
+  describe('IPLD Resolver (old tests)', () => {
     it('throws when not passed a repo', () => {
       expect(() => new IPLDService()).to.throw(/requires a BlockService/)
     })

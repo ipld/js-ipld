@@ -7,9 +7,7 @@ const expect = require('chai').expect
 const IPFSRepo = require('ipfs-repo')
 const Store = require('fs-pull-blob-store')
 
-const tests = require('./ipld-tests')
-
-describe('node test blocks', () => {
+describe('Node.js', () => {
   const repoExample = process.cwd() + '/test/example-repo'
   const repoTests = process.cwd() + '/test/repo-just-for-test' + Date.now()
 
@@ -30,5 +28,7 @@ describe('node test blocks', () => {
 
   const repo = new IPFSRepo(repoTests, {stores: Store})
 
-  tests(repo)
+  require('./test-ipld-dag-pb')(repo)
+  // require('./test-ipld-dag-cbor')(repo)
+  // require('./test-ipld-eth-block')(repo)
 })

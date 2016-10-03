@@ -8,8 +8,6 @@ const IPFSRepo = require('ipfs-repo')
 const pull = require('pull-stream')
 const repoContext = require.context('buffer!./example-repo', true)
 
-const tests = require('./ipld-tests')
-
 const idb = window.indexedDB ||
   window.mozIndexedDB ||
   window.webkitIndexedDB ||
@@ -18,7 +16,7 @@ const idb = window.indexedDB ||
 idb.deleteDatabase('ipfs')
 idb.deleteDatabase('ipfs/blocks')
 
-describe('ipfs merkle dag browser tests', function () {
+describe('Browser', function () {
   before(function (done) {
     this.timeout(10000)
 
@@ -49,6 +47,7 @@ describe('ipfs merkle dag browser tests', function () {
     }, done)
   })
 
-  const repo = new IPFSRepo('ipfs', {stores: Store})
-  tests(repo)
+  const repo = new IPFSRepo('ipfs', { stores: Store })
+
+  require('./test-ipld-dag-pb')(repo)
 })
