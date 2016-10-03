@@ -86,6 +86,8 @@ module.exports = class IPLDResolver {
     )
   }
 
+  // TODO: Consider if we still want this (fact: no one is using it
+  // right now and this will be just an IPLD selector anyway
   getRecursive (cid, callback) {
     pull(
       this.getRecursiveStream(cid),
