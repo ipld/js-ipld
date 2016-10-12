@@ -35,7 +35,7 @@
   "license": "MIT",
   "devDependencies": {
     "aegir": "^8.0.1",
-    "async": "^2.0.1",
+    "async": "^2.1.0",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "fs-pull-blob-store": "^0.3.0",
