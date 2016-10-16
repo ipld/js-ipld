@@ -24,8 +24,9 @@ module.exports = (repo) => {
       node3 = new dagPB.DAGNode(new Buffer('I am 3'))
     })
 
-    it('throws when not passed a repo', () => {
-      expect(() => new IPLDResolver()).to.throw(/requires a BlockService/)
+    it('creates an in memory repo if no blockService is passed', () => {
+      const r = new IPLDResolver()
+      expect(r.bs).to.exist
     })
 
     it('resolver.put', (done) => {
@@ -124,5 +125,9 @@ module.exports = (repo) => {
     })
   })
 
-  describe('IPLD Path Resolver', () => {})
+  describe('IPLD Path Resolver', () => {
+    it.skip('resolves path of a non nested value', () => {})
+    it.skip('resolves path of a level 1 nested value', () => {})
+    it.skip('resolves path of a level 2 nested value', () => {})
+  })
 }

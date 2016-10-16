@@ -20,10 +20,7 @@ describe('Node.js', () => {
   })
 
   after((done) => {
-    rimraf(repoTests, (err) => {
-      expect(err).to.equal(null)
-      done()
-    })
+    rimraf(repoTests, done)
   })
 
   const repo = new IPFSRepo(repoTests, {stores: Store})

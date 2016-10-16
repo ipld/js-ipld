@@ -1,26 +1,32 @@
 'use strict'
 
-// const isIPFS = require('is-ipfs')
 const Block = require('ipfs-block')
-// const ipld = require('ipld-dag-cbor')
 const pull = require('pull-stream')
 const traverse = require('pull-traverse')
-// const mh = require('multihashes')
-const dagPB = require('ipld-dag-pb')
-
 const utils = require('./utils')
+const IPFSRepo = require('ipfs-repo')
+const MemoryStore = require('../node_modules/interface-pull-blob-store/lib/reference.js')
+const BlockService = require('ipfs-block-service')
 
-module.exports = class IPLDResolver {
+const dagPB = require('ipld-dag-pb')
+// const dagCBOR = require('ipld-dag-cbor')
+// const isIPFS = require('is-ipfs')
+// const mh = require('multihashes')
+
+class IPLDResolver {
   constructor (blockService) {
-    // TODO instead of throwing, just create an in-memory
-    // block-service, so it is nice for demos
+    // nicola will love this!
     if (!blockService) {
-      throw new Error('IPLDService requires a BlockService instance')
+      const repo = new IPFSRepo('in-memory', { stores: MemoryStore })
+      blockService = new BlockService(repo)
     }
 
     this.bs = blockService
     this.resolvers = {}
+
+    // Support by default dag-pb and dag-cbor
     this.support(dagPB.resolver.multicodec, dagPB.DAGNode, dagPB.resolver)
+    // this.support(dagCBOR.resolver.multicodec, dagCBOR.DAGNode, dagCBOR.resolver)
   }
 
   // Adds support for an IPLD format
@@ -35,6 +41,8 @@ module.exports = class IPLDResolver {
   resolve (cid, path) {
     // TODO
   }
+
+  // Node operations (get and retrieve nodes, not values)
 
   put (node, callback) {
     callback = callback || noop
@@ -118,26 +126,4 @@ module.exports = class IPLDResolver {
 
 function noop () {}
 
-/*
-function normalizeKey (key) {
-  let res
-  const isMhash = isIPFS.multihash(key)
-  const isPath = isIPFS.path(key)
-
-  if (!isMhash && !isPath) {
-    return null
-  }
-
-  if (isMhash) {
-    res = key
-  } else if (isPath) {
-    res = key.replace('/ipfs/', '')
-  }
-
-  if (typeof res === 'string') {
-    return mh.fromB58String(res)
-  }
-
-  return res
-}
-*/
+module.exports = IPLDResolver
