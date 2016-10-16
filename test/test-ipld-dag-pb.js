@@ -10,10 +10,10 @@ const pull = require('pull-stream')
 const IPLDResolver = require('../src')
 
 module.exports = (repo) => {
-  const bs = new BlockService(repo)
-  const resolver = new IPLDResolver(bs)
-
   describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
+    const bs = new BlockService(repo)
+    const resolver = new IPLDResolver(bs)
+
     let node1
     let node2
     let node3
@@ -126,8 +126,64 @@ module.exports = (repo) => {
   })
 
   describe('IPLD Path Resolver', () => {
-    it.skip('resolves path of a non nested value', () => {})
-    it.skip('resolves path of a level 1 nested value', () => {})
-    it.skip('resolves path of a level 2 nested value', () => {})
+    let resolver
+
+    let node1
+    let node2
+    let node3
+
+    before((done) => {
+      resolver = new IPLDResolver()
+
+      node1 = new dagPB.DAGNode(new Buffer('I am 1'))
+      node2 = new dagPB.DAGNode(new Buffer('I am 2'))
+      node3 = new dagPB.DAGNode(new Buffer('I am 3'))
+
+      node2.addNodeLink('1', node1)
+
+      node3.addNodeLink('1', node1)
+      node3.addNodeLink('2', node2)
+
+      pull(
+        pull.values([
+          node1,
+          node2,
+          node3
+        ]),
+        resolver.putStream(done)
+      )
+    })
+
+    it('root path (same as get)', (done) => {
+      resolver.resolve(node1.cid(), '/', (err, result) => {
+        expect(err).to.not.exist
+        expect(result.cid()).to.eql(node1.cid())
+        done()
+      })
+    })
+
+    it('value within 1st node scope', (done) => {
+      resolver.resolve(node1.cid(), 'data', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql(new Buffer('I am 1'))
+        done()
+      })
+    })
+
+    it('value within nested scope (1 level)', (done) => {
+      resolver.resolve(node2.cid(), 'links/0/data', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql(new Buffer('I am 1'))
+        done()
+      })
+    })
+
+    it('value within nested scope (2 levels)', (done) => {
+      resolver.resolve(node3.cid(), 'links/1/links/0/data', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql(new Buffer('I am 1'))
+        done()
+      })
+    })
   })
 }

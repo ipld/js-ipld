@@ -4,6 +4,8 @@ const Block = require('ipfs-block')
 const pull = require('pull-stream')
 const traverse = require('pull-traverse')
 const utils = require('./utils')
+const CID = require('cids')
+const until = require('async/until')
 const IPFSRepo = require('ipfs-repo')
 const MemoryStore = require('../node_modules/interface-pull-blob-store/lib/reference.js')
 const BlockService = require('ipfs-block-service')
@@ -38,8 +40,46 @@ class IPLDResolver {
     }
   }
 
-  resolve (cid, path) {
-    // TODO
+  resolve (cid, path, callback) {
+    if (path === '/') {
+      return this.get(cid, callback)
+    }
+
+    let value
+
+    until(
+      () => {
+        if (!path || path === '' || path === '/') {
+          return true
+        } else {
+          // continue traversing
+          if (value) {
+            cid = new CID(value['/'])
+          }
+          return false
+        }
+      },
+      (cb) => {
+        // get block
+        // use local resolver
+        // update path value
+        this.bs.get(cid, (err, block) => {
+          if (err) {
+            return cb(err)
+          }
+          const result = this.resolvers[cid.codec].resolver.resolve(block, path)
+          value = result.value
+          path = result.remainderPath
+          cb()
+        })
+      },
+      (err, results) => {
+        if (err) {
+          return callback(err)
+        }
+        return callback(null, value)
+      }
+    )
   }
 
   // Node operations (get and retrieve nodes, not values)
