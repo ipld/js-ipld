@@ -27,15 +27,16 @@ class IPLDResolver {
     this.resolvers = {}
 
     // Support by default dag-pb and dag-cbor
-    this.support(dagPB.resolver.multicodec, dagPB.DAGNode, dagPB.resolver)
+    this.support(dagPB.resolver.multicodec, dagPB.DAGNode, dagPB.resolver, dagPB.util)
     // this.support(dagCBOR.resolver.multicodec, dagCBOR.DAGNode, dagCBOR.resolver)
   }
 
   // Adds support for an IPLD format
   // default ones are dag-pb and dag-cbor
-  support (multicodec, type, resolver) {
+  support (multicodec, type, resolver, util) {
     this.resolvers[multicodec] = {
       resolver: resolver,
+      util: util,
       Type: type
     }
   }
@@ -84,10 +85,10 @@ class IPLDResolver {
 
   // Node operations (get and retrieve nodes, not values)
 
-  put (node, callback) {
+  put (nodeAndCID, callback) {
     callback = callback || noop
     pull(
-      pull.values([node]),
+      pull.values([nodeAndCID]),
       this.putStream(callback)
     )
   }
@@ -96,10 +97,12 @@ class IPLDResolver {
     callback = callback || noop
 
     return pull(
-      pull.map((node) => {
+      pull.map((nodeAndCID) => {
+        const cid = nodeAndCID.cid
+        const r = this.resolvers[cid.codec]
         return {
-          block: new Block(node.serialize()),
-          cid: node.cid()
+          block: new Block(r.util.serialize(nodeAndCID.node)),
+          cid: cid
         }
       }),
       this.bs.putStream(),
@@ -123,10 +126,9 @@ class IPLDResolver {
     return pull(
       this.bs.getStream(cid),
       pull.map((block) => {
-        if (this.resolvers[cid.codec]) {
-          const node = new this.resolvers[cid.codec].Type()
-          node.deserialize(block.data)
-          return node
+        const r = this.resolvers[cid.codec]
+        if (r) {
+          return r.util.deserialize(block.data)
         } else { // multicodec unknown, send back raw data
           return block.data
         }

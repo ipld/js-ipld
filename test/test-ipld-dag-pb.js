@@ -30,24 +30,30 @@ module.exports = (repo) => {
     })
 
     it('resolver.put', (done) => {
-      resolver.put(node1, done)
+      resolver.put({
+        node: node1,
+        cid: dagPB.util.cid(node1)
+      }, done)
     })
 
     it('resolver.putStream', (done) => {
       pull(
         pull.values([
-          node1,
-          node2,
-          node3
+          { node: node1, cid: dagPB.util.cid(node1) },
+          { node: node2, cid: dagPB.util.cid(node2) },
+          { node: node3, cid: dagPB.util.cid(node3) }
         ]),
         resolver.putStream(done)
       )
     })
 
     it('resolver.get', (done) => {
-      resolver.put(node1, (err) => {
+      resolver.put({
+        node: node1,
+        cid: dagPB.util.cid(node1)
+      }, (err) => {
         expect(err).to.not.exist
-        resolver.get(node1.cid(), (err, node) => {
+        resolver.get(dagPB.util.cid(node1), (err, node) => {
           expect(err).to.not.exist
           expect(node.multihash()).to.eql(node.multihash())
           done()
@@ -56,10 +62,13 @@ module.exports = (repo) => {
     })
 
     it('resolver.getStream', (done) => {
-      resolver.put(node1, (err) => {
+      resolver.put({
+        node: node1,
+        cid: dagPB.util.cid(node1)
+      }, (err) => {
         expect(err).to.not.exist
         pull(
-          resolver.getStream(node1.cid()),
+          resolver.getStream(dagPB.util.cid(node1)),
           pull.collect((err, nodes) => {
             expect(err).to.not.exist
             expect(node1.multihash()).to.eql(nodes[0].multihash())
@@ -104,9 +113,12 @@ module.exports = (repo) => {
     })
 
     it('resolver.remove', (done) => {
-      resolver.put(node1, (err) => {
+      resolver.put({
+        node: node1,
+        cid: dagPB.util.cid(node1)
+      }, (err) => {
         expect(err).to.not.exist
-        resolver.get(node1.cid(), (err, node) => {
+        resolver.get(dagPB.util.cid(node1), (err, node) => {
           expect(err).to.not.exist
           expect(node.multihash()).to.eql(node.multihash())
           remove()
@@ -114,9 +126,9 @@ module.exports = (repo) => {
       })
 
       function remove () {
-        resolver.remove(node1.cid(), (err) => {
+        resolver.remove(dagPB.util.cid(node1), (err) => {
           expect(err).to.not.exist
-          resolver.get(node1.cid(), (err, node) => {
+          resolver.get(dagPB.util.cid(node1), (err) => {
             expect(err).to.exist
             done()
           })
@@ -146,24 +158,24 @@ module.exports = (repo) => {
 
       pull(
         pull.values([
-          node1,
-          node2,
-          node3
+          { node: node1, cid: dagPB.util.cid(node1) },
+          { node: node2, cid: dagPB.util.cid(node2) },
+          { node: node3, cid: dagPB.util.cid(node3) }
         ]),
         resolver.putStream(done)
       )
     })
 
     it('root path (same as get)', (done) => {
-      resolver.resolve(node1.cid(), '/', (err, result) => {
+      resolver.resolve(dagPB.util.cid(node1), '/', (err, result) => {
         expect(err).to.not.exist
-        expect(result.cid()).to.eql(node1.cid())
+        expect(dagPB.util.cid(result)).to.eql(dagPB.util.cid(node1))
         done()
       })
     })
 
     it('value within 1st node scope', (done) => {
-      resolver.resolve(node1.cid(), 'data', (err, result) => {
+      resolver.resolve(dagPB.util.cid(node1), 'data', (err, result) => {
         expect(err).to.not.exist
         expect(result).to.eql(new Buffer('I am 1'))
         done()
@@ -171,7 +183,7 @@ module.exports = (repo) => {
     })
 
     it('value within nested scope (1 level)', (done) => {
-      resolver.resolve(node2.cid(), 'links/0/data', (err, result) => {
+      resolver.resolve(dagPB.util.cid(node2), 'links/0/data', (err, result) => {
         expect(err).to.not.exist
         expect(result).to.eql(new Buffer('I am 1'))
         done()
@@ -179,7 +191,7 @@ module.exports = (repo) => {
     })
 
     it('value within nested scope (2 levels)', (done) => {
-      resolver.resolve(node3.cid(), 'links/1/links/0/data', (err, result) => {
+      resolver.resolve(dagPB.util.cid(node3), 'links/1/links/0/data', (err, result) => {
         expect(err).to.not.exist
         expect(result).to.eql(new Buffer('I am 1'))
         done()
