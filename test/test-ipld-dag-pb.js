@@ -55,7 +55,7 @@ module.exports = (repo) => {
         expect(err).to.not.exist
         resolver.get(dagPB.util.cid(node1), (err, node) => {
           expect(err).to.not.exist
-          expect(node.multihash()).to.eql(node.multihash())
+          expect(node1.multihash()).to.eql(node.multihash())
           done()
         })
       })
@@ -120,7 +120,7 @@ module.exports = (repo) => {
         expect(err).to.not.exist
         resolver.get(dagPB.util.cid(node1), (err, node) => {
           expect(err).to.not.exist
-          expect(node.multihash()).to.eql(node.multihash())
+          expect(node1.multihash()).to.eql(node.multihash())
           remove()
         })
       })

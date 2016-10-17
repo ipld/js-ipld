@@ -11,9 +11,7 @@ const MemoryStore = require('../node_modules/interface-pull-blob-store/lib/refer
 const BlockService = require('ipfs-block-service')
 
 const dagPB = require('ipld-dag-pb')
-// const dagCBOR = require('ipld-dag-cbor')
-// const isIPFS = require('is-ipfs')
-// const mh = require('multihashes')
+const dagCBOR = require('ipld-dag-cbor')
 
 class IPLDResolver {
   constructor (blockService) {
@@ -27,17 +25,16 @@ class IPLDResolver {
     this.resolvers = {}
 
     // Support by default dag-pb and dag-cbor
-    this.support(dagPB.resolver.multicodec, dagPB.DAGNode, dagPB.resolver, dagPB.util)
-    // this.support(dagCBOR.resolver.multicodec, dagCBOR.DAGNode, dagCBOR.resolver)
+    this.support(dagPB.resolver.multicodec, dagPB.resolver, dagPB.util)
+    this.support(dagCBOR.resolver.multicodec, dagCBOR.resolver, dagCBOR.util)
   }
 
   // Adds support for an IPLD format
   // default ones are dag-pb and dag-cbor
-  support (multicodec, type, resolver, util) {
+  support (multicodec, resolver, util) {
     this.resolvers[multicodec] = {
       resolver: resolver,
-      util: util,
-      Type: type
+      util: util
     }
   }
 
