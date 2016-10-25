@@ -103,40 +103,6 @@ module.exports = (repo) => {
       })
     })
 
-    it.skip('resolver.getRecursive', (done) => {
-      /*
-      // 1 -> 2 -> 3
-      const node1 = {data: '1'}
-      const node2 = {data: '2'}
-      const node3 = {data: '3'}
-
-      node2.ref = {
-        '/': ipld.multihash(ipld.marshal(node3))
-      }
-
-      node1.ref = {
-        '/': ipld.multihash(ipld.marshal(node2))
-      }
-
-      series([
-        (cb) => ipldService.put(node1, cb),
-        (cb) => ipldService.put(node2, cb),
-        (cb) => ipldService.put(node3, cb),
-        (cb) => {
-          const mh = multihash(ipld.marshal(node1), 'sha2-256')
-          ipldService.getRecursive(mh, (err, nodes) => {
-            expect(err).to.not.exist
-            expect(nodes).to.have.length(3)
-            cb()
-          })
-        }
-      ], (err) => {
-        expect(err).to.not.exist
-        done()
-      })
-      */
-    })
-
     it('resolver.remove', (done) => {
       resolver.put({
         node: node1,

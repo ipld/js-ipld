@@ -2,8 +2,6 @@
 
 const Block = require('ipfs-block')
 const pull = require('pull-stream')
-const traverse = require('pull-traverse')
-const utils = require('./utils')
 const CID = require('cids')
 const until = require('async/until')
 const IPFSRepo = require('ipfs-repo')
@@ -156,31 +154,6 @@ class IPLDResolver {
           cb(null, block.data)
         }
       })
-    )
-  }
-
-  // TODO: Consider if we still want this (fact: no one is using it
-  // right now and this will be just an IPLD selector anyway
-  getRecursive (cid, callback) {
-    pull(
-      this.getRecursiveStream(cid),
-      pull.collect(callback)
-    )
-  }
-
-  getRecursiveStream (cid) {
-    return pull(
-      this.getStream(cid),
-      pull.map((node) => {
-        traverse.widthFirst(node, (node) => {
-          return pull(
-            pull.values(utils.getKeys(node)),
-            pull.map((link) => this.getStream(link)),
-            pull.flatten()
-          )
-        })
-      }),
-      pull.flatten()
     )
   }
 
