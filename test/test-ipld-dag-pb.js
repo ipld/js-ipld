@@ -4,24 +4,51 @@
 const expect = require('chai').expect
 const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
-// const series = require('async/series')
+const series = require('async/series')
 const pull = require('pull-stream')
 
 const IPLDResolver = require('../src')
 
 module.exports = (repo) => {
-  describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
+  describe.only('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
     const bs = new BlockService(repo)
     const resolver = new IPLDResolver(bs)
 
     let node1
     let node2
     let node3
+    let cid1
+    let cid2
+    let cid3
 
-    before(() => {
+    before((done) => {
       node1 = new dagPB.DAGNode(new Buffer('I am 1'))
       node2 = new dagPB.DAGNode(new Buffer('I am 2'))
       node3 = new dagPB.DAGNode(new Buffer('I am 3'))
+
+      series([
+        (cb) => {
+          dagPB.util.cid(node1, (err, cid) => {
+            expect(err).to.not.exist
+            cid1 = cid
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.util.cid(node2, (err, cid) => {
+            expect(err).to.not.exist
+            cid2 = cid
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.util.cid(node3, (err, cid) => {
+            expect(err).to.not.exist
+            cid3 = cid
+            cb()
+          })
+        }
+      ], done)
     })
 
     it('creates an in memory repo if no blockService is passed', () => {
@@ -32,16 +59,16 @@ module.exports = (repo) => {
     it('resolver.put', (done) => {
       resolver.put({
         node: node1,
-        cid: dagPB.util.cid(node1)
+        cid: cid1
       }, done)
     })
 
     it('resolver.putStream', (done) => {
       pull(
         pull.values([
-          { node: node1, cid: dagPB.util.cid(node1) },
-          { node: node2, cid: dagPB.util.cid(node2) },
-          { node: node3, cid: dagPB.util.cid(node3) }
+          { node: node1, cid: cid1 },
+          { node: node2, cid: cid2 },
+          { node: node3, cid: cid3 }
         ]),
         resolver.putStream(done)
       )
@@ -50,12 +77,11 @@ module.exports = (repo) => {
     it('resolver.get', (done) => {
       resolver.put({
         node: node1,
-        cid: dagPB.util.cid(node1)
+        cid: cid1
       }, (err) => {
         expect(err).to.not.exist
-        resolver.get(dagPB.util.cid(node1), (err, node) => {
+        resolver.get(cid1, (err, node) => {
           expect(err).to.not.exist
-          expect(node1.multihash()).to.eql(node.multihash())
           done()
         })
       })
@@ -64,14 +90,13 @@ module.exports = (repo) => {
     it('resolver.getStream', (done) => {
       resolver.put({
         node: node1,
-        cid: dagPB.util.cid(node1)
+        cid: cid1
       }, (err) => {
         expect(err).to.not.exist
         pull(
-          resolver.getStream(dagPB.util.cid(node1)),
+          resolver.getStream(cid1),
           pull.collect((err, nodes) => {
             expect(err).to.not.exist
-            expect(node1.multihash()).to.eql(nodes[0].multihash())
             done()
           })
         )
@@ -115,20 +140,19 @@ module.exports = (repo) => {
     it('resolver.remove', (done) => {
       resolver.put({
         node: node1,
-        cid: dagPB.util.cid(node1)
+        cid: cid1
       }, (err) => {
         expect(err).to.not.exist
-        resolver.get(dagPB.util.cid(node1), (err, node) => {
+        resolver.get(cid1, (err, node) => {
           expect(err).to.not.exist
-          expect(node1.multihash()).to.eql(node.multihash())
           remove()
         })
       })
 
       function remove () {
-        resolver.remove(dagPB.util.cid(node1), (err) => {
+        resolver.remove(cid1, (err) => {
           expect(err).to.not.exist
-          resolver.get(dagPB.util.cid(node1), (err) => {
+          resolver.get(cid1, (err) => {
             expect(err).to.exist
             done()
           })
@@ -143,6 +167,9 @@ module.exports = (repo) => {
     let node1
     let node2
     let node3
+    let cid1
+    let cid2
+    let cid3
 
     before((done) => {
       resolver = new IPLDResolver()
@@ -151,31 +178,70 @@ module.exports = (repo) => {
       node2 = new dagPB.DAGNode(new Buffer('I am 2'))
       node3 = new dagPB.DAGNode(new Buffer('I am 3'))
 
-      node2.addNodeLink('1', node1)
+      series([
+        (cb) => {
+          node2.addNodeLink('1', node1, cb)
+        },
+        (cb) => {
+          node3.addNodeLink('1', node1, cb)
+        },
+        (cb) => {
+          node3.addNodeLink('2', node2, cb)
+        }
+      ], cids)
 
-      node3.addNodeLink('1', node1)
-      node3.addNodeLink('2', node2)
+      function cids () {
+        series([
+          (cb) => {
+            dagPB.util.cid(node1, (err, cid) => {
+              expect(err).to.not.exist
+              cid1 = cid
+              cb()
+            })
+          },
+          (cb) => {
+            dagPB.util.cid(node2, (err, cid) => {
+              expect(err).to.not.exist
+              cid2 = cid
+              cb()
+            })
+          },
+          (cb) => {
+            dagPB.util.cid(node3, (err, cid) => {
+              expect(err).to.not.exist
+              cid3 = cid
+              cb()
+            })
+          }
+        ], store)
+      }
 
-      pull(
-        pull.values([
-          { node: node1, cid: dagPB.util.cid(node1) },
-          { node: node2, cid: dagPB.util.cid(node2) },
-          { node: node3, cid: dagPB.util.cid(node3) }
-        ]),
-        resolver.putStream(done)
-      )
+      function store () {
+        pull(
+          pull.values([
+            { node: node1, cid: cid1 },
+            { node: node2, cid: cid2 },
+            { node: node3, cid: cid3 }
+          ]),
+          resolver.putStream(done)
+        )
+      }
     })
 
     it('root path (same as get)', (done) => {
-      resolver.resolve(dagPB.util.cid(node1), '/', (err, result) => {
+      resolver.resolve(cid1, '/', (err, result) => {
         expect(err).to.not.exist
-        expect(dagPB.util.cid(result)).to.eql(dagPB.util.cid(node1))
-        done()
+
+        dagPB.util.cid(result, (err, cid) => {
+          expect(err).to.not.exist
+          expect(cid).to.eql(cid1)
+          done()
+        })
       })
     })
 
     it('value within 1st node scope', (done) => {
-      resolver.resolve(dagPB.util.cid(node1), 'data', (err, result) => {
+      resolver.resolve(cid1, 'data', (err, result) => {
         expect(err).to.not.exist
         expect(result).to.eql(new Buffer('I am 1'))
         done()
@@ -183,7 +249,7 @@ module.exports = (repo) => {
     })
 
     it('value within nested scope (1 level)', (done) => {
-      resolver.resolve(dagPB.util.cid(node2), 'links/0/data', (err, result) => {
+      resolver.resolve(cid2, 'links/0/data', (err, result) => {
         expect(err).to.not.exist
         expect(result).to.eql(new Buffer('I am 1'))
         done()
@@ -191,7 +257,7 @@ module.exports = (repo) => {
     })
 
     it('value within nested scope (2 levels)', (done) => {
-      resolver.resolve(dagPB.util.cid(node3), 'links/1/links/0/data', (err, result) => {
+      resolver.resolve(cid3, 'links/1/links/0/data', (err, result) => {
         expect(err).to.not.exist
         expect(result).to.eql(new Buffer('I am 1'))
         done()

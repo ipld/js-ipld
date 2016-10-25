@@ -24,18 +24,29 @@ class IPLDResolver {
     this.bs = blockService
     this.resolvers = {}
 
-    // Support by default dag-pb and dag-cbor
-    this.support(dagPB.resolver.multicodec, dagPB.resolver, dagPB.util)
-    this.support(dagCBOR.resolver.multicodec, dagCBOR.resolver, dagCBOR.util)
-  }
+    this.support = {}
 
-  // Adds support for an IPLD format
-  // default ones are dag-pb and dag-cbor
-  support (multicodec, resolver, util) {
-    this.resolvers[multicodec] = {
-      resolver: resolver,
-      util: util
+    // Adds support for an IPLD format
+    this.support.add = (multicodec, resolver, util) => {
+      if (this.resolvers[multicodec]) {
+        throw new Error(multicodec + 'already supported')
+      }
+
+      this.resolvers[multicodec] = {
+        resolver: resolver,
+        util: util
+      }
     }
+
+    this.support.rm = (multicodec) => {
+      if (this.resolvers[multicodec]) {
+        delete this.resolvers[multicodec]
+      }
+    }
+
+    // Support by default dag-pb and dag-cbor
+    this.support.add(dagPB.resolver.multicodec, dagPB.resolver, dagPB.util)
+    this.support.add(dagCBOR.resolver.multicodec, dagCBOR.resolver, dagCBOR.util)
   }
 
   resolve (cid, path, callback) {
@@ -65,10 +76,14 @@ class IPLDResolver {
           if (err) {
             return cb(err)
           }
-          const result = this.resolvers[cid.codec].resolver.resolve(block, path)
-          value = result.value
-          path = result.remainderPath
-          cb()
+          this.resolvers[cid.codec].resolver.resolve(block, path, (err, result) => {
+            if (err) {
+              return cb(err)
+            }
+            value = result.value
+            path = result.remainderPath
+            cb()
+          })
         })
       },
       (err, results) => {
@@ -94,13 +109,19 @@ class IPLDResolver {
     callback = callback || noop
 
     return pull(
-      pull.map((nodeAndCID) => {
+      pull.asyncMap((nodeAndCID, cb) => {
         const cid = nodeAndCID.cid
         const r = this.resolvers[cid.codec]
-        return {
-          block: new Block(r.util.serialize(nodeAndCID.node)),
-          cid: cid
-        }
+
+        r.util.serialize(nodeAndCID.node, (err, serialized) => {
+          if (err) {
+            return cb(err)
+          }
+          cb(null, {
+            block: new Block(serialized),
+            cid: cid
+          })
+        })
       }),
       this.bs.putStream(),
       pull.onEnd(callback)
@@ -122,12 +143,17 @@ class IPLDResolver {
   getStream (cid) {
     return pull(
       this.bs.getStream(cid),
-      pull.map((block) => {
+      pull.asyncMap((block, cb) => {
         const r = this.resolvers[cid.codec]
         if (r) {
-          return r.util.deserialize(block.data)
+          r.util.deserialize(block.data, (err, deserialized) => {
+            if (err) {
+              return cb(err)
+            }
+            cb(null, deserialized)
+          })
         } else { // multicodec unknown, send back raw data
-          return block.data
+          cb(null, block.data)
         }
       })
     )
