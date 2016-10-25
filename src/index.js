@@ -74,7 +74,8 @@ class IPLDResolver {
           if (err) {
             return cb(err)
           }
-          this.resolvers[cid.codec].resolver.resolve(block, path, (err, result) => {
+          const r = this.resolvers[cid.codec]
+          r.resolver.resolve(block, path, (err, result) => {
             if (err) {
               return cb(err)
             }
