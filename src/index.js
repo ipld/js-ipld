@@ -5,7 +5,7 @@ const pull = require('pull-stream')
 const CID = require('cids')
 const until = require('async/until')
 const IPFSRepo = require('ipfs-repo')
-const MemoryStore = require('../node_modules/interface-pull-blob-store/lib/reference.js')
+const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
 
 const dagPB = require('ipld-dag-pb')
