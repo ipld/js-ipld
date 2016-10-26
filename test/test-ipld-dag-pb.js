@@ -127,7 +127,7 @@ module.exports = (repo) => {
     })
   })
 
-  describe('IPLD Path Resolver', () => {
+  describe('IPLD Path Resolver for dag-pb', () => {
     let resolver
 
     let node1

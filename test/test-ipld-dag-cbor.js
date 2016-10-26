@@ -130,7 +130,7 @@ module.exports = (repo) => {
     })
   })
 
-  describe('IPLD Path Resolver', () => {
+  describe('IPLD Path Resolver for dag-cbor', () => {
     let resolver
 
     let node1
@@ -158,7 +158,7 @@ module.exports = (repo) => {
         (cb) => {
           node2 = {
             someData: 'I am 2',
-            'one': { '/': cid1.toBaseEncodedString() }
+            one: { '/': cid1.toBaseEncodedString() }
           }
 
           dagCBOR.util.cid(node2, (err, cid) => {
@@ -170,8 +170,8 @@ module.exports = (repo) => {
         (cb) => {
           node3 = {
             someData: 'I am 3',
-            'one': { '/': cid1.toBaseEncodedString() },
-            'two': { '/': cid2.toBaseEncodedString() }
+            one: { '/': cid1.toBaseEncodedString() },
+            two: { '/': cid2.toBaseEncodedString() }
           }
 
           dagCBOR.util.cid(node3, (err, cid) => {
