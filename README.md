@@ -1,100 +1,82 @@
-# IPFS IPLD
+# IPLD Resolver
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
+[![Coverage Status](https://coveralls.io/repos/github/ipld/js-ipld-resolver/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld-resolver?branch=master)
+[![Travis CI](https://travis-ci.org/ipld/js-ipld-resolver.svg?branch=master)](https://travis-ci.org/ipld/js-ipld-resolver)
+[![Circle CI](https://circleci.com/gh/ipld/js-ipld-resolver.svg?style=svg)](https://circleci.com/gh/ipld/js-ipld-resolver)
+[![Dependency Status](https://david-dm.org/ipld/js-ipld-resolver.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-resolver)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![Coverage Status](https://coveralls.io/repos/github/ipfs/js-ipfs-ipld/badge.svg?branch=master)](https://coveralls.io/github/ipfs/js-ipfs-ipld?branch=master)
-[![Travis CI](https://travis-ci.org/ipfs/js-ipfs-ipld.svg?branch=master)](https://travis-ci.org/ipfs/js-ipfs-ipld)
-[![Circle CI](https://circleci.com/gh/ipfs/js-ipfs-ipld.svg?style=svg)](https://circleci.com/gh/ipfs/js-ipfs-ipld)
-[![Dependency Status](https://david-dm.org/ipfs/js-ipfs-ipld.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfs-ipld) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
-> JavaScript implementation of the IPLDService
+> JavaScript implementation of the IPLD Resolver
 
 ## Table of Contents
 
-* [Install](#install)
-* [Usage](#usage)
-* [API](#api)
-  + [`resolve`](#resolve)
-  + [IPLDService](#ipldservice)
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+  - [IPLD Resolver](#ipldresolver)
     - [`.put(node, cb)`](#putnode-cb)
     - [`.putStream([cb])`](#putstreamcb)
-    - [`.get(multihash, cb)`](#getmultihash-cb)
-    - [`.getStream(multihash)`](#getstreammultihash)
-    - [`.getRecursive(multihash, cb)`](#getrecursivemultihash-cb)
-    - [`.getRecursiveStream(multihash)`](#getrecursivestreammultihash)
-    - [`.remove(multihash, cb)`](#removemultihash-cb)
-* [Contribute](#contribute)
-* [License](#license)
+    - [`.get(cid, cb)`](#getcid-cb)
+    - [`.getStream(cid)`](#getstreamcid)
+    - [`.remove(cid, cb)`](#removecid-cb)
+- [Contribute](#contribute)
+- [License](#license)
 
 ## Install
 
 ```bash
-npm install --save ipfs-ipld
+> npm install --save ipfs-ipld
 ```
 
 ## Usage
 
 ```js
-const ipfsIPLD = require('ipfs-ipld')
+const IPLDResolver = require('ipld-resolver')
 
-// available components
-ipfsIPLD.IPLDService
-ipfsIPLD.resolve
+// pass an optional blockService, if no blockService is passed, 
+// one is created in memory.
+const ipldResolver = new IPLDResolver(blockService)
 ```
 
 ## API
 
-### `resolve`
+### IPLD Resolver
 
-> Resolve IPLD paths against a given IPLDService
-
-```js
-const node = {
-  hello: {
-    world: 11,
-    some: 12
-  }
-}
-const mh = ipld.multihash(ipld.marshal(node))
-ipldService.put(node, (err) => {
-  resolve(ipldService, `${mh}/hello/world`, (err, res) => {
-  console.log(res)
-  // => 11
-})
-```
-
-### IPLDService
-
-#### `.put(node, cb)`
+#### `.put(node, callback)`
 
 > Store the given node (any JavaScript object).
 
-#### `.putStream([cb])`
+#### `.putStream([callback])`
 
 Returns a sink pull-stream, to write IPLD objects to.
 
-#### `.get(multihash, cb)`
+#### `.get(cid, callback)`
 
 > Retrieve a node by the given `multihash`.
 
-#### `.getStream(multihash)`
+#### `.getStream(cid)`
 
 Returns a source pull-stream of the requested IPLD object.
 
-#### `.getRecursive(multihash, cb)`
-
-> Retrieve a node by the given `multihash` and all linked nodes.
-
-#### `.getRecursiveStream(multihash)`
-
-Returns a source pull-stream, which emits the requested node, and
-all linked nodes.
-
-#### `.remove(multihash, cb)`
+#### `.remove(cid, callback)`
 
 > Remove a node by the given `multihash`
+
+#### `.resolve(cid, path, callback)`
+
+> Resolves an IPLD path
+
+#### `.support.add(multicodec, formatResolver, formatUtil)`
+
+> Add support to another IPLD Format
+
+#### `.support.rm(multicodec)`
+
+> Removes support of an IPLD Format
 
 ## Contribute
 
