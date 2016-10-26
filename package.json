@@ -1,6 +1,6 @@
 {
   "name": "ipld-resolver",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "IPLD Resolver Implementation in JavaScript",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
