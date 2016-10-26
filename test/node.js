@@ -24,4 +24,5 @@ describe('Node.js', () => {
   require('./test-ipld-dag-pb')(repo)
   require('./test-ipld-dag-cbor')(repo)
   // require('./test-ipld-eth-block')(repo)
+  require('./test-ipld-all-together-now')
 })

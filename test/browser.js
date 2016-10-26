@@ -8,19 +8,19 @@ const IPFSRepo = require('ipfs-repo')
 const pull = require('pull-stream')
 const repoContext = require.context('buffer!./example-repo', true)
 
+const basePath = 'ipfs' + Math.random()
+
 const idb = window.indexedDB ||
   window.mozIndexedDB ||
   window.webkitIndexedDB ||
   window.msIndexedDB
 
-idb.deleteDatabase('ipfs')
-idb.deleteDatabase('ipfs/blocks')
+idb.deleteDatabase(basePath)
+idb.deleteDatabase(basePath + '/blocks')
 
-describe('Browser', function () {
-  before(function (done) {
-    this.timeout(10000)
-
-    var repoData = []
+describe('Browser', () => {
+  before((done) => {
+    const repoData = []
     repoContext.keys().forEach(function (key) {
       repoData.push({
         key: key.replace('./', ''),
@@ -28,8 +28,8 @@ describe('Browser', function () {
       })
     })
 
-    const mainBlob = new Store('ipfs')
-    const blocksBlob = new Store('ipfs/blocks')
+    const mainBlob = new Store(basePath)
+    const blocksBlob = new Store(basePath + '/blocks')
 
     eachSeries(repoData, (file, cb) => {
       if (_.startsWith(file.key, 'datastore/')) {
@@ -47,7 +47,10 @@ describe('Browser', function () {
     }, done)
   })
 
-  const repo = new IPFSRepo('ipfs', { stores: Store })
+  const repo = new IPFSRepo(basePath, { stores: Store })
 
   require('./test-ipld-dag-pb')(repo)
+  require('./test-ipld-dag-cbor')(repo)
+  // require('./test-ipld-eth-block')(repo)
+  require('./test-ipld-all-together-now')
 })
