@@ -63,9 +63,10 @@
     "pull-traverse": "^1.0.3"
   },
   "contributors": [
+    "David Dias <daviddias.p@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Nicola Greco <me@nicola.io>",
     "Richard Littauer <richard.littauer@gmail.com>",
-    "greenkeeperio-bot <support@greenkeeper.io>",
-    "nicola <me@nicola.io>"
+    "greenkeeperio-bot <support@greenkeeper.io>"
   ]
 }
