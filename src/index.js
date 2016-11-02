@@ -11,7 +11,7 @@ const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 
-class IPLDResolver {
+module.exports = class IPLDResolver {
   constructor (blockService) {
     // nicola will love this!
     if (!blockService) {
@@ -164,5 +164,3 @@ class IPLDResolver {
 }
 
 function noop () {}
-
-module.exports = IPLDResolver
