@@ -9,6 +9,10 @@
 [![Dependency Status](https://david-dm.org/ipld/js-ipld-resolver.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-resolver)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+![](https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square)
+![](https://img.shields.io/badge/Node.js-%3E%3D4.0.0-orange.svg?style=flat-square)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/js-ipld-resolver.svg)](https://saucelabs.com/u/js-ipld-resolver)
 
 > JavaScript implementation of the IPLD Resolver
 
@@ -37,7 +41,7 @@
 ```js
 const IPLDResolver = require('ipld-resolver')
 
-// pass an optional blockService, if no blockService is passed, 
+// pass an optional blockService, if no blockService is passed,
 // one is created in memory.
 const ipldResolver = new IPLDResolver(blockService)
 ```
@@ -80,7 +84,7 @@ Returns a source pull-stream of the requested IPLD object.
 
 ## Contribute
 
-Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-ipfs-ipld/issues)!
+Feel free to join in. All welcome. Open an [issue](https://github.com/ipld/js-ipld-resolver/issues)!
 
 This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
