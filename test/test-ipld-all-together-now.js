@@ -15,7 +15,7 @@ const pull = require('pull-stream')
 
 const IPLDResolver = require('../src')
 
-describe('IPLD Path Resolver for dag-cbor', () => {
+describe('IPLD Path Resolver for dag-cbor + dag-pb', () => {
   let resolver
 
   let nodeCbor
@@ -28,8 +28,13 @@ describe('IPLD Path Resolver for dag-cbor', () => {
 
     series([
       (cb) => {
-        nodePb = new dagPB.DAGNode(new Buffer('I am inside a Protobuf'))
-
+        dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), (err, node) => {
+          expect(err).to.not.exist
+          nodePb = node
+          cb()
+        })
+      },
+      (cb) => {
         dagPB.util.cid(nodePb, (err, cid) => {
           expect(err).to.not.exist
           cidPb = cid
