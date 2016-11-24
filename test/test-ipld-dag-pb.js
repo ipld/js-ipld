@@ -22,11 +22,28 @@ module.exports = (repo) => {
     let cid3
 
     before((done) => {
-      node1 = new dagPB.DAGNode(new Buffer('I am 1'))
-      node2 = new dagPB.DAGNode(new Buffer('I am 2'))
-      node3 = new dagPB.DAGNode(new Buffer('I am 3'))
-
       series([
+        (cb) => {
+          dagPB.DAGNode.create(new Buffer('I am 1'), (err, node) => {
+            expect(err).to.not.exist
+            node1 = node
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.DAGNode.create(new Buffer('I am 2'), (err, node) => {
+            expect(err).to.not.exist
+            node2 = node
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.DAGNode.create(new Buffer('I am 3'), (err, node) => {
+            expect(err).to.not.exist
+            node3 = node
+            cb()
+          })
+        },
         (cb) => {
           dagPB.util.cid(node1, (err, cid) => {
             expect(err).to.not.exist
@@ -140,19 +157,60 @@ module.exports = (repo) => {
     before((done) => {
       resolver = new IPLDResolver()
 
-      node1 = new dagPB.DAGNode(new Buffer('I am 1'))
-      node2 = new dagPB.DAGNode(new Buffer('I am 2'))
-      node3 = new dagPB.DAGNode(new Buffer('I am 3'))
-
       series([
         (cb) => {
-          node2.addNodeLink('1', node1, cb)
+          dagPB.DAGNode.create(new Buffer('I am 1'), (err, node) => {
+            expect(err).to.not.exist
+            node1 = node
+            cb()
+          })
         },
         (cb) => {
-          node3.addNodeLink('1', node1, cb)
+          dagPB.DAGNode.create(new Buffer('I am 2'), (err, node) => {
+            expect(err).to.not.exist
+            node2 = node
+            cb()
+          })
         },
         (cb) => {
-          node3.addNodeLink('2', node2, cb)
+          dagPB.DAGNode.create(new Buffer('I am 3'), (err, node) => {
+            expect(err).to.not.exist
+            node3 = node
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.DAGNode.addLink(node2, {
+            name: '1',
+            size: node1.size,
+            multihash: node1.multihash
+          }, (err, node) => {
+            expect(err).to.not.exist
+            node2 = node
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.DAGNode.addLink(node3, {
+            name: '1',
+            size: node1.size,
+            multihash: node1.multihash
+          }, (err, node) => {
+            expect(err).to.not.exist
+            node3 = node
+            cb()
+          })
+        },
+        (cb) => {
+          dagPB.DAGNode.addLink(node3, {
+            name: '2',
+            size: node2.size,
+            multihash: node2.multihash
+          }, (err, node) => {
+            expect(err).to.not.exist
+            node3 = node
+            cb()
+          })
         }
       ], cids)
 
