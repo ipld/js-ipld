@@ -10,6 +10,7 @@ const BlockService = require('ipfs-block-service')
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
+const ipldEthBlock = require('ipld-eth-block')
 
 module.exports = class IPLDResolver {
   constructor (blockService) {
@@ -42,9 +43,10 @@ module.exports = class IPLDResolver {
       }
     }
 
-    // Support by default dag-pb and dag-cbor
+    // Support by default dag-pb, dag-cbor, and eth-block
     this.support.add(dagPB.resolver.multicodec, dagPB.resolver, dagPB.util)
     this.support.add(dagCBOR.resolver.multicodec, dagCBOR.resolver, dagCBOR.util)
+    this.support.add(ipldEthBlock.resolver.multicodec, ipldEthBlock.resolver, ipldEthBlock.util)
   }
 
   resolve (cid, path, callback) {
