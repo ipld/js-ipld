@@ -49,7 +49,7 @@
     "cids": "^0.3.4",
     "interface-pull-blob-store": "^0.6.0",
     "ipfs-block": "^0.5.3",
-    "ipfs-block-service": "^0.7.2",
+    "ipfs-block-service": "^0.8.0",
     "ipfs-repo": "^0.11.2",
     "ipld-dag-cbor": "^0.8.3",
     "ipld-dag-pb": "^0.9.3",
