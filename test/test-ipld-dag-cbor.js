@@ -216,13 +216,13 @@ module.exports = (repo) => {
 
     it('value within nested scope (0 level)', (done) => {
       resolver.resolve(cid2, 'one', (err, result) => {
+        expect(err).to.not.exist
         expect(result).to.eql({
           someData: 'I am 1'
         })
         done()
       })
     })
-
 
     it('value within nested scope (1 level)', (done) => {
       resolver.resolve(cid2, 'one/someData', (err, result) => {
