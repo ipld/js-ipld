@@ -59,8 +59,8 @@ module.exports = class IPLDResolver {
     until(
       () => {
         const endReached = !path || path === '' || path === '/'
-        const isLink = value && !value['/']
-        if (endReached && isLink) {
+        const isTerminal = value && !value['/']
+        if (endReached && isTerminal) {
           return true
         } else {
           // continue traversing
