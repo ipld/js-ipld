@@ -74,4 +74,3 @@ describe('IPLD Path Resolver for dag-cbor + dag-pb', () => {
     })
   })
 })
-
