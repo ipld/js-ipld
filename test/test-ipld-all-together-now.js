@@ -15,7 +15,7 @@ const pull = require('pull-stream')
 
 const IPLDResolver = require('../src')
 
-describe('IPLD Path Resolver for dag-cbor + dag-pb', () => {
+describe.skip('IPLD Resolver for dag-cbor + dag-pb', () => {
   let resolver
 
   let nodeCbor

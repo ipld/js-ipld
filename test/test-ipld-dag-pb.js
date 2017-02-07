@@ -10,7 +10,7 @@ const pull = require('pull-stream')
 const IPLDResolver = require('../src')
 
 module.exports = (repo) => {
-  describe.only('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
+  describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
     let resolver
     let node1
     let node2

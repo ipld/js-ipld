@@ -10,7 +10,7 @@ const pull = require('pull-stream')
 const IPLDResolver = require('../src')
 
 module.exports = (repo) => {
-  describe('IPLD Resolver with dag-cbor (MerkleDAG CBOR)', () => {
+  describe.skip('IPLD Resolver with dag-cbor (MerkleDAG CBOR)', () => {
     const bs = new BlockService(repo)
     const resolver = new IPLDResolver(bs)
 
@@ -130,7 +130,7 @@ module.exports = (repo) => {
     })
   })
 
-  describe('IPLD Path Resolver for dag-cbor', () => {
+  describe.skip('IPLD Path Resolver for dag-cbor', () => {
     let resolver
 
     let node1
