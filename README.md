@@ -14,7 +14,7 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/js-ipld-resolver.svg)](https://saucelabs.com/u/js-ipld-resolver)
 
-> JavaScript implementation of the IPLD Resolver
+> JavaScript implementation of the IPLD Resolver (internal DAG API module)
 
 ## Table of Contents
 
@@ -22,63 +22,60 @@
 - [Usage](#usage)
 - [API](#api)
   - [IPLD Resolver](#ipldresolver)
-    - [`.put(node, cb)`](#putnode-cb)
-    - [`.putStream([cb])`](#putstreamcb)
-    - [`.get(cid, cb)`](#getcid-cb)
-    - [`.getStream(cid)`](#getstreamcid)
-    - [`.remove(cid, cb)`](#removecid-cb)
+    - [`.put(node, <<cid> || <format>, <hashAlg>>, callback)`](#putnode-cb)
+    - [`.get(cid [, path] [, options], callback)`](#getcid-cb)
+    - [`.remove(cid, callback)`](#removecid-cb)
+    - [`.support.add(multicodec, formatResolver, formatUtil)`]()
+    - [`.support.rm(multicodec)`]()
 - [Contribute](#contribute)
 - [License](#license)
 
 ## Install
 
 ```bash
-> npm install --save ipfs-ipld
+> npm install --save ipld-resolver
 ```
 
 ## Usage
 
 ```js
-const IPLDResolver = require('ipld-resolver')
+const Resolver = require('ipld-resolver')
 
 // pass an optional blockService, if no blockService is passed,
 // one is created in memory.
-const ipldResolver = new IPLDResolver(blockService)
+const Resolver = new Resolver(blockService)
 ```
 
 ## API
 
-### IPLD Resolver
+### `.put(node, <<cid> || <format>, <hashAlg>>, callback)`
 
-#### `.put(node, callback)`
+> Store the given node of a recognized IPLD Format.
 
-> Store the given node (any JavaScript object).
+A `CID` or a format + hashAlg tuple needs to be passed in so that the resolver understand how to serialize the object.
 
-#### `.putStream([callback])`
+### `.get(cid [, path] [, options], callback)`
 
-Returns a sink pull-stream, to write IPLD objects to.
+> Retrieve a node by the given `cid` or `cid + path`
 
-#### `.get(cid, callback)`
+`options` is an optional object containing:
 
-> Retrieve a node by the given `multihash`.
+- `localResolve: bool` - if true, get will only attempt to resolve the path locally
 
-#### `.getStream(cid)`
+`callback` should be a function with the signature `function (err, result)`, the result being an object with:
 
-Returns a source pull-stream of the requested IPLD object.
+- `value` - the value that resulted from the get
+- `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
 
-#### `.remove(cid, callback)`
+### `.remove(cid, callback)`
 
-> Remove a node by the given `multihash`
+> Remove a node by the given `cid`
 
-#### `.resolve(cid, path, callback)`
-
-> Resolves an IPLD path
-
-#### `.support.add(multicodec, formatResolver, formatUtil)`
+### `.support.add(multicodec, formatResolver, formatUtil)`
 
 > Add support to another IPLD Format
 
-#### `.support.rm(multicodec)`
+### `.support.rm(multicodec)`
 
 > Removes support of an IPLD Format
 
