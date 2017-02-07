@@ -206,6 +206,62 @@ module.exports = (repo) => {
       })
     })
 
+    it('relative path `.` (same as get /)', (done) => {
+      resolver.resolve(cid1, '.', (err, result) => {
+        expect(err).to.not.exist
+
+        dagCBOR.util.cid(result, (err, cid) => {
+          expect(err).to.not.exist
+          expect(cid).to.eql(cid1)
+          done()
+        })
+      })
+    })
+
+    it('relative path `./` (same as get /)', (done) => {
+      resolver.resolve(cid1, './', (err, result) => {
+        expect(err).to.not.exist
+
+        dagCBOR.util.cid(result, (err, cid) => {
+          expect(err).to.not.exist
+          expect(cid).to.eql(cid1)
+          done()
+        })
+      })
+    })
+
+    it('relative path `./one/someData` (same as get one/someData)', (done) => {
+      resolver.resolve(cid2, './one/someData', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql('I am 1')
+        done()
+      })
+    })
+
+    it('relative path `one/./someData` (same as get one/someData)', (done) => {
+      resolver.resolve(cid2, 'one/./someData', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql('I am 1')
+        done()
+      })
+    })
+
+    it('double slash at the beginning `//one/someData` (same as get one/someData)', (done) => {
+      resolver.resolve(cid2, '//one/someData', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql('I am 1')
+        done()
+      })
+    })
+
+    it('double slash in the middle `one//someData` (same as get one/someData)', (done) => {
+      resolver.resolve(cid2, 'one//someData', (err, result) => {
+        expect(err).to.not.exist
+        expect(result).to.eql('I am 1')
+        done()
+      })
+    })
+
     it('value within 1st node scope', (done) => {
       resolver.resolve(cid1, 'someData', (err, result) => {
         expect(err).to.not.exist

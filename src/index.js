@@ -7,6 +7,7 @@ const until = require('async/until')
 const IPFSRepo = require('ipfs-repo')
 const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
+const joinPath = require('path').join
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -50,7 +51,11 @@ module.exports = class IPLDResolver {
   }
 
   resolve (cid, path, callback) {
-    if (path === '/') {
+    // this removes occurrences of ./, //, ../
+    // makes sure that path never starts with ./ or /
+    path = joinPath('/', path).substr(1)
+
+    if (path === '') {
       return this.get(cid, callback)
     }
 
