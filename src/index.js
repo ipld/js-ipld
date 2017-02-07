@@ -3,7 +3,7 @@
 const Block = require('ipfs-block')
 const pull = require('pull-stream')
 const CID = require('cids')
-const until = require('async/until')
+const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
 const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
@@ -58,10 +58,15 @@ module.exports = class IPLDResolver {
                      ipldEthBlock.util)
   }
 
-  get (cid, path, callback) {
+  get (cid, path, options, callback) {
     if (typeof path === 'function') {
       callback = path
       path = undefined
+    }
+
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
     }
 
     // this removes occurrences of ./, //, ../
@@ -71,26 +76,20 @@ module.exports = class IPLDResolver {
     }
 
     if (path === '' || !path) {
-      return this._get(cid, callback)
+      return this._get(cid, (err, node) => {
+        if (err) {
+          return callback(err)
+        }
+        callback(null, {
+          value: node,
+          path: ''
+        })
+      })
     }
 
     let value
 
-    until(
-      () => {
-        const endReached = !path || path === '' || path === '/'
-        const isTerminal = value && !value['/']
-
-        if (endReached && isTerminal) {
-          return true
-        } else {
-          // continue traversing
-          if (value) {
-            cid = new CID(value['/'])
-          }
-          return false
-        }
-      },
+    doUntil(
       (cb) => {
         // get block
         // use local resolver
@@ -110,11 +109,28 @@ module.exports = class IPLDResolver {
           })
         })
       },
+      () => {
+        const endReached = !path || path === '' || path === '/'
+        const isTerminal = value && !value['/']
+
+        if ((endReached && isTerminal) || options.localResolve) {
+          return true
+        } else {
+          // continue traversing
+          if (value) {
+            cid = new CID(value['/'])
+          }
+          return false
+        }
+      },
       (err, results) => {
         if (err) {
           return callback(err)
         }
-        return callback(null, value)
+        return callback(null, {
+          value: value,
+          path: path
+        })
       }
     )
   }

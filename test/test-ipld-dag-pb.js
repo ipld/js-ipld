@@ -171,10 +171,7 @@ module.exports = (repo) => {
       it('resolver.get just CID', (done) => {
         resolver.put(node1, cid1, (err) => {
           expect(err).to.not.exist
-          resolver.get(cid1, (err, node) => {
-            expect(err).to.not.exist
-            done()
-          })
+          resolver.get(cid1, (done))
         })
       })
 
@@ -182,7 +179,7 @@ module.exports = (repo) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist
 
-          dagPB.util.cid(result, (err, cid) => {
+          dagPB.util.cid(result.value, (err, cid) => {
             expect(err).to.not.exist
             expect(cid).to.eql(cid1)
             done()
@@ -193,7 +190,7 @@ module.exports = (repo) => {
       it('resolver.get value within 1st node scope', (done) => {
         resolver.get(cid1, 'data', (err, result) => {
           expect(err).to.not.exist
-          expect(result).to.eql(new Buffer('I am 1'))
+          expect(result.value).to.eql(new Buffer('I am 1'))
           done()
         })
       })
@@ -201,7 +198,7 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'links/0/data', (err, result) => {
           expect(err).to.not.exist
-          expect(result).to.eql(new Buffer('I am 1'))
+          expect(result.value).to.eql(new Buffer('I am 1'))
           done()
         })
       })
@@ -209,12 +206,21 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'links/1/links/0/data', (err, result) => {
           expect(err).to.not.exist
-          expect(result).to.eql(new Buffer('I am 1'))
+          expect(result.value).to.eql(new Buffer('I am 1'))
           done()
         })
       })
 
-      it.skip('resolver.get with option localResolve: true', () => {})
+      it('resolver.get with option localResolve: true', (done) => {
+        resolver.get(cid3, 'links/1/links/0/data', { localResolve: true }, (err, result) => {
+          expect(err).to.not.exist
+          expect(result.path).to.equal('links/0/data')
+          expect(result.value).to.eql({
+            '/': 'QmS149H7EbyMuZ2wtEF1sAd7gPwjj4rKAorweAjKMkxr8D'
+          })
+          done()
+        })
+      })
 
       it('resolver.remove', (done) => {
         resolver.put(node1, cid1, (err) => {
