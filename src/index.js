@@ -45,18 +45,33 @@ module.exports = class IPLDResolver {
     }
 
     // Support by default dag-pb, dag-cbor, and eth-block
-    this.support.add(dagPB.resolver.multicodec, dagPB.resolver, dagPB.util)
-    this.support.add(dagCBOR.resolver.multicodec, dagCBOR.resolver, dagCBOR.util)
-    this.support.add(ipldEthBlock.resolver.multicodec, ipldEthBlock.resolver, ipldEthBlock.util)
+    this.support.add(dagPB.resolver.multicodec,
+                     dagPB.resolver,
+                     dagPB.util)
+
+    this.support.add(dagCBOR.resolver.multicodec,
+                     dagCBOR.resolver,
+                     dagCBOR.util)
+
+    this.support.add(ipldEthBlock.resolver.multicodec,
+                     ipldEthBlock.resolver,
+                     ipldEthBlock.util)
   }
 
-  resolve (cid, path, callback) {
+  get (cid, path, callback) {
+    if (typeof path === 'function') {
+      callback = path
+      path = undefined
+    }
+
     // this removes occurrences of ./, //, ../
     // makes sure that path never starts with ./ or /
-    path = joinPath('/', path).substr(1)
+    if (typeof path === 'string') {
+      path = joinPath('/', path).substr(1)
+    }
 
-    if (path === '') {
-      return this.get(cid, callback)
+    if (path === '' || !path) {
+      return this._get(cid, callback)
     }
 
     let value
@@ -65,6 +80,7 @@ module.exports = class IPLDResolver {
       () => {
         const endReached = !path || path === '' || path === '/'
         const isTerminal = value && !value['/']
+
         if (endReached && isTerminal) {
           return true
         } else {
@@ -103,17 +119,94 @@ module.exports = class IPLDResolver {
     )
   }
 
-  // Node operations (get and retrieve nodes, not values)
+  put (node, cidOrFormat, hashAlg, callback) {
+    let nodeAndCID
 
-  put (nodeAndCID, callback) {
-    callback = callback || noop
+    if (CID.isCID(cidOrFormat)) {
+      nodeAndCID = {
+        node: node,
+        cid: cidOrFormat
+      }
+
+      callback = hashAlg
+      hashAlg = undefined
+
+      store.apply(this)
+    } else {
+      if (typeof hashAlg === 'function') {
+        callback = hashAlg
+        hashAlg = undefined
+      }
+
+      const format = cidOrFormat
+      hashAlg = hashAlg || 'sha2-256'
+
+      const r = this.resolvers[format]
+      // TODO add support for different hash funcs in the utils of
+      // each format (just really needed for CBOR for now, really
+      // r.util.cid(node1, hashAlg, (err, cid) => {
+      r.util.cid(node, (err, cid) => {
+        if (err) {
+          return callback(err)
+        }
+
+        nodeAndCID = {
+          node: node,
+          cid: cid
+        }
+
+        store.apply(this)
+      })
+    }
+
+    function store () {
+      callback = callback || noop
+
+      pull(
+        pull.values([nodeAndCID]),
+        this._putStream(callback)
+      )
+    }
+  }
+
+  remove (cids, callback) {
+    this.bs.delete(cids, callback)
+  }
+
+  /* internals */
+
+  _get (cid, callback) {
     pull(
-      pull.values([nodeAndCID]),
-      this.putStream(callback)
+      this._getStream(cid),
+      pull.collect((err, res) => {
+        if (err) {
+          return callback(err)
+        }
+        callback(null, res[0])
+      })
     )
   }
 
-  putStream (callback) {
+  _getStream (cid) {
+    return pull(
+      this.bs.getStream(cid),
+      pull.asyncMap((block, cb) => {
+        const r = this.resolvers[cid.codec]
+        if (r) {
+          r.util.deserialize(block.data, (err, deserialized) => {
+            if (err) {
+              return cb(err)
+            }
+            cb(null, deserialized)
+          })
+        } else { // multicodec unknown, send back raw data
+          cb(null, block.data)
+        }
+      })
+    )
+  }
+
+  _putStream (callback) {
     callback = callback || noop
 
     return pull(
@@ -134,41 +227,6 @@ module.exports = class IPLDResolver {
       this.bs.putStream(),
       pull.onEnd(callback)
     )
-  }
-
-  get (cid, callback) {
-    pull(
-      this.getStream(cid),
-      pull.collect((err, res) => {
-        if (err) {
-          return callback(err)
-        }
-        callback(null, res[0])
-      })
-    )
-  }
-
-  getStream (cid) {
-    return pull(
-      this.bs.getStream(cid),
-      pull.asyncMap((block, cb) => {
-        const r = this.resolvers[cid.codec]
-        if (r) {
-          r.util.deserialize(block.data, (err, deserialized) => {
-            if (err) {
-              return cb(err)
-            }
-            cb(null, deserialized)
-          })
-        } else { // multicodec unknown, send back raw data
-          cb(null, block.data)
-        }
-      })
-    )
-  }
-
-  remove (cids, callback) {
-    this.bs.delete(cids, callback)
   }
 }
 
