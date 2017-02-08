@@ -15,7 +15,7 @@ const pull = require('pull-stream')
 
 const IPLDResolver = require('../src')
 
-describe.skip('IPLD Resolver for dag-cbor + dag-pb', () => {
+describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   let resolver
 
   let nodeCbor
@@ -61,15 +61,16 @@ describe.skip('IPLD Resolver for dag-cbor + dag-pb', () => {
           { node: nodePb, cid: cidPb },
           { node: nodeCbor, cid: cidCbor }
         ]),
-        resolver.putStream(done)
+        pull.asyncMap((nac, cb) => resolver.put(nac.node, nac.cid, cb)),
+        pull.onEnd(done)
       )
     }
   })
 
   it('resolve through different formats', (done) => {
-    resolver.resolve(cidCbor, 'pb/data', (err, result) => {
+    resolver.get(cidCbor, 'pb/data', (err, result) => {
       expect(err).to.not.exist
-      expect(result).to.eql(new Buffer('I am inside a Protobuf'))
+      expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
       done()
     })
   })
