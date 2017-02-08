@@ -21,7 +21,7 @@ idb.deleteDatabase(basePath + '/blocks')
 describe('Browser', () => {
   before((done) => {
     const repoData = []
-    repoContext.keys().forEach(function (key) {
+    repoContext.keys().forEach((key) => {
       repoData.push({
         key: key.replace('./', ''),
         value: repoContext(key)
@@ -49,8 +49,9 @@ describe('Browser', () => {
 
   const repo = new IPFSRepo(basePath, { stores: Store })
 
-  require('./test-ipld-dag-pb')(repo)
-  require('./test-ipld-dag-cbor')(repo)
-  require('./test-ipld-eth-block')(repo)
-  require('./test-ipld-all-together-now')
+  require('./basics')(repo)
+  require('./ipld-dag-pb')(repo)
+  require('./ipld-dag-cbor')(repo)
+  require('./ipld-eth-block')(repo)
+  require('./ipld-all')
 })
