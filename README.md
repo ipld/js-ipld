@@ -69,6 +69,10 @@ Options is an object that must contain one of the following combinations:
 - `value` - the value that resulted from the get
 - `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
 
+### `.getStream(cid [, path] [, options])`
+
+> Same as get, but returns a source pull-stream that is used to pass the fetched node.
+
 ### `.remove(cid, callback)`
 
 > Remove a node by the given `cid`

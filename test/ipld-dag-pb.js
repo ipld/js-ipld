@@ -178,6 +178,16 @@ module.exports = (repo) => {
         })
       })
 
+      it('resolver.getStream', (done) => {
+        resolver.put(node1, { cid: cid1 }, (err) => {
+          expect(err).to.not.exist
+          pull(
+            resolver.getStream(cid1),
+            pull.collect(done)
+          )
+        })
+      })
+
       it('resolver.get root path', (done) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist

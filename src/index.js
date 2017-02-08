@@ -8,6 +8,7 @@ const IPFSRepo = require('ipfs-repo')
 const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
+const pullDeferSource = require('pull-defer').source
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -133,6 +134,23 @@ module.exports = class IPLDResolver {
         })
       }
     )
+  }
+
+  getStream (cid, path, options) {
+    const deferred = pullDeferSource()
+
+    this.get(cid, path, options, (err, result) => {
+      if (err) {
+        return deferred.resolve(
+          pull.error(err)
+        )
+      }
+      deferred.resolve(
+        pull.values([result])
+      )
+    })
+
+    return deferred
   }
 
   put (node, options, callback) {
