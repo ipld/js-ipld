@@ -5,19 +5,14 @@ const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
 const IPFSRepo = require('ipfs-repo')
 const Store = require('fs-pull-blob-store')
+const os = require('os')
 
 describe('Node.js', () => {
   const repoExample = process.cwd() + '/test/example-repo'
-  const repoTests = process.cwd() + '/test/repo-just-for-test' + Date.now()
+  const repoTests = os.tmpDir() + '/t-r-' + Date.now()
 
-  before((done) => {
-    process.env.IPFS_PATH = repoTests
-    ncp(repoExample, repoTests, done)
-  })
-
-  after((done) => {
-    rimraf(repoTests, done)
-  })
+  before((done) => ncp(repoExample, repoTests, done))
+  after((done) => rimraf(repoTests, done))
 
   const repo = new IPFSRepo(repoTests, { stores: Store })
 
