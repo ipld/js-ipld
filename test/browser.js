@@ -1,4 +1,6 @@
 /* eslint-env mocha */
+/* global self */
+
 'use strict'
 
 const eachSeries = require('async/eachSeries')
@@ -10,10 +12,10 @@ const repoContext = require.context('buffer!./example-repo', true)
 
 const basePath = 'ipfs' + Math.random()
 
-const idb = window.indexedDB ||
-  window.mozIndexedDB ||
-  window.webkitIndexedDB ||
-  window.msIndexedDB
+const idb = self.indexedDB ||
+  self.mozIndexedDB ||
+  self.webkitIndexedDB ||
+  self.msIndexedDB
 
 idb.deleteDatabase(basePath)
 idb.deleteDatabase(basePath + '/blocks')
