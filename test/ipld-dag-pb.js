@@ -114,7 +114,7 @@ module.exports = (repo) => {
             { node: node2, cid: cid2 },
             { node: node3, cid: cid3 }
           ]),
-          pull.asyncMap((nac, cb) => resolver.put(nac.node, nac.cid, cb)),
+          pull.asyncMap((nac, cb) => resolver.put(nac.node, { cid: nac.cid }, cb)),
           pull.onEnd(done)
         )
       }
@@ -133,7 +133,7 @@ module.exports = (repo) => {
       })
 
       it('resolver._getStream', (done) => {
-        resolver.put(node1, cid1, (err) => {
+        resolver.put(node1, { cid: cid1 }, (err) => {
           expect(err).to.not.exist
           pull(
             resolver._getStream(cid1),
@@ -146,7 +146,7 @@ module.exports = (repo) => {
       })
 
       it('resolver._get', (done) => {
-        resolver.put(node1, cid1, (err) => {
+        resolver.put(node1, { cid: cid1 }, (err) => {
           expect(err).to.not.exist
           pull(
             resolver._getStream(cid1),
@@ -161,15 +161,18 @@ module.exports = (repo) => {
 
     describe('public api', () => {
       it('resolver.put with CID', (done) => {
-        resolver.put(node1, cid1, done)
+        resolver.put(node1, { cid: cid1 }, done)
       })
 
       it('resolver.put with hashAlg + format', (done) => {
-        resolver.put(node1, 'dag-pb', 'sha2-256', done)
+        resolver.put(node1, {
+          format: 'dag-pb',
+          hashAlg: 'sha2-256'
+        }, done)
       })
 
       it('resolver.get just CID', (done) => {
-        resolver.put(node1, cid1, (err) => {
+        resolver.put(node1, { cid: cid1 }, (err) => {
           expect(err).to.not.exist
           resolver.get(cid1, (done))
         })
@@ -223,7 +226,7 @@ module.exports = (repo) => {
       })
 
       it('resolver.remove', (done) => {
-        resolver.put(node1, cid1, (err) => {
+        resolver.put(node1, { cid: cid1 }, (err) => {
           expect(err).to.not.exist
           resolver.get(cid1, (err, node) => {
             expect(err).to.not.exist
