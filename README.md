@@ -22,7 +22,7 @@
 - [Usage](#usage)
 - [API](#api)
   - [IPLD Resolver](#ipldresolver)
-    - [`.put(node, <<cid> || <format>, <hashAlg>>, callback)`](#putnode-cb)
+    - [`.put(node, options, callback)`](#putnode-cb)
     - [`.get(cid [, path] [, options], callback)`](#getcid-cb)
     - [`.remove(cid, callback)`](#removecid-cb)
     - [`.support.add(multicodec, formatResolver, formatUtil)`]()
@@ -48,11 +48,13 @@ const Resolver = new Resolver(blockService)
 
 ## API
 
-### `.put(node, <<cid> || <format>, <hashAlg>>, callback)`
+### `.put(node, options, callback)`
 
 > Store the given node of a recognized IPLD Format.
 
-A `CID` or a format + hashAlg tuple needs to be passed in so that the resolver understand how to serialize the object.
+Options is an object that must contain one of the following combinations:
+- `cid` - the CID of the node
+- `hashAlg` and `format` - the hashAlg and the format that should be used to create the CID of the node
 
 ### `.get(cid [, path] [, options], callback)`
 
@@ -66,6 +68,10 @@ A `CID` or a format + hashAlg tuple needs to be passed in so that the resolver u
 
 - `value` - the value that resulted from the get
 - `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
+
+### `.getStream(cid [, path] [, options])`
+
+> Same as get, but returns a source pull-stream that is used to pass the fetched node.
 
 ### `.remove(cid, callback)`
 

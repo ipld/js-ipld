@@ -61,7 +61,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
           { node: nodePb, cid: cidPb },
           { node: nodeCbor, cid: cidCbor }
         ]),
-        pull.asyncMap((nac, cb) => resolver.put(nac.node, nac.cid, cb)),
+        pull.asyncMap((nac, cb) => resolver.put(nac.node, { cid: nac.cid }, cb)),
         pull.onEnd(done)
       )
     }

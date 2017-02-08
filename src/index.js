@@ -8,6 +8,7 @@ const IPFSRepo = require('ipfs-repo')
 const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
+const pullDeferSource = require('pull-defer').source
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -135,29 +136,41 @@ module.exports = class IPLDResolver {
     )
   }
 
-  put (node, cidOrFormat, hashAlg, callback) {
+  getStream (cid, path, options) {
+    const deferred = pullDeferSource()
+
+    this.get(cid, path, options, (err, result) => {
+      if (err) {
+        return deferred.resolve(
+          pull.error(err)
+        )
+      }
+      deferred.resolve(
+        pull.values([result])
+      )
+    })
+
+    return deferred
+  }
+
+  put (node, options, callback) {
+    if (typeof options === 'function') {
+      return setImmediate(() => callback(new Error('no options were passed')))
+    }
+
     let nodeAndCID
 
-    if (CID.isCID(cidOrFormat)) {
+    if (options.cid && CID.isCID(options.cid)) {
       nodeAndCID = {
         node: node,
-        cid: cidOrFormat
+        cid: options.cid
       }
-
-      callback = hashAlg
-      hashAlg = undefined
 
       store.apply(this)
     } else {
-      if (typeof hashAlg === 'function') {
-        callback = hashAlg
-        hashAlg = undefined
-      }
+      options.hashAlg = options.hashAlg || 'sha2-256'
 
-      const format = cidOrFormat
-      hashAlg = hashAlg || 'sha2-256'
-
-      const r = this.resolvers[format]
+      const r = this.resolvers[options.format]
       // TODO add support for different hash funcs in the utils of
       // each format (just really needed for CBOR for now, really
       // r.util.cid(node1, hashAlg, (err, cid) => {
