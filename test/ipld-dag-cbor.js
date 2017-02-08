@@ -118,10 +118,21 @@ module.exports = (repo) => {
         resolver.put(node1, cid1, done)
       })
 
-      it.skip('resolver.put with hashAlg + format', (done) => {
+      it('resolver.put with hashAlg + format', (done) => {
+        resolver.put(node1, 'dag-cbor', 'sha2-256', done)
       })
 
-      it.skip('resolver.get just CID', (done) => {})
+      it('resolver.get just CID', (done) => {
+        resolver.get(cid1, (err, result) => {
+          expect(err).to.not.exist
+
+          dagCBOR.util.cid(result.value, (err, cid) => {
+            expect(err).to.not.exist
+            expect(cid).to.eql(cid1)
+            done()
+          })
+        })
+      })
 
       it('resolver.get root path', (done) => {
         resolver.get(cid1, '/', (err, result) => {
