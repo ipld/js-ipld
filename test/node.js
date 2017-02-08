@@ -16,9 +16,9 @@ describe('Node.js', () => {
 
   const repo = new IPFSRepo(repoTests, { stores: Store })
 
-  require('./test-basics')(repo)
-  require('./test-ipld-dag-pb')(repo)
-  require('./test-ipld-dag-cbor')(repo)
-  require('./test-ipld-eth-block')(repo)
-  require('./test-ipld-all-together-now')
+  require('./basics')(repo)
+  require('./ipld-dag-pb')(repo)
+  require('./ipld-dag-cbor')(repo)
+  require('./ipld-eth-block')(repo)
+  require('./ipld-all')
 })
