@@ -22,7 +22,6 @@
   "keywords": [
     "IPFS"
   ],
-  "author": "Friedel Ziegelmayer dignifiedquire<@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ipld/js-ipld-resolver.git"
@@ -37,8 +36,8 @@
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
     "ethereumjs-block": "^1.5.0",
-    "fs-pull-blob-store": "^0.4.1",
-    "idb-pull-blob-store": "^0.5.1",
+    "fs-pull-blob-store": "~0.4.1",
+    "idb-pull-blob-store": "~0.5.1",
     "lodash": "^4.17.4",
     "ncp": "^2.0.0",
     "pre-commit": "^1.2.2",
@@ -46,18 +45,18 @@
   },
   "dependencies": {
     "async": "^2.1.4",
-    "cids": "^0.4.0",
-    "interface-pull-blob-store": "^0.6.0",
-    "ipfs-block": "^0.5.4",
-    "ipfs-block-service": "^0.8.1",
-    "ipfs-repo": "^0.11.2",
-    "ipld-dag-cbor": "0.9.0",
-    "ipld-dag-pb": "^0.9.4",
-    "ipld-eth-block": "^2.2.1",
-    "is-ipfs": "^0.3.0",
+    "cids": "~0.4.1",
+    "interface-pull-blob-store": "~0.6.0",
+    "ipfs-block": "~0.5.4",
+    "ipfs-block-service": "~0.8.1",
+    "ipfs-repo": "~0.11.2",
+    "ipld-dag-cbor": "~0.9.1",
+    "ipld-dag-pb": "~0.9.5",
+    "ipld-eth-block": "~2.2.1",
+    "is-ipfs": "~0.3.0",
     "lodash.flatten": "^4.4.0",
     "lodash.includes": "^4.3.0",
-    "multihashes": "^0.3.2",
+    "multihashes": "~0.3.3",
     "pull-stream": "^3.5.0",
     "pull-traverse": "^1.0.3"
   },
