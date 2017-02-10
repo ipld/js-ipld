@@ -29,15 +29,15 @@ module.exports = (repo) => {
 
       function readFilesFixture (cb) {
         async.parallel({
-          child: (cb) => cb(null, loadFixture(__dirname, 'eth-data/block_302517')),
-          block: (cb) => cb(null, loadFixture(__dirname, 'eth-data/block_302516')),
-          stateRoot: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_r_302516')),
-          state0: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_0_302516')),
-          state00: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_00_302516')),
-          state000: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_000_302516')),
-          state0000: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_0000_302516')),
-          state00001: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_00001_302516')),
-          state000017: (cb) => cb(null, loadFixture(__dirname, 'eth-data/state_000017_302516'))
+          child: (cb) => cb(null, loadFixture(__dirname, 'fixtures/block_302517')),
+          block: (cb) => cb(null, loadFixture(__dirname, 'fixtures/block_302516')),
+          stateRoot: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_r_302516')),
+          state0: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_0_302516')),
+          state00: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_00_302516')),
+          state000: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_000_302516')),
+          state0000: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_0000_302516')),
+          state00001: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_00001_302516')),
+          state000017: (cb) => cb(null, loadFixture(__dirname, 'fixtures/state_000017_302516'))
         }, cb)
       }
 
