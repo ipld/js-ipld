@@ -4,15 +4,16 @@
 const expect = require('chai').expect
 const rlp = require('rlp')
 const BlockService = require('ipfs-block-service')
-const cidForHash = require('ipld-eth-block/src/common').cidForHash
+const loadFixture = require('aegir/fixtures')
+const async = require('async')
+const cidForHash = require('eth-hash-to-cid')
 const EthBlockHeader = require('ethereumjs-block/header')
 const EthTrieNode = require('merkle-patricia-tree/trieNode')
-const async = require('async')
+
 const IPLDResolver = require('../src')
-const loadFixture = require('aegir/fixtures')
 
 module.exports = (repo) => {
-  describe('IPLD Resolver with eth-star (resolving across various Eth objects)', () => {
+  describe('IPLD Resolver with eth-* (resolving across various Eth objects)', () => {
     let resolver
 
     let ethObjs
@@ -53,25 +54,23 @@ module.exports = (repo) => {
           state00001: generateForType('state00001', 'eth-state-trie', fileData.state00001),
           state000017: generateForType('state000017', 'eth-state-trie', fileData.state000017)
         }
-        cb()
 
-        function generateForType (label, type, rawData) {
-          let node
-          switch (type) {
-            case 'eth-block':
-              node = new EthBlockHeader(rawData)
-              break
-            case 'eth-state-trie':
-              node = new EthTrieNode(rlp.decode(rawData))
-              break
-            default:
-              throw new Error('Unknown type!')
-          }
-          return {
-            raw: rawData,
-            node: node,
-            cid: cidForHash(type, node.hash())
-          }
+        cb()
+      }
+
+      function generateForType (label, type, rawData) {
+        let node
+
+        switch (type) {
+          case 'eth-block': node = new EthBlockHeader(rawData); break
+          case 'eth-state-trie': node = new EthTrieNode(rlp.decode(rawData)); break
+          default: throw new Error('Unknown type!')
+        }
+
+        return {
+          raw: rawData,
+          node: node,
+          cid: cidForHash(type, node.hash())
         }
       }
 
