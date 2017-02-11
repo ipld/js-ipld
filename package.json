@@ -1,6 +1,6 @@
 {
   "name": "ipld-resolver",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "IPLD Resolver Implementation in JavaScript",
   "main": "src/index.js",
   "pre-commit": [
