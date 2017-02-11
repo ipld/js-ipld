@@ -13,6 +13,10 @@ const pullDeferSource = require('pull-defer').source
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const ipldEthBlock = require('ipld-eth-block')
+const ipldEthBlockList = require('ipld-eth-block-list')
+const ipldEthTxTrie = require('ipld-eth-tx-trie')
+const ipldEthStateTrie = require('ipld-eth-state-trie')
+const ipldEthStorageTrie = require('ipld-eth-storage-trie')
 
 module.exports = class IPLDResolver {
   constructor (blockService) {
@@ -45,7 +49,7 @@ module.exports = class IPLDResolver {
       }
     }
 
-    // Support by default dag-pb, dag-cbor, and eth-block
+    // Support by default dag-pb, dag-cbor, and eth-*
     this.support.add(dagPB.resolver.multicodec,
                      dagPB.resolver,
                      dagPB.util)
@@ -57,6 +61,22 @@ module.exports = class IPLDResolver {
     this.support.add(ipldEthBlock.resolver.multicodec,
                      ipldEthBlock.resolver,
                      ipldEthBlock.util)
+
+    this.support.add(ipldEthBlockList.resolver.multicodec,
+                     ipldEthBlockList.resolver,
+                     ipldEthBlockList.util)
+
+    this.support.add(ipldEthTxTrie.resolver.multicodec,
+                     ipldEthTxTrie.resolver,
+                     ipldEthTxTrie.util)
+
+    this.support.add(ipldEthStateTrie.resolver.multicodec,
+                     ipldEthStateTrie.resolver,
+                     ipldEthStateTrie.util)
+
+    this.support.add(ipldEthStorageTrie.resolver.multicodec,
+                     ipldEthStorageTrie.resolver,
+                     ipldEthStorageTrie.util)
   }
 
   get (cid, path, options, callback) {
