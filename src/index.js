@@ -213,7 +213,12 @@ module.exports = class IPLDResolver {
 
       pull(
         pull.values([nodeAndCID]),
-        this._putStream(callback)
+        this._putStream((err) => {
+          if (err) {
+            return callback(err)
+          }
+          callback(null, nodeAndCID.cid)
+        })
       )
     }
   }
