@@ -273,7 +273,7 @@ class IPLDResolver {
               return p(err)
             }
 
-            const r = this.resolvers[cid.codec]
+            const r = this.resolvers[el.cid.codec]
 
             r.resolver.tree(block, (err, paths) => {
               if (err) {
