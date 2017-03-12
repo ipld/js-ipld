@@ -113,7 +113,7 @@ module.exports = (repo) => {
       })
     })
 
-    describe('public api', () => {
+    describe.only('public api', () => {
       it('resolver.put with CID', (done) => {
         resolver.put(node1, { cid: cid1 }, done)
       })
@@ -237,6 +237,77 @@ module.exports = (repo) => {
           expect(result.value).to.eql('I am 1')
           done()
         })
+      })
+
+      it('resolver.tree', (done) => {
+        pull(
+          resolver.treeStream(cid3),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([
+              'one',
+              'someData',
+              'two'
+            ])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree with existent path', (done) => {
+        pull(
+          resolver.treeStream(cid3, 'one'),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree with non existent path', (done) => {
+        pull(
+          resolver.treeStream(cid3, 'bananas'),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree recursive', (done) => {
+        pull(
+          resolver.treeStream(cid3, { recursive: true }),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([
+              'one',
+              'one/someData',
+              'someData',
+              'two',
+              'two/one',
+              'two/one/someData',
+              'two/someData'
+            ])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree with existent path recursive', (done) => {
+        pull(
+          resolver.treeStream(cid3, 'two', { recursive: true }),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([
+              'one',
+              'one/someData',
+              'someData'
+            ])
+            done()
+          })
+        )
       })
 
       it('resolver.remove', (done) => {

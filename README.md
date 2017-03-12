@@ -75,6 +75,12 @@ const Resolver = new Resolver(blockService)
 
 > Same as get, but returns a source pull-stream that is used to pass the fetched node.
 
+### `.treeStream(cid [, path] [, options])`
+
+> Returns all the paths under a cid + path through a pull-stream. Accepts the following options:
+
+- `recursive` - bool - traverse through links to complete the graph.
+
 ### `.remove(cid, callback)`
 
 > Remove a node by the given `cid`
