@@ -248,8 +248,8 @@ module.exports = (repo) => {
             expect(err).to.not.exist
             expect(values).to.eql([
               'one',
-              'someData',
-              'two'
+              'two',
+              'someData'
             ])
             done()
           })
@@ -285,12 +285,12 @@ module.exports = (repo) => {
             expect(err).to.not.exist
             expect(values).to.eql([
               'one',
-              'one/someData',
-              'someData',
               'two',
+              'someData',
+              'one/someData',
               'two/one',
-              'two/one/someData',
-              'two/someData'
+              'two/someData',
+              'two/one/someData'
             ])
             done()
           })
@@ -304,8 +304,8 @@ module.exports = (repo) => {
             expect(err).to.not.exist
             expect(values).to.eql([
               'one',
-              'one/someData',
-              'someData'
+              'someData',
+              'one/someData'
             ])
             done()
           })
