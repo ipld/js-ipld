@@ -2,7 +2,6 @@
 
 const Block = require('ipfs-block')
 const pull = require('pull-stream')
-const pullPushable = require('pull-pushable')
 const CID = require('cids')
 const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
@@ -11,10 +10,8 @@ const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
-const asyncEach = require('async/each')
+const map = require('async/map')
 const waterfall = require('async/waterfall')
-
-const pullSort = require('pull-sort')
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -239,13 +236,12 @@ class IPLDResolver {
 
     options = options || {}
 
-    // non recursive
     let p
 
     if (!options.recursive) {
+      p = pullDeferSource()
       const r = this.resolvers[cid.codec]
 
-      p = pullDeferSource()
       waterfall([
         (cb) => this.bs.get(cid, cb),
         (block, cb) => r.resolver.tree(block, cb)
@@ -253,72 +249,73 @@ class IPLDResolver {
         if (err) {
           return p.abort(err)
         }
-        p.resolve(pull.values(paths))
+        p.resolve(pull.values(paths.map((e) => {
+          if (typeof e === 'object') {
+            return e.path
+          }
+          return e
+        })))
       })
     }
 
     // recursive
     if (options.recursive) {
-      p = pullPushable()
-      pull(
-        pullTraverse.widthFirst({ basePath: null, cid: cid }, (el) => {
+      p = pull(
+        pullTraverse.widthFirst({
+          basePath: null,
+          cid: cid
+        }, (el) => {
           // pass the paths through the pushable pull stream
           // continue traversing the graph by returning
           // the next cids with deferred
 
+          if (typeof el === 'string') {
+            return pull.empty()
+          }
+
           const deferred = pullDeferSource()
+          const r = this.resolvers[el.cid.codec]
 
-          this.bs.get(el.cid, (err, block) => {
-            if (err) {
-              return p(err)
-            }
-
-            const r = this.resolvers[el.cid.codec]
-
-            r.resolver.tree(block, (err, paths) => {
+          waterfall([
+            (cb) => this.bs.get(el.cid, cb),
+            (block, cb) => r.resolver.tree(block, (err, paths) => {
               if (err) {
-                p(err)
-                return deferred.resolve(pull.empty())
+                return cb(err)
               }
-
-              const next = []
-
-              asyncEach(paths, (path, cb) => {
-                r.resolver.isLink(block, path, (err, link) => {
+              map(paths, (p, cb) => {
+                r.resolver.isLink(block, p, (err, link) => {
                   if (err) {
                     return cb(err)
                   }
-
-                  p.push(el.basePath
-                    ? el.basePath + '/' + path
-                    : path
-                  )
-
-                  // if it is a link, continue traversing
-                  if (link) {
-                    next.push({
-                      basePath: el.basePath
-                        ? el.basePath + '/' + path
-                        : path,
-                      cid: new CID(link['/'])
-                    })
-                  }
-                  cb()
+                  cb(null, {path: p, link: link})
                 })
-              }, (err) => {
-                if (err) {
-                  p(err)
-                  return deferred.resolve(pull.empty())
-                }
-
-                deferred.resolve(pull.values(next))
-              })
+              }, cb)
             })
-          })
+          ], (err, paths) => {
+            if (err) {
+              return deferred.abort(err)
+            }
 
+            deferred.resolve(pull.values(paths.map((p) => {
+              const base = el.basePath ? el.basePath + '/' + p.path : p.path
+              if (p.link) {
+                return {
+                  basePath: base,
+                  cid: new CID(p.link['/'])
+                }
+              }
+              return base
+            })))
+          })
           return deferred
         }),
-        pull.onEnd(() => p.end())
+        pull.map((e) => {
+          if (typeof e === 'string') {
+            return e
+          }
+          return e.basePath
+        }),
+        pull.filter(Boolean)
       )
     }
 
@@ -332,15 +329,11 @@ class IPLDResolver {
             return el
           }
         }),
-        pull.filter((el) => el && el.length > 0),
-        pullSort((a, b) => a.localeCompare(b))
+        pull.filter(Boolean)
       )
     }
 
-    return pull(
-      p,
-      pullSort((a, b) => a.localeCompare(b))
-    )
+    return p
   }
 
   remove (cids, callback) {
