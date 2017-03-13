@@ -113,7 +113,7 @@ module.exports = (repo) => {
       })
     })
 
-    describe.only('public api', () => {
+    describe('public api', () => {
       it('resolver.put with CID', (done) => {
         resolver.put(node1, { cid: cid1 }, done)
       })
