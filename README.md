@@ -52,9 +52,11 @@ const Resolver = new Resolver(blockService)
 
 > Store the given node of a recognized IPLD Format.
 
-Options is an object that must contain one of the following combinations:
+`options` is an object that must contain one of the following combinations:
 - `cid` - the CID of the node
 - `hashAlg` and `format` - the hashAlg and the format that should be used to create the CID of the node
+
+`callback` is a function that should have the signature as following: `function (err, cid) {}`, where `err` is an Error object in case of error and `cid` is the cid of the stored object.
 
 ### `.get(cid [, path] [, options], callback)`
 
@@ -72,6 +74,12 @@ Options is an object that must contain one of the following combinations:
 ### `.getStream(cid [, path] [, options])`
 
 > Same as get, but returns a source pull-stream that is used to pass the fetched node.
+
+### `.treeStream(cid [, path] [, options])`
+
+> Returns all the paths under a cid + path through a pull-stream. Accepts the following options:
+
+- `recursive` - bool - traverse through links to complete the graph.
 
 ### `.remove(cid, callback)`
 

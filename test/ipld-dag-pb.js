@@ -201,7 +201,7 @@ module.exports = (repo) => {
       })
 
       it('resolver.get value within 1st node scope', (done) => {
-        resolver.get(cid1, 'data', (err, result) => {
+        resolver.get(cid1, 'Data', (err, result) => {
           expect(err).to.not.exist
           expect(result.value).to.eql(new Buffer('I am 1'))
           done()
@@ -209,7 +209,7 @@ module.exports = (repo) => {
       })
 
       it('resolver.get value within nested scope (1 level)', (done) => {
-        resolver.get(cid2, 'links/0/data', (err, result) => {
+        resolver.get(cid2, 'Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist
           expect(result.value).to.eql(new Buffer('I am 1'))
           done()
@@ -217,7 +217,7 @@ module.exports = (repo) => {
       })
 
       it('resolver.get value within nested scope (2 levels)', (done) => {
-        resolver.get(cid3, 'links/1/links/0/data', (err, result) => {
+        resolver.get(cid3, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist
           expect(result.value).to.eql(new Buffer('I am 1'))
           done()
@@ -225,9 +225,9 @@ module.exports = (repo) => {
       })
 
       it('resolver.get with option localResolve: true', (done) => {
-        resolver.get(cid3, 'links/1/links/0/data', { localResolve: true }, (err, result) => {
+        resolver.get(cid3, 'Links/1/Hash/Links/0/Hash/Data', { localResolve: true }, (err, result) => {
           expect(err).to.not.exist
-          expect(result.path).to.equal('links/0/data')
+          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
           expect(result.value).to.eql({
             '/': 'QmS149H7EbyMuZ2wtEF1sAd7gPwjj4rKAorweAjKMkxr8D'
           })

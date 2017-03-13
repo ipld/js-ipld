@@ -85,7 +85,7 @@ module.exports = (repo) => {
       it('block-to-block', (done) => {
         resolver.get(ethObjs.child.cid, '/parent', (err, result) => {
           expect(err).to.not.exist
-          expect(result.path).to.equal('')
+          expect(result.remainderPath).to.equal('')
           expect(result.value.number.toString('hex')).to.equal('302516')
           done()
         })
@@ -95,7 +95,7 @@ module.exports = (repo) => {
         resolver.get(ethObjs.child.cid, '/parent/state/0/0/0/0/1/7/nonce', (err, result) => {
           expect(err).to.not.exist
           expect(result.value.toString('hex'), '03')
-          expect(result.path).to.equal('')
+          expect(result.remainderPath).to.equal('')
           done()
         })
       })

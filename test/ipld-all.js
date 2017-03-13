@@ -68,7 +68,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   })
 
   it('resolve through different formats', (done) => {
-    resolver.get(cidCbor, 'pb/data', (err, result) => {
+    resolver.get(cidCbor, 'pb/Data', (err, result) => {
       expect(err).to.not.exist
       expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
       done()

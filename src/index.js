@@ -9,6 +9,9 @@ const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
 const pullDeferSource = require('pull-defer').source
+const pullTraverse = require('pull-traverse')
+const map = require('async/map')
+const waterfall = require('async/waterfall')
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -18,7 +21,9 @@ const ipldEthTxTrie = require('ipld-eth-tx-trie')
 const ipldEthStateTrie = require('ipld-eth-state-trie')
 const ipldEthStorageTrie = require('ipld-eth-storage-trie')
 
-module.exports = class IPLDResolver {
+function noop () {}
+
+class IPLDResolver {
   constructor (blockService) {
     // nicola will love this!
     if (!blockService) {
@@ -103,7 +108,7 @@ module.exports = class IPLDResolver {
         }
         callback(null, {
           value: node,
-          path: ''
+          remainderPath: ''
         })
       })
     }
@@ -150,7 +155,7 @@ module.exports = class IPLDResolver {
         }
         return callback(null, {
           value: value,
-          path: path
+          remainderPath: path
         })
       }
     )
@@ -213,16 +218,126 @@ module.exports = class IPLDResolver {
 
       pull(
         pull.values([nodeAndCID]),
-        this._putStream(callback)
+        this._putStream((err) => {
+          if (err) {
+            return callback(err)
+          }
+          callback(null, nodeAndCID.cid)
+        })
       )
     }
+  }
+
+  treeStream (cid, path, options) {
+    if (typeof path === 'object') {
+      options = path
+      path = undefined
+    }
+
+    options = options || {}
+
+    let p
+
+    if (!options.recursive) {
+      p = pullDeferSource()
+      const r = this.resolvers[cid.codec]
+
+      waterfall([
+        (cb) => this.bs.get(cid, cb),
+        (block, cb) => r.resolver.tree(block, cb)
+      ], (err, paths) => {
+        if (err) {
+          return p.abort(err)
+        }
+        p.resolve(pull.values(paths))
+      })
+    }
+
+    // recursive
+    if (options.recursive) {
+      p = pull(
+        pullTraverse.widthFirst({
+          basePath: null,
+          cid: cid
+        }, (el) => {
+          // pass the paths through the pushable pull stream
+          // continue traversing the graph by returning
+          // the next cids with deferred
+
+          if (typeof el === 'string') {
+            return pull.empty()
+          }
+
+          const deferred = pullDeferSource()
+          const r = this.resolvers[el.cid.codec]
+
+          waterfall([
+            (cb) => this.bs.get(el.cid, cb),
+            (block, cb) => r.resolver.tree(block, (err, paths) => {
+              if (err) {
+                return cb(err)
+              }
+              map(paths, (p, cb) => {
+                r.resolver.isLink(block, p, (err, link) => {
+                  if (err) {
+                    return cb(err)
+                  }
+                  cb(null, {path: p, link: link})
+                })
+              }, cb)
+            })
+          ], (err, paths) => {
+            if (err) {
+              return deferred.abort(err)
+            }
+
+            deferred.resolve(pull.values(paths.map((p) => {
+              const base = el.basePath ? el.basePath + '/' + p.path : p.path
+              if (p.link) {
+                return {
+                  basePath: base,
+                  cid: new CID(p.link['/'])
+                }
+              }
+              return base
+            })))
+          })
+          return deferred
+        }),
+        pull.map((e) => {
+          if (typeof e === 'string') {
+            return e
+          }
+          return e.basePath
+        }),
+        pull.filter(Boolean)
+      )
+    }
+
+    // filter out by path
+    if (path) {
+      return pull(
+        p,
+        pull.map((el) => {
+          if (el.indexOf(path) === 0) {
+            el = el.slice(path.length + 1)
+            return el
+          }
+        }),
+        pull.filter(Boolean)
+      )
+    }
+
+    return p
   }
 
   remove (cids, callback) {
     this.bs.delete(cids, callback)
   }
 
+  /*           */
   /* internals */
+  /*           */
 
   _get (cid, callback) {
     pull(
@@ -279,4 +394,4 @@ module.exports = class IPLDResolver {
   }
 }
 
-function noop () {}
+module.exports = IPLDResolver

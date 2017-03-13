@@ -235,8 +235,81 @@ module.exports = (repo) => {
         resolver.get(cid3, 'two/one/someData', (err, result) => {
           expect(err).to.not.exist
           expect(result.value).to.eql('I am 1')
+          expect(result.remainderPath).to.eql('')
+
           done()
         })
+      })
+
+      it('resolver.tree', (done) => {
+        pull(
+          resolver.treeStream(cid3),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([
+              'one',
+              'two',
+              'someData'
+            ])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree with existent path', (done) => {
+        pull(
+          resolver.treeStream(cid3, 'one'),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree with non existent path', (done) => {
+        pull(
+          resolver.treeStream(cid3, 'bananas'),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree recursive', (done) => {
+        pull(
+          resolver.treeStream(cid3, { recursive: true }),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([
+              'one',
+              'two',
+              'someData',
+              'one/someData',
+              'two/one',
+              'two/someData',
+              'two/one/someData'
+            ])
+            done()
+          })
+        )
+      })
+
+      it('resolver.tree with existent path recursive', (done) => {
+        pull(
+          resolver.treeStream(cid3, 'two', { recursive: true }),
+          pull.collect((err, values) => {
+            expect(err).to.not.exist
+            expect(values).to.eql([
+              'one',
+              'someData',
+              'one/someData'
+            ])
+            done()
+          })
+        )
       })
 
       it('resolver.remove', (done) => {
