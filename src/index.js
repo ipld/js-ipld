@@ -12,6 +12,8 @@ const joinPath = require('path').join
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const asyncEach = require('async/each')
+const waterfall = require('async/waterfall')
+
 const pullSort = require('pull-sort')
 
 const dagPB = require('ipld-dag-pb')
@@ -238,28 +240,26 @@ class IPLDResolver {
     options = options || {}
 
     // non recursive
-    const p = pullPushable()
+    let p
 
     if (!options.recursive) {
       const r = this.resolvers[cid.codec]
 
-      this.bs.get(cid, (err, block) => {
+      p = pullDeferSource()
+      waterfall([
+        (cb) => this.bs.get(cid, cb),
+        (block, cb) => r.resolver.tree(block, cb)
+      ], (err, paths) => {
         if (err) {
-          return p(err)
+          return p.abort(err)
         }
-
-        r.resolver.tree(block, (err, paths) => {
-          if (err) {
-            return p(err)
-          }
-          paths.forEach((path) => p.push(path))
-          p.end()
-        })
+        p.resolve(pull.values(paths))
       })
     }
 
     // recursive
     if (options.recursive) {
+      p = pullPushable()
       pull(
         pullTraverse.widthFirst({ basePath: null, cid: cid }, (el) => {
           // pass the paths through the pushable pull stream
