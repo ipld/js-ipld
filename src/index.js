@@ -109,7 +109,7 @@ class IPLDResolver {
         }
         callback(null, {
           value: node,
-          path: ''
+          remainderPath: ''
         })
       })
     }
@@ -156,7 +156,7 @@ class IPLDResolver {
         }
         return callback(null, {
           value: value,
-          path: path
+          remainderPath: path
         })
       }
     )

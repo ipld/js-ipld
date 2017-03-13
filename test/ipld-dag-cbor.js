@@ -235,6 +235,8 @@ module.exports = (repo) => {
         resolver.get(cid3, 'two/one/someData', (err, result) => {
           expect(err).to.not.exist
           expect(result.value).to.eql('I am 1')
+          expect(result.remainderPath).to.eql('')
+
           done()
         })
       })
