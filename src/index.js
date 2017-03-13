@@ -249,12 +249,7 @@ class IPLDResolver {
         if (err) {
           return p.abort(err)
         }
-        p.resolve(pull.values(paths.map((e) => {
-          if (typeof e === 'object') {
-            return e.path
-          }
-          return e
-        })))
+        p.resolve(pull.values(paths))
       })
     }
 
