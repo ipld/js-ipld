@@ -4,17 +4,27 @@
 const ncp = require('ncp').ncp
 const rimraf = require('rimraf')
 const IPFSRepo = require('ipfs-repo')
-const Store = require('fs-pull-blob-store')
+const series = require('async/series')
 const os = require('os')
 
 describe('Node.js', () => {
   const repoExample = process.cwd() + '/test/example-repo'
   const repoTests = os.tmpDir() + '/t-r-' + Date.now()
+  const repo = new IPFSRepo(repoTests)
 
-  before((done) => ncp(repoExample, repoTests, done))
-  after((done) => rimraf(repoTests, done))
+  before((done) => {
+    series([
+      (cb) => ncp(repoExample, repoTests, cb),
+      (cb) => repo.open(cb)
+    ], done)
+  })
 
-  const repo = new IPFSRepo(repoTests, { stores: Store })
+  after((done) => {
+    series([
+      (cb) => repo.close(cb),
+      (cb) => rimraf(repoTests, cb)
+    ], done)
+  })
 
   require('./basics')(repo)
   require('./ipld-dag-pb')(repo)

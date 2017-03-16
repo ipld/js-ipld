@@ -3,12 +3,8 @@
 
 'use strict'
 
-const eachSeries = require('async/eachSeries')
-const Store = require('idb-pull-blob-store')
-const _ = require('lodash')
+const series = require('async/series')
 const IPFSRepo = require('ipfs-repo')
-const pull = require('pull-stream')
-const repoContext = require.context('buffer!./example-repo', true)
 
 const basePath = 'ipfs' + Math.random()
 
@@ -21,35 +17,25 @@ idb.deleteDatabase(basePath)
 idb.deleteDatabase(basePath + '/blocks')
 
 describe('Browser', () => {
+  const repo = new IPFSRepo(basePath)
+
   before((done) => {
-    const repoData = []
-    repoContext.keys().forEach((key) => {
-      repoData.push({
-        key: key.replace('./', ''),
-        value: repoContext(key)
-      })
-    })
-
-    const mainBlob = new Store(basePath)
-    const blocksBlob = new Store(basePath + '/blocks')
-
-    eachSeries(repoData, (file, cb) => {
-      if (_.startsWith(file.key, 'datastore/')) {
-        return cb()
-      }
-
-      const blocks = _.startsWith(file.key, 'blocks/')
-      const blob = blocks ? blocksBlob : mainBlob
-      const key = blocks ? file.key.replace(/^blocks\//, '') : file.key
-
-      pull(
-        pull.values([file.value]),
-        blob.write(key, cb)
-      )
-    }, done)
+    series([
+      (cb) => repo.init({}, cb),
+      (cb) => repo.open(cb)
+    ], done)
   })
 
-  const repo = new IPFSRepo(basePath, { stores: Store })
+  after((done) => {
+    series([
+      (cb) => repo.close(cb),
+      (cb) => {
+        idb.deleteDatabase(basePath)
+        idb.deleteDatabase(basePath + '/blocks')
+        cb()
+      }
+    ], done)
+  })
 
   require('./basics')(repo)
   require('./ipld-dag-pb')(repo)
