@@ -32,7 +32,7 @@ module.exports = (repo) => {
           })
 
           ipldEthBlock.util.cid(node1, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             cid1 = cid
             cb()
           })
@@ -44,7 +44,7 @@ module.exports = (repo) => {
           })
 
           ipldEthBlock.util.cid(node2, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             cid2 = cid
             cb()
           })
@@ -56,7 +56,7 @@ module.exports = (repo) => {
           })
 
           ipldEthBlock.util.cid(node3, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             cid3 = cid
             cb()
           })
@@ -90,9 +90,9 @@ module.exports = (repo) => {
 
       it('resolver._get', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           resolver.get(cid1, (err, result) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1.number.toString('hex')).to.eql('01')
             expect(node1.raw).to.eql(result.value.raw)
             expect(node1.hash()).to.eql(result.value.hash())
@@ -103,11 +103,11 @@ module.exports = (repo) => {
 
       it('resolver._getStream', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           pull(
             resolver._getStream(cid1),
             pull.collect((err, results) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist // eslint-disable-line
               const node = results[0]
               expect(node1.raw).to.eql(node.raw)
               expect(node1.hash()).to.eql(node.hash())
@@ -125,10 +125,10 @@ module.exports = (repo) => {
 
       it('root path (same as get)', (done) => {
         resolver.get(cid1, '/', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
 
           ipldEthBlock.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(cid).to.eql(cid1)
             done()
           })
@@ -137,7 +137,7 @@ module.exports = (repo) => {
 
       it('value within 1st node scope', (done) => {
         resolver.get(cid1, 'number', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value.toString('hex')).to.eql('01')
           done()
         })
@@ -145,7 +145,7 @@ module.exports = (repo) => {
 
       it('value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'parent/number', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value.toString('hex')).to.eql('01')
           done()
         })
@@ -153,7 +153,7 @@ module.exports = (repo) => {
 
       it('value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'parent/parent/number', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value.toString('hex')).to.eql('01')
           done()
         })
@@ -161,9 +161,9 @@ module.exports = (repo) => {
 
       it('resolver.remove', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           resolver.get(cid1, (err, result) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             const node = result.value
             expect(node1.raw).to.eql(node.raw)
             expect(node1.hash()).to.eql(node.hash())
@@ -173,9 +173,9 @@ module.exports = (repo) => {
 
         function remove () {
           resolver.remove(cid1, (err) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             resolver.get(cid1, (err) => {
-              expect(err).to.exist
+              expect(err).to.exist // eslint-disable-line
               done()
             })
           })

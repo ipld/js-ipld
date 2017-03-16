@@ -11,12 +11,12 @@ module.exports = (repo) => {
     it('creates an instance', () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
-      expect(r.bs).to.exist
+      expect(r.bs).to.exist // eslint-disable-line
     })
 
     it('creates an in memory repo if no blockService is passed', () => {
       const r = new IPLDResolver()
-      expect(r.bs).to.exist
+      expect(r.bs).to.exist // eslint-disable-line
     })
 
     it.skip('add support to a new format', () => {})

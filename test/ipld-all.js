@@ -29,14 +29,14 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     series([
       (cb) => {
         dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), (err, node) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           nodePb = node
           cb()
         })
       },
       (cb) => {
         dagPB.util.cid(nodePb, (err, cid) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           cidPb = cid
           cb()
         })
@@ -48,7 +48,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
         }
 
         dagCBOR.util.cid(nodeCbor, (err, cid) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           cidCbor = cid
           cb()
         })
@@ -69,10 +69,9 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
 
   it('resolve through different formats', (done) => {
     resolver.get(cidCbor, 'pb/Data', (err, result) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist // eslint-disable-line
       expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
       done()
     })
   })
 })
-

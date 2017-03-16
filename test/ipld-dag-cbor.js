@@ -30,7 +30,7 @@ module.exports = (repo) => {
           node1 = { someData: 'I am 1' }
 
           dagCBOR.util.cid(node1, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             cid1 = cid
             cb()
           })
@@ -42,7 +42,7 @@ module.exports = (repo) => {
           }
 
           dagCBOR.util.cid(node2, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             cid2 = cid
             cb()
           })
@@ -55,7 +55,7 @@ module.exports = (repo) => {
           }
 
           dagCBOR.util.cid(node3, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             cid3 = cid
             cb()
           })
@@ -89,9 +89,9 @@ module.exports = (repo) => {
 
       it('resolver._get', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           resolver._get(cid1, (err, node) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1).to.eql(node)
             done()
           })
@@ -100,11 +100,11 @@ module.exports = (repo) => {
 
       it('resolver._getStream', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           pull(
             resolver._getStream(cid1),
             pull.collect((err, nodes) => {
-              expect(err).to.not.exist
+              expect(err).to.not.exist // eslint-disable-line
               expect(node1).to.eql(nodes[0])
               done()
             })
@@ -127,10 +127,10 @@ module.exports = (repo) => {
 
       it('resolver.get just CID', (done) => {
         resolver.get(cid1, (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
 
           dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(cid).to.eql(cid1)
             done()
           })
@@ -139,10 +139,10 @@ module.exports = (repo) => {
 
       it('resolver.get root path', (done) => {
         resolver.get(cid1, '/', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
 
           dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(cid).to.eql(cid1)
             done()
           })
@@ -151,10 +151,10 @@ module.exports = (repo) => {
 
       it('resolver.get relative path `.` (same as get /)', (done) => {
         resolver.get(cid1, '.', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
 
           dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(cid).to.eql(cid1)
             done()
           })
@@ -163,10 +163,10 @@ module.exports = (repo) => {
 
       it('resolver.get relative path `./` (same as get /)', (done) => {
         resolver.get(cid1, './', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
 
           dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(cid).to.eql(cid1)
             done()
           })
@@ -175,7 +175,7 @@ module.exports = (repo) => {
 
       it('resolver.get relative path `./one/someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, './one/someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           done()
         })
@@ -183,7 +183,7 @@ module.exports = (repo) => {
 
       it('resolver.get relative path `one/./someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, 'one/./someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           done()
         })
@@ -191,7 +191,7 @@ module.exports = (repo) => {
 
       it('resolver.get double slash at the beginning `//one/someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, '//one/someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           done()
         })
@@ -199,7 +199,7 @@ module.exports = (repo) => {
 
       it('resolver.get double slash in the middle `one//someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, 'one//someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           done()
         })
@@ -207,7 +207,7 @@ module.exports = (repo) => {
 
       it('resolver.get value within 1st node scope', (done) => {
         resolver.get(cid1, 'someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           done()
         })
@@ -215,7 +215,7 @@ module.exports = (repo) => {
 
       it('resolver.get value within nested scope (0 level)', (done) => {
         resolver.get(cid2, 'one', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql({
             someData: 'I am 1'
           })
@@ -225,7 +225,7 @@ module.exports = (repo) => {
 
       it('resolver.get value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'one/someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           done()
         })
@@ -233,7 +233,7 @@ module.exports = (repo) => {
 
       it('resolver.get value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'two/one/someData', (err, result) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           expect(result.value).to.eql('I am 1')
           expect(result.remainderPath).to.eql('')
 
@@ -245,7 +245,7 @@ module.exports = (repo) => {
         pull(
           resolver.treeStream(cid3),
           pull.collect((err, values) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(values).to.eql([
               'one',
               'two',
@@ -256,22 +256,22 @@ module.exports = (repo) => {
         )
       })
 
-      it('resolver.tree with existent path', (done) => {
+      it('resolver.tree with exist // eslint-disable-lineent path', (done) => {
         pull(
           resolver.treeStream(cid3, 'one'),
           pull.collect((err, values) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(values).to.eql([])
             done()
           })
         )
       })
 
-      it('resolver.tree with non existent path', (done) => {
+      it('resolver.tree with non exist // eslint-disable-lineent path', (done) => {
         pull(
           resolver.treeStream(cid3, 'bananas'),
           pull.collect((err, values) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(values).to.eql([])
             done()
           })
@@ -282,7 +282,7 @@ module.exports = (repo) => {
         pull(
           resolver.treeStream(cid3, { recursive: true }),
           pull.collect((err, values) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(values).to.eql([
               'one',
               'two',
@@ -297,11 +297,11 @@ module.exports = (repo) => {
         )
       })
 
-      it('resolver.tree with existent path recursive', (done) => {
+      it('resolver.tree with exist // eslint-disable-lineent path recursive', (done) => {
         pull(
           resolver.treeStream(cid3, 'two', { recursive: true }),
           pull.collect((err, values) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(values).to.eql([
               'one',
               'someData',
@@ -314,9 +314,9 @@ module.exports = (repo) => {
 
       it('resolver.remove', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist
+          expect(err).to.not.exist // eslint-disable-line
           resolver.get(cid1, (err, result) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             expect(node1).to.eql(result.value)
             remove()
           })
@@ -324,9 +324,9 @@ module.exports = (repo) => {
 
         function remove () {
           resolver.remove(cid1, (err) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist // eslint-disable-line
             resolver.get(cid1, (err) => {
-              expect(err).to.exist
+              expect(err).to.exist // eslint-disable-line
               done()
             })
           })
