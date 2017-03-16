@@ -1,7 +1,10 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+const expect = chai.expect
+chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 
 const IPLDResolver = require('../src')
@@ -11,12 +14,12 @@ module.exports = (repo) => {
     it('creates an instance', () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
-      expect(r.bs).to.exist // eslint-disable-line
+      expect(r.bs).to.exist()
     })
 
     it('creates an in memory repo if no blockService is passed', () => {
       const r = new IPLDResolver()
-      expect(r.bs).to.exist // eslint-disable-line
+      expect(r.bs).to.exist()
     })
 
     it.skip('add support to a new format', () => {})

@@ -35,6 +35,7 @@
     "aegir": "^11.0.0",
     "buffer-loader": "0.0.1",
     "chai": "^3.5.0",
+    "dirty-chai": "^1.2.2",
     "eth-hash-to-cid": "^0.1.0",
     "ethereumjs-block": "^1.5.0",
     "fs-pull-blob-store": "~0.4.1",

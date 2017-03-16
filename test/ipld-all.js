@@ -7,7 +7,10 @@
  * Test data made of mixed data structures!
  */
 
-const expect = require('chai').expect
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+const expect = chai.expect
+chai.use(dirtyChai)
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const series = require('async/series')
@@ -29,14 +32,14 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     series([
       (cb) => {
         dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), (err, node) => {
-          expect(err).to.not.exist // eslint-disable-line
+          expect(err).to.not.exist()
           nodePb = node
           cb()
         })
       },
       (cb) => {
         dagPB.util.cid(nodePb, (err, cid) => {
-          expect(err).to.not.exist // eslint-disable-line
+          expect(err).to.not.exist()
           cidPb = cid
           cb()
         })
@@ -48,7 +51,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
         }
 
         dagCBOR.util.cid(nodeCbor, (err, cid) => {
-          expect(err).to.not.exist // eslint-disable-line
+          expect(err).to.not.exist()
           cidCbor = cid
           cb()
         })
@@ -69,7 +72,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
 
   it('resolve through different formats', (done) => {
     resolver.get(cidCbor, 'pb/Data', (err, result) => {
-      expect(err).to.not.exist // eslint-disable-line
+      expect(err).to.not.exist()
       expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
       done()
     })
