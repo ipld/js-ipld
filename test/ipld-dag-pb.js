@@ -8,6 +8,7 @@ chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
 const series = require('async/series')
+const each = require('async/each')
 const pull = require('pull-stream')
 
 const IPLDResolver = require('../src')
@@ -124,40 +125,23 @@ module.exports = (repo) => {
     })
 
     describe('internals', () => {
-      it('resolver._putStream', (done) => {
-        pull(
-          pull.values([
-            { node: node1, cid: cid1 },
-            { node: node2, cid: cid2 },
-            { node: node3, cid: cid3 }
-          ]),
-          resolver._putStream(done)
-        )
-      })
-
-      it('resolver._getStream', (done) => {
-        resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist()
-          pull(
-            resolver._getStream(cid1),
-            pull.collect((err, nodes) => {
-              expect(err).to.not.exist()
-              done()
-            })
-          )
-        })
+      it('resolver._put', (done) => {
+        each([
+          { node: node1, cid: cid1 },
+          { node: node2, cid: cid2 },
+          { node: node3, cid: cid3 }
+        ], (nc, cb) => {
+          resolver._put(nc.cid, nc.node, cb)
+        }, done)
       })
 
       it('resolver._get', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
           expect(err).to.not.exist()
-          pull(
-            resolver._getStream(cid1),
-            pull.collect((err, nodes) => {
-              expect(err).to.not.exist()
-              done()
-            })
-          )
+          resolver._get(cid1, (err, node) => {
+            expect(err).to.not.exist()
+            done()
+          })
         })
       })
     })

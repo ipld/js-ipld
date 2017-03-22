@@ -5,13 +5,14 @@ const pull = require('pull-stream')
 const CID = require('cids')
 const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
-const MemoryStore = require('interface-pull-blob-store')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const map = require('async/map')
+const series = require('async/series')
 const waterfall = require('async/waterfall')
+const MemoryStore = require('interface-datastore').MemoryDatastore
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -25,10 +26,8 @@ function noop () {}
 
 class IPLDResolver {
   constructor (blockService) {
-    // nicola will love this!
     if (!blockService) {
-      const repo = new IPFSRepo('in-memory', { stores: MemoryStore })
-      blockService = new BlockService(repo)
+      throw new Error('Missing blockservice')
     }
 
     this.bs = blockService
@@ -182,50 +181,24 @@ class IPLDResolver {
     if (typeof options === 'function') {
       return setImmediate(() => callback(new Error('no options were passed')))
     }
-
-    let nodeAndCID
+    callback = callback || noop
 
     if (options.cid && CID.isCID(options.cid)) {
-      nodeAndCID = {
-        node: node,
-        cid: options.cid
+      return this._put(options.cid, node, callback)
+    }
+
+    options.hashAlg = options.hashAlg || 'sha2-256'
+    const r = this.resolvers[options.format]
+    // TODO add support for different hash funcs in the utils of
+    // each format (just really needed for CBOR for now, really
+    // r.util.cid(node1, hashAlg, (err, cid) => {
+    r.util.cid(node, (err, cid) => {
+      if (err) {
+        return callback(err)
       }
 
-      store.apply(this)
-    } else {
-      options.hashAlg = options.hashAlg || 'sha2-256'
-
-      const r = this.resolvers[options.format]
-      // TODO add support for different hash funcs in the utils of
-      // each format (just really needed for CBOR for now, really
-      // r.util.cid(node1, hashAlg, (err, cid) => {
-      r.util.cid(node, (err, cid) => {
-        if (err) {
-          return callback(err)
-        }
-
-        nodeAndCID = {
-          node: node,
-          cid: cid
-        }
-
-        store.apply(this)
-      })
-    }
-
-    function store () {
-      callback = callback || noop
-
-      pull(
-        pull.values([nodeAndCID]),
-        this._putStream((err) => {
-          if (err) {
-            return callback(err)
-          }
-          callback(null, nodeAndCID.cid)
-        })
-      )
-    }
+      this._put(cid, node, callback)
+    })
   }
 
   treeStream (cid, path, options) {
@@ -340,22 +313,11 @@ class IPLDResolver {
   /*           */
 
   _get (cid, callback) {
-    pull(
-      this._getStream(cid),
-      pull.collect((err, res) => {
-        if (err) {
-          return callback(err)
-        }
-        callback(null, res[0])
-      })
-    )
-  }
+    const r = this.resolvers[cid.codec]
 
-  _getStream (cid) {
-    return pull(
-      this.bs.getStream(cid),
-      pull.asyncMap((block, cb) => {
-        const r = this.resolvers[cid.codec]
+    waterfall([
+      (cb) => this.bs.get(cid, cb),
+      (block, cb) => {
         if (r) {
           r.util.deserialize(block.data, (err, deserialized) => {
             if (err) {
@@ -366,32 +328,50 @@ class IPLDResolver {
         } else { // multicodec unknown, send back raw data
           cb(null, block.data)
         }
-      })
-    )
+      }
+    ], callback)
   }
 
-  _putStream (callback) {
+  _put (cid, node, callback) {
     callback = callback || noop
 
-    return pull(
-      pull.asyncMap((nodeAndCID, cb) => {
-        const cid = nodeAndCID.cid
-        const r = this.resolvers[cid.codec]
-
-        r.util.serialize(nodeAndCID.node, (err, serialized) => {
-          if (err) {
-            return cb(err)
-          }
-          cb(null, {
-            block: new Block(serialized),
-            cid: cid
-          })
-        })
-      }),
-      this.bs.putStream(),
-      pull.onEnd(callback)
-    )
+    const r = this.resolvers[cid.codec]
+    waterfall([
+      (cb) => r.util.serialize(node, cb),
+      (buf, cb) => this.bs.put(new Block(buf, cid), cb)
+    ], (err) => {
+      if (err) {
+        return callback(err)
+      }
+      callback(null, cid)
+    })
   }
+}
+
+/**
+ * Create an IPLD resolver with an inmemory blockservice and
+ * repo.
+ *
+ * @param {function(Error, IPLDResolver)} callback
+ * @returns {void}
+ */
+IPLDResolver.inMemory = function (callback) {
+  const repo = new IPFSRepo('in-memory', {
+    fs: MemoryStore,
+    level: require('memdown'),
+    lock: 'memory'
+  })
+  const blockService = new BlockService(repo)
+
+  series([
+    (cb) => repo.init({}, cb),
+    (cb) => repo.open(cb)
+  ], (err) => {
+    if (err) {
+      return callback(err)
+    }
+    callback(null, new IPLDResolver(blockService))
+  })
 }
 
 module.exports = IPLDResolver

@@ -18,8 +18,10 @@ module.exports = (repo) => {
     })
 
     it('creates an in memory repo if no blockService is passed', () => {
-      const r = new IPLDResolver()
-      expect(r.bs).to.exist()
+      IPLDResolver.inMemory((err, r) => {
+        expect(err).to.not.exist()
+        expect(r.bs).to.exist()
+      })
     })
 
     it.skip('add support to a new format', () => {})

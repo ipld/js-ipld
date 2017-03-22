@@ -13,8 +13,8 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
-const series = require('async/series')
-const pull = require('pull-stream')
+const each = require('async/each')
+const waterfall = require('async/waterfall')
 
 const IPLDResolver = require('../src')
 
@@ -27,47 +27,36 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   let cidPb
 
   before((done) => {
-    resolver = new IPLDResolver()
-
-    series([
-      (cb) => {
-        dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), (err, node) => {
-          expect(err).to.not.exist()
-          nodePb = node
-          cb()
-        })
+    waterfall([
+      (cb) => IPLDResolver.inMemory(cb),
+      (res, cb) => {
+        resolver = res
+        dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), cb)
       },
-      (cb) => {
-        dagPB.util.cid(nodePb, (err, cid) => {
-          expect(err).to.not.exist()
-          cidPb = cid
-          cb()
-        })
+      (node, cb) => {
+        nodePb = node
+        dagPB.util.cid(nodePb, cb)
       },
-      (cb) => {
+      (cid, cb) => {
+        cidPb = cid
         nodeCbor = {
           someData: 'I am inside a Cbor object',
           pb: { '/': cidPb.toBaseEncodedString() }
         }
 
-        dagCBOR.util.cid(nodeCbor, (err, cid) => {
-          expect(err).to.not.exist()
-          cidCbor = cid
-          cb()
-        })
-      }
-    ], store)
+        dagCBOR.util.cid(nodeCbor, cb)
+      },
+      (cid, cb) => {
+        cidCbor = cid
 
-    function store () {
-      pull(
-        pull.values([
+        each([
           { node: nodePb, cid: cidPb },
           { node: nodeCbor, cid: cidCbor }
-        ]),
-        pull.asyncMap((nac, cb) => resolver.put(nac.node, { cid: nac.cid }, cb)),
-        pull.onEnd(done)
-      )
-    }
+        ], (nac, cb) => {
+          resolver.put(nac.node, { cid: nac.cid }, cb)
+        }, cb)
+      }
+    ], done)
   })
 
   it('resolve through different formats', (done) => {
