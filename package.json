@@ -32,7 +32,7 @@
   "homepage": "https://github.com/ipld/js-ipld-resolver#readme",
   "license": "MIT",
   "devDependencies": {
-    "aegir": "^11.0.1",
+    "aegir": "^11.0.2",
     "chai": "^3.5.0",
     "dirty-chai": "^1.2.2",
     "eth-hash-to-cid": "^0.1.0",
@@ -44,13 +44,13 @@
     "rlp": "^2.0.0"
   },
   "dependencies": {
-    "async": "^2.1.5",
-    "cids": "~0.4.2",
-    "interface-datastore": "^0.1.1",
+    "async": "^2.4.1",
+    "cids": "~0.5.0",
+    "interface-datastore": "^0.2.1",
     "ipfs-block": "~0.6.0",
-    "ipfs-block-service": "~0.9.0",
-    "ipfs-repo": "~0.12.0",
-    "ipld-dag-cbor": "~0.11.0",
+    "ipfs-block-service": "~0.9.1",
+    "ipfs-repo": "~0.13.1",
+    "ipld-dag-cbor": "~0.11.1",
     "ipld-dag-pb": "~0.11.0",
     "ipld-eth-block": "^2.2.2",
     "ipld-eth-block-list": "^1.0.4",
@@ -61,9 +61,9 @@
     "lodash.flatten": "^4.4.0",
     "lodash.includes": "^4.3.0",
     "memdown": "^1.2.4",
-    "multihashes": "~0.4.4",
+    "multihashes": "~0.4.5",
     "pull-sort": "^1.0.0",
-    "pull-stream": "^3.5.0",
+    "pull-stream": "^3.6.0",
     "pull-traverse": "^1.0.3"
   },
   "contributors": [
