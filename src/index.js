@@ -356,7 +356,6 @@ class IPLDResolver {
  * @returns {void}
  */
 IPLDResolver.inMemory = function (callback) {
-  const Memdown = require('memdown')
   const repo = new IPFSRepo('in-memory', {
     storageBackends: {
       root: MemoryStore,
