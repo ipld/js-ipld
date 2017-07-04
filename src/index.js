@@ -363,17 +363,6 @@ IPLDResolver.inMemory = function (callback) {
       blocks: MemoryStore,
       datastore: MemoryStore
     },
-    storageBackendOptions: {
-      root: {
-        db: Memdown
-      },
-      blocks: {
-        db: Memdown
-      },
-      datastore: {
-        db: Memdown
-      }
-    },
     lock: 'memory'
   })
   const blockService = new BlockService(repo)
