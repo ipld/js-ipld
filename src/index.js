@@ -16,11 +16,13 @@ const MemoryStore = require('interface-datastore').MemoryDatastore
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
-const ipldEthBlock = require('ipld-eth-block')
-const ipldEthBlockList = require('ipld-eth-block-list')
-const ipldEthTxTrie = require('ipld-eth-tx-trie')
-const ipldEthStateTrie = require('ipld-eth-state-trie')
-const ipldEthStorageTrie = require('ipld-eth-storage-trie')
+const ipldEthAccountSnapshot = require('ipld-eth-star').ethAccountSnapshot
+const ipldEthBlock = require('ipld-eth-star').ethBlock
+const ipldEthBlockList = require('ipld-eth-star').ethBlockList
+const ipldEthStateTrie = require('ipld-eth-star').ethStateTrie
+const ipldEthStorageTrie = require('ipld-eth-star').ethStorageTrie
+const ipldEthTx = require('ipld-eth-star').ethTx
+const ipldEthTxTrie = require('ipld-eth-star').ethTxTrie
 
 function noop () {}
 
@@ -62,6 +64,10 @@ class IPLDResolver {
                      dagCBOR.resolver,
                      dagCBOR.util)
 
+    this.support.add(ipldEthAccountSnapshot.resolver.multicodec,
+                     ipldEthAccountSnapshot.resolver,
+                     ipldEthAccountSnapshot.util)
+
     this.support.add(ipldEthBlock.resolver.multicodec,
                      ipldEthBlock.resolver,
                      ipldEthBlock.util)
@@ -70,10 +76,6 @@ class IPLDResolver {
                      ipldEthBlockList.resolver,
                      ipldEthBlockList.util)
 
-    this.support.add(ipldEthTxTrie.resolver.multicodec,
-                     ipldEthTxTrie.resolver,
-                     ipldEthTxTrie.util)
-
     this.support.add(ipldEthStateTrie.resolver.multicodec,
                      ipldEthStateTrie.resolver,
                      ipldEthStateTrie.util)
@@ -81,6 +83,14 @@ class IPLDResolver {
     this.support.add(ipldEthStorageTrie.resolver.multicodec,
                      ipldEthStorageTrie.resolver,
                      ipldEthStorageTrie.util)
+
+    this.support.add(ipldEthTx.resolver.multicodec,
+                     ipldEthTx.resolver,
+                     ipldEthTx.util)
+
+    this.support.add(ipldEthTxTrie.resolver.multicodec,
+                     ipldEthTxTrie.resolver,
+                     ipldEthTxTrie.util)
   }
 
   get (cid, path, options, callback) {
