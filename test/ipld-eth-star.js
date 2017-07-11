@@ -95,7 +95,7 @@ module.exports = (repo) => {
       })
 
       it('block-to-account resolve', (done) => {
-        resolver.get(ethObjs.child.cid, '/parent/state/0/0/0/0/1/7/nonce', (err, result) => {
+        resolver.get(ethObjs.child.cid, '/parent/state/0/0/0/0/1/7/2/7/8/a/1/e/6/e/9/6/3/5/e/1/a/3/f/1/1/e/b/0/2/2/d/a/1/f/5/7/e/a/0/0/4/d/8/5/2/d/9/d/1/9/4/2/d/4/3/6/0/8/5/4/0/4/7/1/nonce', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value.toString('hex'), '03')
           expect(result.remainderPath).to.equal('')

@@ -16,11 +16,11 @@ const MemoryStore = require('interface-datastore').MemoryDatastore
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
-const ipldEthBlock = require('ipld-eth-block')
-const ipldEthBlockList = require('ipld-eth-block-list')
-const ipldEthTxTrie = require('ipld-eth-tx-trie')
-const ipldEthStateTrie = require('ipld-eth-state-trie')
-const ipldEthStorageTrie = require('ipld-eth-storage-trie')
+const ipldEthBlock = require('ipld-eth-star/eth-block')
+const ipldEthBlockList = require('ipld-eth-star/eth-block-list')
+const ipldEthTxTrie = require('ipld-eth-star/eth-tx-trie')
+const ipldEthStateTrie = require('ipld-eth-star/eth-state-trie')
+const ipldEthStorageTrie = require('ipld-eth-star/eth-storage-trie')
 
 function noop () {}
 
