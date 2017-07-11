@@ -34,7 +34,7 @@
   "devDependencies": {
     "aegir": "^11.0.2",
     "chai": "^4.0.2",
-    "dirty-chai": "^2.0.0",
+    "dirty-chai": "^2.0.1",
     "eth-hash-to-cid": "^0.1.0",
     "ethereumjs-block": "^1.5.1",
     "lodash": "^4.17.4",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "async": "^2.5.0",
-    "cids": "~0.5.0",
+    "cids": "~0.5.1",
     "interface-datastore": "^0.2.2",
     "ipfs-block": "~0.6.0",
     "ipfs-block-service": "~0.10.0",
