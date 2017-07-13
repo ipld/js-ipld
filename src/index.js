@@ -134,6 +134,9 @@ class IPLDResolver {
             return cb(err)
           }
           const r = this.resolvers[cid.codec]
+          if (!r) {
+            return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
+          }
           r.resolver.resolve(block, path, (err, result) => {
             if (err) {
               return cb(err)
