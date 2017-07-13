@@ -23,6 +23,7 @@ const ipldEthStateTrie = require('ipld-eth-star').ethStateTrie
 const ipldEthStorageTrie = require('ipld-eth-star').ethStorageTrie
 const ipldEthTx = require('ipld-eth-star').ethTx
 const ipldEthTxTrie = require('ipld-eth-star').ethTxTrie
+const ipldBin = require('./ipldBin')
 
 function noop () {}
 
@@ -91,6 +92,10 @@ class IPLDResolver {
     this.support.add(ipldEthTxTrie.resolver.multicodec,
                      ipldEthTxTrie.resolver,
                      ipldEthTxTrie.util)
+
+    this.support.add(ipldBin.resolver.multicodec,
+                     ipldBin.resolver,
+                     ipldBin.util)
   }
 
   get (cid, path, options, callback) {
