@@ -231,7 +231,8 @@ class IPLDResolver {
       p = pullDeferSource()
       const r = this.resolvers[cid.codec]
       if (!r) {
-        return p.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
+        p.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
+        return p
       }
 
       waterfall([
@@ -239,7 +240,8 @@ class IPLDResolver {
         (block, cb) => r.resolver.tree(block, cb)
       ], (err, paths) => {
         if (err) {
-          return p.abort(err)
+          p.abort(err)
+          return p
         }
         p.resolve(pull.values(paths))
       })
@@ -264,7 +266,8 @@ class IPLDResolver {
           const cid = el.cid
           const r = this.resolvers[cid.codec]
           if (!r) {
-            return p.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
+            deferred.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
+            return deferred
           }
 
           waterfall([
@@ -284,7 +287,8 @@ class IPLDResolver {
             })
           ], (err, paths) => {
             if (err) {
-              return deferred.abort(err)
+              deferred.abort(err)
+              return deferred
             }
 
             deferred.resolve(pull.values(paths.map((p) => {
