@@ -24,5 +24,53 @@ module.exports = () => {
         done()
       })
     })
+
+    it('trees an empty array', (done) => {
+      const buffer = Buffer.from('deadbeef', 'hex')
+      const cid = new CID('zDvjKAA4iXx')
+      const ipfsBlock = new IpfsBlock(buffer, cid)
+      ipldBin.resolver.tree(ipfsBlock, {}, (err, result) => {
+        expect(err).to.not.exist()
+        expect(result).to.exist()
+        expect(result.length).to.eql(0)
+        done()
+      })
+    })
+
+    it('creates a cid with the currect multicodec', (done) => {
+      const buffer = Buffer.from('deadbeef', 'hex')
+      // const cid = new CID('zDvjKAA4iXx')
+      // const ipfsBlock = new IpfsBlock(buffer, cid)
+      ipldBin.util.cid(buffer, (err, cid) => {
+        expect(err).to.not.exist()
+        expect(cid).to.exist()
+        expect(cid.codec).to.eql('base2')
+        done()
+      })
+    })
+
+    it('serializes to the same value', (done) => {
+      const buffer = Buffer.from('deadbeef', 'hex')
+      // const cid = new CID('zDvjKAA4iXx')
+      // const ipfsBlock = new IpfsBlock(buffer, cid)
+      ipldBin.util.serialize(buffer, (err, result) => {
+        expect(err).to.not.exist()
+        expect(result).to.exist()
+        expect(result.toString('hex')).to.eql(buffer.toString('hex'))
+        done()
+      })
+    })
+
+    it('deserializes to the same value', (done) => {
+      const buffer = Buffer.from('deadbeef', 'hex')
+      // const cid = new CID('zDvjKAA4iXx')
+      // const ipfsBlock = new IpfsBlock(buffer, cid)
+      ipldBin.util.deserialize(buffer, (err, result) => {
+        expect(err).to.not.exist()
+        expect(result).to.exist()
+        expect(result.toString('hex')).to.eql(buffer.toString('hex'))
+        done()
+      })
+    })
   })
 }
