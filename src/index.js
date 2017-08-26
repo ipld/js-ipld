@@ -134,6 +134,9 @@ class IPLDResolver {
             return cb(err)
           }
           const r = this.resolvers[cid.codec]
+          if (!r) {
+            return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
+          }
           r.resolver.resolve(block, path, (err, result) => {
             if (err) {
               return cb(err)
@@ -199,6 +202,9 @@ class IPLDResolver {
 
     options.hashAlg = options.hashAlg || 'sha2-256'
     const r = this.resolvers[options.format]
+    if (!r) {
+      return callback(new Error('No resolver found for codec "' + options.format + '"'))
+    }
     // TODO add support for different hash funcs in the utils of
     // each format (just really needed for CBOR for now, really
     // r.util.cid(node1, hashAlg, (err, cid) => {
@@ -224,13 +230,18 @@ class IPLDResolver {
     if (!options.recursive) {
       p = pullDeferSource()
       const r = this.resolvers[cid.codec]
+      if (!r) {
+        p.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
+        return p
+      }
 
       waterfall([
         (cb) => this.bs.get(cid, cb),
         (block, cb) => r.resolver.tree(block, cb)
       ], (err, paths) => {
         if (err) {
-          return p.abort(err)
+          p.abort(err)
+          return p
         }
         p.resolve(pull.values(paths))
       })
@@ -252,7 +263,12 @@ class IPLDResolver {
           }
 
           const deferred = pullDeferSource()
-          const r = this.resolvers[el.cid.codec]
+          const cid = el.cid
+          const r = this.resolvers[cid.codec]
+          if (!r) {
+            deferred.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
+            return deferred
+          }
 
           waterfall([
             (cb) => this.bs.get(el.cid, cb),
@@ -271,7 +287,8 @@ class IPLDResolver {
             })
           ], (err, paths) => {
             if (err) {
-              return deferred.abort(err)
+              deferred.abort(err)
+              return deferred
             }
 
             deferred.resolve(pull.values(paths.map((p) => {
@@ -324,6 +341,9 @@ class IPLDResolver {
 
   _get (cid, callback) {
     const r = this.resolvers[cid.codec]
+    if (!r) {
+      return callback(new Error('No resolver found for codec "' + cid.codec + '"'))
+    }
 
     waterfall([
       (cb) => this.bs.get(cid, cb),
@@ -346,6 +366,10 @@ class IPLDResolver {
     callback = callback || noop
 
     const r = this.resolvers[cid.codec]
+    if (!r) {
+      return callback(new Error('No resolver found for codec "' + cid.codec + '"'))
+    }
+
     waterfall([
       (cb) => r.util.serialize(node, cb),
       (buf, cb) => this.bs.put(new Block(buf, cid), cb)
