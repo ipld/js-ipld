@@ -203,9 +203,7 @@ class IPLDResolver {
     // each format (just really needed for CBOR for now, really
     // r.util.cid(node1, hashAlg, (err, cid) => {
     r.util.cid(node, (err, cid) => {
-      if (err) {
-        return callback(err)
-      }
+      if (err) { return callback(err) }
 
       this._put(cid, node, callback)
     })
@@ -346,6 +344,7 @@ class IPLDResolver {
     callback = callback || noop
 
     const r = this.resolvers[cid.codec]
+
     waterfall([
       (cb) => r.util.serialize(node, cb),
       (buf, cb) => this.bs.put(new Block(buf, cid), cb)
