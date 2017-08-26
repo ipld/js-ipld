@@ -33,11 +33,12 @@
   "license": "MIT",
   "devDependencies": {
     "aegir": "^11.0.2",
-    "chai": "^4.1.0",
+    "chai": "^4.1.1",
     "dirty-chai": "^2.0.1",
     "eth-hash-to-cid": "^0.1.0",
     "ethereumjs-block": "^1.6.0",
     "lodash": "^4.17.4",
+    "multihashing": "^0.3.2",
     "ncp": "^2.0.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.1",
@@ -57,7 +58,7 @@
     "lodash.flatten": "^4.4.0",
     "lodash.includes": "^4.3.0",
     "memdown": "^1.2.4",
-    "multihashes": "~0.4.5",
+    "multihashes": "~0.4.8",
     "pull-sort": "^1.0.1",
     "pull-stream": "^3.6.0",
     "pull-traverse": "^1.0.3"
