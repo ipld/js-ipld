@@ -40,6 +40,7 @@ describe('Browser', () => {
   require('./basics')(repo)
   require('./ipld-dag-pb')(repo)
   require('./ipld-dag-cbor')(repo)
+  require('./ipld-git')(repo)
   require('./ipld-eth-block')(repo)
   require('./ipld-eth-star')(repo)
   require('./ipld-all')

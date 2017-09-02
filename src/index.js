@@ -16,6 +16,7 @@ const MemoryStore = require('interface-datastore').MemoryDatastore
 
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
+const ipldGit = require('ipld-git')
 const ipldEthAccountSnapshot = require('ipld-eth-star').ethAccountSnapshot
 const ipldEthBlock = require('ipld-eth-star').ethBlock
 const ipldEthBlockList = require('ipld-eth-star').ethBlockList
@@ -55,7 +56,7 @@ class IPLDResolver {
       }
     }
 
-    // Support by default dag-pb, dag-cbor, and eth-*
+    // Support by default dag-pb, dag-cbor, git, and eth-*
     this.support.add(dagPB.resolver.multicodec,
                      dagPB.resolver,
                      dagPB.util)
@@ -63,6 +64,10 @@ class IPLDResolver {
     this.support.add(dagCBOR.resolver.multicodec,
                      dagCBOR.resolver,
                      dagCBOR.util)
+
+    this.support.add(ipldGit.resolver.multicodec,
+                     ipldGit.resolver,
+                     ipldGit.util)
 
     this.support.add(ipldEthAccountSnapshot.resolver.multicodec,
                      ipldEthAccountSnapshot.resolver,
