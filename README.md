@@ -39,9 +39,9 @@
 ```js
 const Resolver = require('ipld-resolver')
 
-// pass an optional blockService, if no blockService is passed,
-// one is created in memory.
-const Resolver = new Resolver(blockService)
+// You need to create and pass an ipfs-block-service instance
+// https://github.com/ipfs/js-ipfs-block-service
+const Resolver = new Resolver(<ipfs-block-service instance>)
 ```
 
 ## API
