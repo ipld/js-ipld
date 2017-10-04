@@ -6,7 +6,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
-const ipldEthBlock = require('ipld-eth-star').ethBlock
+const ipldEthBlock = require('ipld-ethereum').ethBlock
 const EthBlockHeader = require('ethereumjs-block/header')
 const series = require('async/series')
 const each = require('async/each')
