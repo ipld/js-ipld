@@ -26,7 +26,6 @@ describe('Node.js', () => {
     ], done)
   })
 
-  require('./ipld-bin')
   require('./basics')(repo)
   require('./ipld-dag-pb')(repo)
   require('./ipld-dag-cbor')(repo)
