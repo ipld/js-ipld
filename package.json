@@ -1,6 +1,6 @@
 {
   "name": "ipld-resolver",
-  "version": "0.12.1",
+  "version": "0.13.2",
   "description": "IPLD Resolver Implementation in JavaScript",
   "main": "src/index.js",
   "pre-commit": [
@@ -33,10 +33,10 @@
   "license": "MIT",
   "devDependencies": {
     "aegir": "^11.0.2",
-    "chai": "^4.0.2",
+    "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",
     "eth-hash-to-cid": "^0.1.0",
-    "ethereumjs-block": "^1.5.1",
+    "ethereumjs-block": "^1.6.0",
     "lodash": "^4.17.4",
     "ncp": "^2.0.0",
     "pre-commit": "^1.2.2",
@@ -46,18 +46,19 @@
   "dependencies": {
     "async": "^2.5.0",
     "cids": "~0.5.1",
-    "interface-datastore": "^0.2.2",
+    "interface-datastore": "^0.3.0",
     "ipfs-block": "~0.6.0",
-    "ipfs-block-service": "~0.10.0",
-    "ipfs-repo": "~0.15.0",
+    "ipfs-block-service": "~0.12.0",
+    "ipfs-repo": "~0.17.0",
     "ipld-dag-cbor": "~0.11.1",
-    "ipld-dag-pb": "~0.11.0",
+    "ipld-dag-pb": "~0.11.2",
     "ipld-eth-star": "^1.4.1",
+    "ipld-git": "^0.1.0",
     "is-ipfs": "~0.3.0",
     "lodash.flatten": "^4.4.0",
     "lodash.includes": "^4.3.0",
-    "memdown": "^1.2.4",
-    "multihashes": "~0.4.5",
+    "memdown": "^1.2.7",
+    "multihashes": "~0.4.9",
     "pull-sort": "^1.0.1",
     "pull-stream": "^3.6.0",
     "pull-traverse": "^1.0.3"
@@ -71,6 +72,7 @@
     "Victor Bjelkholm <victorbjelkholm@gmail.com>",
     "greenkeeperio-bot <support@greenkeeper.io>",
     "kumavis <kumavis@users.noreply.github.com>",
-    "wanderer <mjbecze@gmail.com>"
+    "wanderer <mjbecze@gmail.com>",
+    "Łukasz Magiera <magik6k@users.noreply.github.com>"
   ]
 }
