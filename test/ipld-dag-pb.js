@@ -30,21 +30,21 @@ module.exports = (repo) => {
 
       series([
         (cb) => {
-          dagPB.DAGNode.create(new Buffer('I am 1'), (err, node) => {
+          dagPB.DAGNode.create(Buffer.from('I am 1'), (err, node) => {
             expect(err).to.not.exist()
             node1 = node
             cb()
           })
         },
         (cb) => {
-          dagPB.DAGNode.create(new Buffer('I am 2'), (err, node) => {
+          dagPB.DAGNode.create(Buffer.from('I am 2'), (err, node) => {
             expect(err).to.not.exist()
             node2 = node
             cb()
           })
         },
         (cb) => {
-          dagPB.DAGNode.create(new Buffer('I am 3'), (err, node) => {
+          dagPB.DAGNode.create(Buffer.from('I am 3'), (err, node) => {
             expect(err).to.not.exist()
             node3 = node
             cb()
@@ -190,7 +190,7 @@ module.exports = (repo) => {
       it('resolver.get value within 1st node scope', (done) => {
         resolver.get(cid1, 'Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(new Buffer('I am 1'))
+          expect(result.value).to.eql(Buffer.from('I am 1'))
           done()
         })
       })
@@ -198,7 +198,7 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(new Buffer('I am 1'))
+          expect(result.value).to.eql(Buffer.from('I am 1'))
           done()
         })
       })
@@ -206,7 +206,7 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(new Buffer('I am 1'))
+          expect(result.value).to.eql(Buffer.from('I am 1'))
           done()
         })
       })

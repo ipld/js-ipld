@@ -9,7 +9,7 @@ const os = require('os')
 
 describe('Node.js', () => {
   const repoExample = process.cwd() + '/test/example-repo'
-  const repoTests = os.tmpDir() + '/t-r-' + Date.now()
+  const repoTests = os.tmpdir() + '/t-r-' + Date.now()
   const repo = new IPFSRepo(repoTests)
 
   before((done) => {

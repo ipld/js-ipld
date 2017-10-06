@@ -59,48 +59,48 @@ class IPLDResolver {
 
     // Support by default dag-pb, dag-cbor, git, and eth-*
     this.support.add(dagPB.resolver.multicodec,
-                     dagPB.resolver,
-                     dagPB.util)
+      dagPB.resolver,
+      dagPB.util)
 
     this.support.add(dagCBOR.resolver.multicodec,
-                     dagCBOR.resolver,
-                     dagCBOR.util)
+      dagCBOR.resolver,
+      dagCBOR.util)
 
     this.support.add(ipldGit.resolver.multicodec,
-                     ipldGit.resolver,
-                     ipldGit.util)
+      ipldGit.resolver,
+      ipldGit.util)
 
     this.support.add(ipldEthAccountSnapshot.resolver.multicodec,
-                     ipldEthAccountSnapshot.resolver,
-                     ipldEthAccountSnapshot.util)
+      ipldEthAccountSnapshot.resolver,
+      ipldEthAccountSnapshot.util)
 
     this.support.add(ipldEthBlock.resolver.multicodec,
-                     ipldEthBlock.resolver,
-                     ipldEthBlock.util)
+      ipldEthBlock.resolver,
+      ipldEthBlock.util)
 
     this.support.add(ipldEthBlockList.resolver.multicodec,
-                     ipldEthBlockList.resolver,
-                     ipldEthBlockList.util)
+      ipldEthBlockList.resolver,
+      ipldEthBlockList.util)
 
     this.support.add(ipldEthStateTrie.resolver.multicodec,
-                     ipldEthStateTrie.resolver,
-                     ipldEthStateTrie.util)
+      ipldEthStateTrie.resolver,
+      ipldEthStateTrie.util)
 
     this.support.add(ipldEthStorageTrie.resolver.multicodec,
-                     ipldEthStorageTrie.resolver,
-                     ipldEthStorageTrie.util)
+      ipldEthStorageTrie.resolver,
+      ipldEthStorageTrie.util)
 
     this.support.add(ipldEthTx.resolver.multicodec,
-                     ipldEthTx.resolver,
-                     ipldEthTx.util)
+      ipldEthTx.resolver,
+      ipldEthTx.util)
 
     this.support.add(ipldEthTxTrie.resolver.multicodec,
-                     ipldEthTxTrie.resolver,
-                     ipldEthTxTrie.util)
+      ipldEthTxTrie.resolver,
+      ipldEthTxTrie.util)
 
     this.support.add(ipldRaw.resolver.multicodec,
-                     ipldRaw.resolver,
-                     ipldRaw.util)
+      ipldRaw.resolver,
+      ipldRaw.util)
   }
 
   get (cid, path, options, callback) {

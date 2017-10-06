@@ -36,7 +36,7 @@ module.exports = (repo) => {
 
       series([
         (cb) => {
-          blobNode = new Buffer('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
+          blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
 
           ipldGit.util.cid(blobNode, (err, cid) => {
             expect(err).to.not.exist()
