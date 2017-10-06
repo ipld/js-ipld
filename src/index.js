@@ -17,13 +17,13 @@ const MemoryStore = require('interface-datastore').MemoryDatastore
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const ipldGit = require('ipld-git')
-const ipldEthAccountSnapshot = require('ipld-eth-star').ethAccountSnapshot
-const ipldEthBlock = require('ipld-eth-star').ethBlock
-const ipldEthBlockList = require('ipld-eth-star').ethBlockList
-const ipldEthStateTrie = require('ipld-eth-star').ethStateTrie
-const ipldEthStorageTrie = require('ipld-eth-star').ethStorageTrie
-const ipldEthTx = require('ipld-eth-star').ethTx
-const ipldEthTxTrie = require('ipld-eth-star').ethTxTrie
+const ipldEthAccountSnapshot = require('ipld-ethereum').ethAccountSnapshot
+const ipldEthBlock = require('ipld-ethereum').ethBlock
+const ipldEthBlockList = require('ipld-ethereum').ethBlockList
+const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie
+const ipldEthStorageTrie = require('ipld-ethereum').ethStorageTrie
+const ipldEthTx = require('ipld-ethereum').ethTx
+const ipldEthTxTrie = require('ipld-ethereum').ethTxTrie
 const ipldRaw = require('ipld-raw')
 
 function noop () {}

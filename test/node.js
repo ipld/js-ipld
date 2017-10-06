@@ -31,6 +31,6 @@ describe('Node.js', () => {
   require('./ipld-dag-cbor')(repo)
   require('./ipld-git')(repo)
   require('./ipld-eth-block')(repo)
-  require('./ipld-eth-star')(repo)
+  require('./ipld-eth')(repo)
   require('./ipld-all')
 })
