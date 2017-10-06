@@ -54,7 +54,7 @@
     "ipld-dag-pb": "~0.11.2",
     "ipld-ethereum": "^1.4.2",
     "ipld-git": "^0.1.0",
-    "ipld-raw": "^1.0.5",
+    "ipld-raw": "^1.0.6",
     "is-ipfs": "~0.3.2",
     "lodash.flatten": "^4.4.0",
     "lodash.includes": "^4.3.0",
