@@ -36,7 +36,7 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
       // choosing a format that is not supported
-      const cid = new CID(1, 'base1', multihash.encode(new Buffer('abcd', 'hex'), 'sha1'))
+      const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       r.get(cid, '/', {}, (err, result) => {
         expect(err).to.exist()
         expect(err.message).to.eql('No resolver found for codec "base1"')
@@ -48,7 +48,7 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
       // choosing a format that is not supported
-      const cid = new CID(1, 'base1', multihash.encode(new Buffer('abcd', 'hex'), 'sha1'))
+      const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       r.get(cid, (err, result) => {
         expect(err).to.exist()
         expect(err.message).to.eql('No resolver found for codec "base1"')
@@ -71,7 +71,7 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
       // choosing a format that is not supported
-      const cid = new CID(1, 'base1', multihash.encode(new Buffer('abcd', 'hex'), 'sha1'))
+      const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       r._put(cid, null, (err, result) => {
         expect(err).to.exist()
         expect(err.message).to.eql('No resolver found for codec "base1"')
@@ -83,7 +83,7 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
       // choosing a format that is not supported
-      const cid = new CID(1, 'base1', multihash.encode(new Buffer('abcd', 'hex'), 'sha1'))
+      const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       pull(
         r.treeStream(cid, '/', {}),
         pull.collect(function (err) {

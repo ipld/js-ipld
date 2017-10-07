@@ -31,7 +31,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
       (cb) => IPLDResolver.inMemory(cb),
       (res, cb) => {
         resolver = res
-        dagPB.DAGNode.create(new Buffer('I am inside a Protobuf'), cb)
+        dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'), cb)
       },
       (node, cb) => {
         nodePb = node
@@ -62,7 +62,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   it('resolve through different formats', (done) => {
     resolver.get(cidCbor, 'pb/Data', (err, result) => {
       expect(err).to.not.exist()
-      expect(result.value).to.eql(new Buffer('I am inside a Protobuf'))
+      expect(result.value).to.eql(Buffer.from('I am inside a Protobuf'))
       done()
     })
   })
