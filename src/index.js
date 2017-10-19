@@ -1,5 +1,6 @@
 'use strict'
 
+const EventEmitter = require('events')
 const Block = require('ipfs-block')
 const pull = require('pull-stream')
 const CID = require('cids')
@@ -33,6 +34,8 @@ class IPLDResolver {
     if (!blockService) {
       throw new Error('Missing blockservice')
     }
+
+    this.events = new EventEmitter()
 
     this.bs = blockService
     this.resolvers = {}
@@ -139,10 +142,12 @@ class IPLDResolver {
         // get block
         // use local resolver
         // update path value
+        this.events.emit('node:before', cid)
         this.bs.get(cid, (err, block) => {
           if (err) {
             return cb(err)
           }
+          this.events.emit('node:resolved', cid)
           const r = this.resolvers[cid.codec]
           if (!r) {
             return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
@@ -151,8 +156,21 @@ class IPLDResolver {
             if (err) {
               return cb(err)
             }
+            const pathConsumed = path.slice(0, -result.remainderPath.length)
             value = result.value
             path = result.remainderPath
+
+            // prepare for event
+            const endReached = !path || path === '' || path === '/'
+            const isTerminal = value && !value['/']
+            if ((endReached && isTerminal) || options.localResolve) return cb()
+            // continue traversing
+            const oldNode = cid
+            cid = (value && value['/']) ? new CID(value['/']) : undefined
+            if (cid) {
+              this.events.emit('edge', { from: oldNode, to: cid, label: pathConsumed })
+            }
+
             cb()
           })
         })
