@@ -4,8 +4,7 @@
   "description": "IPLD Resolver Implementation in JavaScript",
   "main": "src/index.js",
   "pre-commit": [
-    "lint",
-    "test"
+    "lint"
   ],
   "scripts": {
     "lint": "aegir lint",
@@ -46,10 +45,10 @@
   "dependencies": {
     "async": "^2.5.0",
     "cids": "~0.5.2",
-    "interface-datastore": "^0.3.1",
+    "interface-datastore": "^0.4.1",
     "ipfs-block": "~0.6.0",
     "ipfs-block-service": "~0.12.0",
-    "ipfs-repo": "~0.17.0",
+    "ipfs-repo": "^0.18.0",
     "ipld-dag-cbor": "~0.11.1",
     "ipld-dag-pb": "~0.11.2",
     "ipld-ethereum": "^1.4.3",
