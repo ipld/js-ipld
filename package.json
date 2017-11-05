@@ -10,9 +10,9 @@
   "scripts": {
     "lint": "aegir lint",
     "build": "aegir build",
-    "test": "aegir test",
-    "test:node": "aegir test --target node",
-    "test:browser": "aegir test --target browser",
+    "test": "aegir test --timeout 10000",
+    "test:node": "aegir test --target node --timeout 10000",
+    "test:browser": "aegir test --target browser --timeout 10000",
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
