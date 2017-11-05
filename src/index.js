@@ -7,6 +7,7 @@ const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
+const osPathSep = require('path').sep
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const map = require('async/map')
@@ -120,7 +121,7 @@ class IPLDResolver {
     if (typeof path === 'string') {
       path = joinPath('/', path)
         .substr(1)
-        .split(path.sep)
+        .split(osPathSep)
         .join('/')
     }
 
