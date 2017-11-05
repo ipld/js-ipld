@@ -4,7 +4,8 @@
   "description": "IPLD Resolver Implementation in JavaScript",
   "main": "src/index.js",
   "pre-commit": [
-    "lint"
+    "lint",
+    "test"
   ],
   "scripts": {
     "lint": "aegir lint",
