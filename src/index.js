@@ -7,6 +7,7 @@ const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
+const osPathSep = require('path').sep
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const map = require('async/map')
@@ -116,8 +117,12 @@ class IPLDResolver {
 
     // this removes occurrences of ./, //, ../
     // makes sure that path never starts with ./ or /
+    // path.join is OS specific. Need to convert back to POSIX format.
     if (typeof path === 'string') {
-      path = joinPath('/', path).substr(1)
+      path = joinPath('/', path)
+        .substr(1)
+        .split(osPathSep)
+        .join('/')
     }
 
     if (path === '' || !path) {

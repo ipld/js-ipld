@@ -21,7 +21,8 @@ module.exports = (repo) => {
 
     let ethObjs
 
-    before((done) => {
+    before(function (done) {
+      this.timeout(10 * 1000)
       const bs = new BlockService(repo)
       resolver = new IPLDResolver(bs)
 
