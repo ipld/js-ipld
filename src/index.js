@@ -220,7 +220,9 @@ class IPLDResolver {
     if (!r) {
       return callback(new Error('No resolver found for codec "' + options.format + '"'))
     }
-
+    // TODO add support for different hash funcs in the utils of
+    // each format (just really needed for CBOR for now, really
+    // r.util.cid(node1, hashAlg, (err, cid) => {
     r.util.cid(node, (err, cid) => {
       if (err) {
         return callback(err)
