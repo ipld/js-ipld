@@ -1,3 +1,13 @@
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/ipld/js-ipld-resolver/compare/v0.13.4...v0.14.0) (2017-11-06)
+
+
+### Bug Fixes
+
+* Windows interop ([#104](https://github.com/ipld/js-ipld-resolver/issues/104)) ([f2d524b](https://github.com/ipld/js-ipld-resolver/commit/f2d524b))
+
+
+
 <a name="0.13.4"></a>
 ## [0.13.4](https://github.com/ipld/js-ipld-resolver/compare/v0.13.3...v0.13.4) (2017-10-11)
 
