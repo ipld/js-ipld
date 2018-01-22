@@ -60,6 +60,7 @@
     "lodash.includes": "^4.3.0",
     "memdown": "^1.4.1",
     "multihashes": "~0.4.12",
+    "pull-defer": "^0.2.2",
     "pull-sort": "^1.0.1",
     "pull-stream": "^3.6.1",
     "pull-traverse": "^1.0.3"
