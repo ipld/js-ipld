@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="libp2p.io"><img width="250" src="https://ipld.io/img/ipld-logo.png" alt="libp2p hex logo" /></a>
+  <a href="libp2p.io"><img width="250" src="https://ipld.io/img/ipld-logo.png" alt="ipld hex logo" /></a>
 </h1>
 
 <h3 align="center">The JavaScript implementation of the IPLD, InterPlanetary Linked-Data</h3>
