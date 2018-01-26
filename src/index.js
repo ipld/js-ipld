@@ -18,6 +18,7 @@ const MemoryStore = require('interface-datastore').MemoryDatastore
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
 const ipldGit = require('ipld-git')
+const ipldBitcoin = require('ipld-bitcoin')
 const ipldEthAccountSnapshot = require('ipld-ethereum').ethAccountSnapshot
 const ipldEthBlock = require('ipld-ethereum').ethBlock
 const ipldEthBlockList = require('ipld-ethereum').ethBlockList
@@ -70,6 +71,10 @@ class IPLDResolver {
     this.support.add(ipldGit.resolver.multicodec,
       ipldGit.resolver,
       ipldGit.util)
+
+    this.support.add(ipldBitcoin.resolver.multicodec,
+      ipldBitcoin.resolver,
+      ipldBitcoin.util)
 
     this.support.add(ipldEthAccountSnapshot.resolver.multicodec,
       ipldEthAccountSnapshot.resolver,
