@@ -1,27 +1,25 @@
-<h1 align="center">
-  <a href="libp2p.io"><img width="250" src="https://ipld.io/img/ipld-logo.png" alt="ipld hex logo" /></a>
-</h1>
+<div align="center">
+  <a href="https://ipld.io"><img src="https://ipld.io/img/ipld-logo.png" alt="IPLD hex logo" /></a>
+</div>
 
-<h3 align="center">The JavaScript implementation of the IPLD, InterPlanetary Linked-Data</h3>
+# The JavaScript implementation of the IPLD
 
-<p align="center">
-  <a href="http://protocol.ai"><img src="https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square" /></a>
-  <a href="http://ipld.io/"><img src="https://img.shields.io/badge/project-ipld-blue.svg?style=flat-square" /></a>
-  <a href="http://webchat.freenode.net/?channels=%23ipfs"><img src="https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square" /></a>
-  <a href="https://waffle.io/ipld/js-ipld"><img src="https://img.shields.io/badge/pm-waffle-blue.svg?style=flat-square" /></a>
-</p>
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
+[![](https://img.shields.io/badge/project-ipld-blue.svg?style=flat-square)](http://ipld.io/)
+[![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
+[![]([https://img.shields.io/badge/pm-waffle-blue.svg?style=flat-square")](https://waffle.io/ipld/js-ipld)
 
-<p align="center">
-  <a href="https://travis-ci.org/ipld/js-ipld"><img src="https://travis-ci.org/ipld/js-ipld.svg?branch=master" /></a>
-  <a href="https://circleci.com/gh/ipld/js-ipld"><img src="https://circleci.com/gh/ipld/js-ipld.svg?style=svg" /></a>
-  <a href="https://coveralls.io/github/ipld/js-ipld?branch=master"><img src="https://coveralls.io/repos/github/ipld/js-ipld/badge.svg?branch=master"></a>
-  <br>
-  <a href="https://david-dm.org/ipld/js-ipld"><img src="https://david-dm.org/ipld/js-ipld.svg?style=flat-square" /></a>
-  <a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"></a>
-  <a href=""><img src="https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square" /></a>
-  <a href=""><img src="https://img.shields.io/badge/Node.js-%3E%3D6.0.0-orange.svg?style=flat-square" /></a>
-  <br>
-</p>
+[![Travis CI](https://travis-ci.org/ipld/js-ipld.svg?branch=master)](https://travis-ci.org/ipld/js-ipld)
+[![Circle CI](https://circleci.com/gh/ipld/js-ipld.svg?style=svg)]("https://circleci.com/gh/ipld/js-ipld)
+[![Coverage Status](https://coveralls.io/repos/github/ipld/js-ipld/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld?branch=master)
+
+
+[![Dependency Status](https://david-dm.org/ipld/js-ipld.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+![](https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square)
+![](https://img.shields.io/badge/Node.js-%3E%3D6.0.0-orange.svg?style=flat-square)
+
+> The JavaScript implementation of the IPLD, InterPlanetary Linked-Data
 
 ## Table of Contents
 
