@@ -6,8 +6,7 @@ const CID = require('cids')
 const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
 const BlockService = require('ipfs-block-service')
-const joinPath = require('path').join
-const osPathSep = require('path').sep
+const path = require('path')
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const map = require('async/map')
@@ -26,6 +25,9 @@ const ipldEthStorageTrie = require('ipld-ethereum').ethStorageTrie
 const ipldEthTx = require('ipld-ethereum').ethTx
 const ipldEthTxTrie = require('ipld-ethereum').ethTxTrie
 const ipldRaw = require('ipld-raw')
+
+// Always use POSIX format (to avoid Windows-specific issues)
+const joinPath = path.posix ? path.posix.join : path.join
 
 function noop () {}
 
@@ -117,12 +119,8 @@ class IPLDResolver {
 
     // this removes occurrences of ./, //, ../
     // makes sure that path never starts with ./ or /
-    // path.join is OS specific. Need to convert back to POSIX format.
     if (typeof path === 'string') {
-      path = joinPath('/', path)
-        .substr(1)
-        .split(osPathSep)
-        .join('/')
+      path = joinPath('/', path).substr(1)
     }
 
     if (path === '' || !path) {
