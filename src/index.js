@@ -27,6 +27,7 @@ const ipldEthStorageTrie = require('ipld-ethereum').ethStorageTrie
 const ipldEthTx = require('ipld-ethereum').ethTx
 const ipldEthTxTrie = require('ipld-ethereum').ethTxTrie
 const ipldRaw = require('ipld-raw')
+const ipldZcash = require('ipld-zcash')
 
 function noop () {}
 
@@ -107,6 +108,10 @@ class IPLDResolver {
     this.support.add(ipldRaw.resolver.multicodec,
       ipldRaw.resolver,
       ipldRaw.util)
+
+    this.support.add(ipldZcash.resolver.multicodec,
+      ipldZcash.resolver,
+      ipldZcash.util)
   }
 
   get (cid, path, options, callback) {
