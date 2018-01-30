@@ -33,5 +33,6 @@ describe('Node.js', () => {
   require('./ipld-eth-block')(repo)
   require('./ipld-eth')(repo)
   require('./ipld-bitcoin')(repo)
+  require('./ipld-zcash')(repo)
   require('./ipld-all')
 })
