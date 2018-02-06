@@ -152,7 +152,7 @@ class IPLDResolver {
           if (!r) {
             return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
           }
-          r.resolver.resolve(block, path, (err, result) => {
+          r.resolver.resolve(block.data, path, (err, result) => {
             if (err) {
               return cb(err)
             }
@@ -252,7 +252,7 @@ class IPLDResolver {
 
       waterfall([
         (cb) => this.bs.get(cid, cb),
-        (block, cb) => r.resolver.tree(block, cb)
+        (block, cb) => r.resolver.tree(block.data, cb)
       ], (err, paths) => {
         if (err) {
           p.abort(err)
@@ -287,12 +287,12 @@ class IPLDResolver {
 
           waterfall([
             (cb) => this.bs.get(el.cid, cb),
-            (block, cb) => r.resolver.tree(block, (err, paths) => {
+            (block, cb) => r.resolver.tree(block.data, (err, paths) => {
               if (err) {
                 return cb(err)
               }
               map(paths, (p, cb) => {
-                r.resolver.isLink(block, p, (err, link) => {
+                r.resolver.isLink(block.data, p, (err, link) => {
                   if (err) {
                     return cb(err)
                   }
