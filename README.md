@@ -19,6 +19,10 @@
 
 > The JavaScript implementation of the IPLD, InterPlanetary Linked-Data
 
+## Project Status
+
+[![Throughput Graph](https://graphs.waffle.io/ipld/js-ipld/throughput.svg)](https://waffle.io/ipld/js-ipld/metrics/throughput)
+
 ## Table of Contents
 
 - [Install](#install)
