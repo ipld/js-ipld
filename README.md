@@ -21,7 +21,7 @@
 
 ## Project Status
 
-We've come a long way, but this project is still in Alpha, lots of development is happening, API might change, beware of the Dragons 🐉..
+We've come a long way, but this project is still in Alpha, lots of development is happening, API might change, beware of the Dragons 🐉.
 
 Want to get started? Check our examples folder. You can check the development status at the [js-ipld Waffle Board](https://waffle.io/ipld/js-ipld).
 
