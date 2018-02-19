@@ -19,6 +19,14 @@
 
 > The JavaScript implementation of the IPLD, InterPlanetary Linked-Data
 
+## Project Status
+
+We've come a long way, but this project is still in Alpha, lots of development is happening, API might change, beware of the Dragons 🐉.
+
+Want to get started? Check our examples folder. You can check the development status at the [js-ipld Waffle Board](https://waffle.io/ipld/js-ipld).
+
+[![Throughput Graph](https://graphs.waffle.io/ipld/js-ipld/throughput.svg)](https://waffle.io/ipld/js-ipld/metrics/throughput)
+
 ## Table of Contents
 
 - [Install](#install)
