@@ -1,3 +1,43 @@
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/ipld/js-ipld-resolver/compare/v0.14.1...v0.15.0) (2018-02-26)
+
+
+### Bug Fixes
+
+* resolvers expect binary data ([03eaa25](https://github.com/ipld/js-ipld-resolver/commit/03eaa25))
+
+
+### Chores
+
+* Rename package from `ipld-resolver` to `ipld` ([8b82a49](https://github.com/ipld/js-ipld-resolver/commit/8b82a49)), closes [#116](https://github.com/ipld/js-ipld-resolver/issues/116)
+
+
+### Features
+
+* Add support for Bitcoin ([7c4bc2c](https://github.com/ipld/js-ipld-resolver/commit/7c4bc2c))
+* Add support for Zcash ([3e3ed35](https://github.com/ipld/js-ipld-resolver/commit/3e3ed35))
+
+
+### BREAKING CHANGES
+
+* All packages that depend on `ipld-resolver`
+need to change their dependency.
+
+Within your package that depends on `ipld-resolver` do:
+
+    npm uninstall ipld-resolver
+    npm intall ipld
+
+Then search for all imports of `ipld-resolver` and change from
+
+    const IPLDResolver = require('ipld-resolver')
+
+to
+
+    const Ipld = require('ipld')
+
+
+
 <a name="0.14.1"></a>
 ## [0.14.1](https://github.com/ipld/js-ipld-resolver/compare/v0.14.0...v0.14.1) (2017-11-07)
 
