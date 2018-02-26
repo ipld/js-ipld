@@ -1,5 +1,5 @@
 {
-  "name": "ipld-resolver",
+  "name": "ipld",
   "version": "0.14.1",
   "description": "IPLD Resolver Implementation in JavaScript",
   "main": "src/index.js",
