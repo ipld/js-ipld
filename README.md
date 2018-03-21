@@ -32,25 +32,27 @@ Want to get started? Check our examples folder. You can check the development st
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-  - [IPLD Resolver](#ipldresolver)
-    - [`.put(node, options, callback)`](#putnode-cb)
-    - [`.get(cid [, path] [, options], callback)`](#getcid-cb)
-    - [`.remove(cid, callback)`](#removecid-cb)
-    - [`.support.add(multicodec, formatResolver, formatUtil)`]()
-    - [`.support.rm(multicodec)`]()
+  - IPLD Resolver
+    - [`.put(node, options, callback)`](#putnode-options-callback)
+    - [`.get(cid [, path] [, options], callback)`](#getcid--path--options-callback)
+    - [`.getStream(cid [, path] [, options])`](#getstreamcid--path--options)
+    - [`.treeStream(cid [, path] [, options])`](#treestreamcid--path--options)
+    - [`.remove(cid, callback)`](#removecid-callback)
+    - [`.support.add(multicodec, formatResolver, formatUtil)`](#supportaddmulticodec-formatresolver-formatutil)
+    - [`.support.rm(multicodec)`](#supportrmmulticodec)
 - [Contribute](#contribute)
 - [License](#license)
 
 ## Install
 
 ```bash
-> npm install --save ipld-resolver
+> npm install --save ipld
 ```
 
 ## Usage
 
 ```js
-const Resolver = require('ipld-resolver')
+const Resolver = require('ipld')
 
 // You need to create and pass an ipfs-block-service instance
 // https://github.com/ipfs/js-ipfs-block-service
