@@ -217,7 +217,10 @@ class IPLDResolver {
 
   put (node, options, callback) {
     if (typeof options === 'function') {
-      return setImmediate(() => callback(new Error('no options were passed')))
+      callback = options
+      return setImmediate(() => callback(
+        new Error('IPLDResolver.put requires options')
+      ))
     }
     callback = callback || noop
 
