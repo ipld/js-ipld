@@ -67,6 +67,16 @@ module.exports = (repo) => {
       })
     })
 
+    it('put - errors if no options', (done) => {
+      const bs = new BlockService(repo)
+      const r = new IPLDResolver(bs)
+      r.put(null, (err, result) => {
+        expect(err).to.exist()
+        expect(err.message).to.eql('IPLDResolver.put requires options')
+        done()
+      })
+    })
+
     it('_put - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver(bs)
