@@ -1,7 +1,7 @@
 {
   "name": "ipld",
   "version": "0.15.0",
-  "description": "IPLD Resolver Implementation in JavaScript",
+  "description": "The JavaScript Implementation of IPLD",
   "main": "src/index.js",
   "pre-push": [
     "lint",
