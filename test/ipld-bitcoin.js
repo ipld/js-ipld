@@ -109,7 +109,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(node1.version).to.eql(result.value.version)
+            expect(node1.version).to.eql(result[0].value.version)
             done()
           })
         })
@@ -125,7 +125,7 @@ module.exports = (repo) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist()
 
-          ipldBitcoin.util.cid(result.value, (err, cid) => {
+          ipldBitcoin.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -136,7 +136,8 @@ module.exports = (repo) => {
       it('value within 1st node scope', (done) => {
         resolver.get(cid1, 'version', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(1)
+          expect(result.length).to.eq(1)
+          expect(result[0].value).to.eql(1)
           done()
         })
       })
@@ -144,7 +145,8 @@ module.exports = (repo) => {
       it('value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'parent/version', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(1)
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql(1)
           done()
         })
       })
@@ -152,7 +154,8 @@ module.exports = (repo) => {
       it('value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'parent/parent/version', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(1)
+          expect(result.length).to.eq(3)
+          expect(result[2].value).to.eql(1)
           done()
         })
       })
@@ -162,7 +165,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(result.value.version).to.eql(1)
+            expect(result[0].value.version).to.eql(1)
             remove()
           })
         })

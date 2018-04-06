@@ -114,7 +114,8 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(node1.header.version).to.eql(result.value.header.version)
+            expect(result.length).to.eq(1)
+            expect(node1.header.version).to.eql(result[0].value.header.version)
             done()
           })
         })
@@ -129,8 +130,9 @@ module.exports = (repo) => {
       it('root path (same as get)', (done) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist()
+          expect(result.length).to.eq(1)
 
-          ipldZcash.util.cid(result.value, (err, cid) => {
+          ipldZcash.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -141,7 +143,8 @@ module.exports = (repo) => {
       it('value within 1st node scope', (done) => {
         resolver.get(cid1, 'version', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(1)
+          expect(result.length).to.eq(1)
+          expect(result[0].value).to.eql(1)
           done()
         })
       })
@@ -149,7 +152,8 @@ module.exports = (repo) => {
       it('value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'parent/version', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(1)
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql(1)
           done()
         })
       })
@@ -157,7 +161,8 @@ module.exports = (repo) => {
       it('value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'parent/parent/version', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(1)
+          expect(result.length).to.eq(3)
+          expect(result[2].value).to.eql(1)
           done()
         })
       })
@@ -167,7 +172,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(result.value.header.version).to.eql(1)
+            expect(result[0].value.header.version).to.eql(1)
             remove()
           })
         })

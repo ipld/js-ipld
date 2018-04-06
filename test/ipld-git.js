@@ -163,7 +163,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(blobCid, (err, result) => {
             expect(err).to.not.exist()
-            expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
+            expect(blobNode.toString('hex')).to.eql(result[0].value.toString('hex'))
             done()
           })
         })
@@ -178,8 +178,9 @@ module.exports = (repo) => {
       it('resolver.get root path', (done) => {
         resolver.get(blobCid, '/', (err, result) => {
           expect(err).to.not.exist()
+          expect(result.length).to.eq(1)
 
-          ipldGit.util.cid(result.value, (err, cid) => {
+          ipldGit.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(blobCid)
             done()
@@ -190,7 +191,8 @@ module.exports = (repo) => {
       it('value within 1st node scope', (done) => {
         resolver.get(commitCid, 'message', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('Initial commit\n')
+          expect(result.length).to.eq(1)
+          expect(result[0].value).to.eql('Initial commit\n')
           done()
         })
       })
@@ -198,7 +200,8 @@ module.exports = (repo) => {
       it('value within nested node scope (commit/tree)', (done) => {
         resolver.get(commitCid, 'tree/somefile/mode', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('100644')
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql('100644')
           done()
         })
       })
@@ -206,7 +209,8 @@ module.exports = (repo) => {
       it('value within nested node scope (commit/tree/blob)', (done) => {
         resolver.get(commitCid, 'tree/somefile/hash', (err, result) => {
           expect(err).to.not.exist()
-          expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
+          expect(result.length).to.eq(3)
+          expect(blobNode.toString('hex')).to.eql(result[2].value.toString('hex'))
           done()
         })
       })
@@ -214,7 +218,8 @@ module.exports = (repo) => {
       it('value within nested node scope (commit/commit/tree/blob)', (done) => {
         resolver.get(commit2Cid, 'parents/0/tree/somefile/hash', (err, result) => {
           expect(err).to.not.exist()
-          expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
+          expect(result.length).to.eq(4)
+          expect(blobNode.toString('hex')).to.eql(result[3].value.toString('hex'))
           done()
         })
       })
@@ -222,7 +227,8 @@ module.exports = (repo) => {
       it('value within nested node scope (tag/commit/commit/tree/blob)', (done) => {
         resolver.get(tagCid, 'object/parents/0/tree/somefile/hash', (err, result) => {
           expect(err).to.not.exist()
-          expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
+          expect(result.length).to.eq(5)
+          expect(blobNode.toString('hex')).to.eql(result[4].value.toString('hex'))
           done()
         })
       })
@@ -232,7 +238,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(blobCid, (err, result) => {
             expect(err).to.not.exist()
-            const node = result.value
+            const node = result[0].value
             expect(blobNode.toString('hex')).to.eql(node.toString('hex'))
             remove()
           })

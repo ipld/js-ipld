@@ -178,8 +178,9 @@ module.exports = (repo) => {
       it('resolver.get root path', (done) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist()
+          expect(result.length).to.eq(1)
 
-          dagPB.util.cid(result.value, (err, cid) => {
+          dagPB.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -190,7 +191,8 @@ module.exports = (repo) => {
       it('resolver.get value within 1st node scope', (done) => {
         resolver.get(cid1, 'Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(Buffer.from('I am 1'))
+          expect(result.length).to.eq(1)
+          expect(result[0].value).to.eql(Buffer.from('I am 1'))
           done()
         })
       })
@@ -198,7 +200,8 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(Buffer.from('I am 1'))
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql(Buffer.from('I am 1'))
           done()
         })
       })
@@ -206,7 +209,8 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'Links/1/Hash/Links/0/Hash/Data', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql(Buffer.from('I am 1'))
+          expect(result.length).to.eq(3)
+          expect(result[2].value).to.eql(Buffer.from('I am 1'))
           done()
         })
       })
@@ -214,8 +218,9 @@ module.exports = (repo) => {
       it('resolver.get with option localResolve: true', (done) => {
         resolver.get(cid3, 'Links/1/Hash/Links/0/Hash/Data', { localResolve: true }, (err, result) => {
           expect(err).to.not.exist()
-          expect(result.remainderPath).to.equal('Links/0/Hash/Data')
-          expect(result.value).to.eql({
+          expect(result.length).to.eq(1)
+          expect(result[0].remainderPath).to.equal('Links/0/Hash/Data')
+          expect(result[0].value).to.eql({
             '/': 'QmS149H7EbyMuZ2wtEF1sAd7gPwjj4rKAorweAjKMkxr8D'
           })
           done()

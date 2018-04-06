@@ -87,19 +87,19 @@ module.exports = (repo) => {
 
     describe('resolver.get', () => {
       it('block-to-block', (done) => {
-        resolver.get(ethObjs.child.cid, '/parent', (err, result) => {
+        resolver.get(ethObjs.child.cid, '/parent', {onlyNode: true}, (err, result) => {
           expect(err).to.not.exist()
-          expect(result.remainderPath).to.equal('')
-          expect(result.value.number.toString('hex')).to.equal('302516')
+          expect(result[0].remainderPath).to.equal('')
+          expect(result[0].value.number.toString('hex')).to.equal('302516')
           done()
         })
       })
 
       it('block-to-account resolve', (done) => {
-        resolver.get(ethObjs.child.cid, '/parent/state/0/0/0/0/1/7/2/7/8/a/1/e/6/e/9/6/3/5/e/1/a/3/f/1/1/e/b/0/2/2/d/a/1/f/5/7/e/a/0/0/4/d/8/5/2/d/9/d/1/9/4/2/d/4/3/6/0/8/5/4/0/4/7/1/nonce', (err, result) => {
+        resolver.get(ethObjs.child.cid, '/parent/state/0/0/0/0/1/7/2/7/8/a/1/e/6/e/9/6/3/5/e/1/a/3/f/1/1/e/b/0/2/2/d/a/1/f/5/7/e/a/0/0/4/d/8/5/2/d/9/d/1/9/4/2/d/4/3/6/0/8/5/4/0/4/7/1/nonce', {onlyNode: true}, (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value.toString('hex'), '03')
-          expect(result.remainderPath).to.equal('')
+          expect(result[0].value.toString('hex'), '03')
+          expect(result[0].remainderPath).to.equal('')
           done()
         })
       })

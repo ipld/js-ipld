@@ -96,9 +96,10 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
+            expect(result.length).to.eq(1)
             expect(node1.number.toString('hex')).to.eql('01')
-            expect(node1.raw).to.eql(result.value.raw)
-            expect(node1.hash()).to.eql(result.value.hash())
+            expect(node1.raw).to.eql(result[0].value.raw)
+            expect(node1.hash()).to.eql(result[0].value.hash())
             done()
           })
         })
@@ -113,8 +114,9 @@ module.exports = (repo) => {
       it('root path (same as get)', (done) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist()
+          expect(result.length).to.eq(1)
 
-          ipldEthBlock.util.cid(result.value, (err, cid) => {
+          ipldEthBlock.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -125,7 +127,8 @@ module.exports = (repo) => {
       it('value within 1st node scope', (done) => {
         resolver.get(cid1, 'number', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value.toString('hex')).to.eql('01')
+          expect(result.length).to.eq(1)
+          expect(result[0].value.toString('hex')).to.eql('01')
           done()
         })
       })
@@ -133,7 +136,8 @@ module.exports = (repo) => {
       it('value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'parent/number', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value.toString('hex')).to.eql('01')
+          expect(result.length).to.eq(2)
+          expect(result[1].value.toString('hex')).to.eql('01')
           done()
         })
       })
@@ -141,7 +145,9 @@ module.exports = (repo) => {
       it('value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'parent/parent/number', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value.toString('hex')).to.eql('01')
+          expect(err).to.not.exist()
+          expect(result.length).to.eq(3)
+          expect(result[2].value.toString('hex')).to.eql('01')
           done()
         })
       })
@@ -151,7 +157,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            const node = result.value
+            const node = result[0].value
             expect(node1.raw).to.eql(node.raw)
             expect(node1.hash()).to.eql(node.hash())
             remove()

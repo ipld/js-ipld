@@ -114,11 +114,26 @@ module.exports = (repo) => {
         }, done)
       })
 
+      it('resolver.getPullStream just CID', (done) => {
+        pull(resolver.getPullStream(cid1, null),
+          pull.collect((err, results) => {
+            expect(err).to.not.exist()
+            expect(results.length).to.eq(1)
+
+            dagCBOR.util.cid(results[0].value, (err, cid) => {
+              expect(err).to.not.exist()
+              expect(cid).to.eql(cid1)
+            })
+          }))
+        done()
+      })
+
       it('resolver.get just CID', (done) => {
-        resolver.get(cid1, (err, result) => {
+        resolver.get(cid1, (err, results) => {
+          expect(results.length).to.eq(1)
           expect(err).to.not.exist()
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
+          dagCBOR.util.cid(results[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -127,10 +142,11 @@ module.exports = (repo) => {
       })
 
       it('resolver.get root path', (done) => {
-        resolver.get(cid1, '/', (err, result) => {
+        resolver.get(cid1, '/', (err, results) => {
+          expect(results.length).to.eq(1)
           expect(err).to.not.exist()
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
+          dagCBOR.util.cid(results[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -141,8 +157,9 @@ module.exports = (repo) => {
       it('resolver.get relative path `.` (same as get /)', (done) => {
         resolver.get(cid1, '.', (err, result) => {
           expect(err).to.not.exist()
+          expect(result.length).to.eq(1)
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
+          dagCBOR.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -153,8 +170,9 @@ module.exports = (repo) => {
       it('resolver.get relative path `./` (same as get /)', (done) => {
         resolver.get(cid1, './', (err, result) => {
           expect(err).to.not.exist()
+          expect(result.length).to.eq(1)
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
+          dagCBOR.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -165,7 +183,8 @@ module.exports = (repo) => {
       it('resolver.get relative path `./one/someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, './one/someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql('I am 1')
           done()
         })
       })
@@ -173,7 +192,8 @@ module.exports = (repo) => {
       it('resolver.get relative path `one/./someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, 'one/./someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql('I am 1')
           done()
         })
       })
@@ -181,7 +201,8 @@ module.exports = (repo) => {
       it('resolver.get double slash at the beginning `//one/someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, '//one/someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql('I am 1')
           done()
         })
       })
@@ -189,7 +210,8 @@ module.exports = (repo) => {
       it('resolver.get double slash in the middle `one//someData` (same as get one/someData)', (done) => {
         resolver.get(cid2, 'one//someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql('I am 1')
           done()
         })
       })
@@ -197,7 +219,8 @@ module.exports = (repo) => {
       it('resolver.get value within 1st node scope', (done) => {
         resolver.get(cid1, 'someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
+          expect(result.length).to.eq(1)
+          expect(result[0].value).to.eql('I am 1')
           done()
         })
       })
@@ -205,7 +228,8 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (0 level)', (done) => {
         resolver.get(cid2, 'one', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql({
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql({
             someData: 'I am 1'
           })
           done()
@@ -215,7 +239,8 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (1 level)', (done) => {
         resolver.get(cid2, 'one/someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
+          expect(result.length).to.eq(2)
+          expect(result[1].value).to.eql('I am 1')
           done()
         })
       })
@@ -223,8 +248,9 @@ module.exports = (repo) => {
       it('resolver.get value within nested scope (2 levels)', (done) => {
         resolver.get(cid3, 'two/one/someData', (err, result) => {
           expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          expect(result.remainderPath).to.eql('')
+          expect(result.length).to.eq(3)
+          expect(result[2].value).to.eql('I am 1')
+          expect(result[2].remainderPath).to.eql('')
 
           done()
         })
@@ -306,7 +332,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(node1).to.eql(result.value)
+            expect(node1).to.eql(result[0].value)
             remove()
           })
         })

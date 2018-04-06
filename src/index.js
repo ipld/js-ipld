@@ -3,7 +3,6 @@
 const Block = require('ipfs-block')
 const pull = require('pull-stream')
 const CID = require('cids')
-const doUntil = require('async/doUntil')
 const IPFSRepo = require('ipfs-repo')
 const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
@@ -125,9 +124,28 @@ class IPLDResolver {
       options = {}
     }
 
+    if (!options) {
+      options = {}
+    }
+
+    pull(this.getPullStream(cid, path, options),
+      pull.reduce((arr, item) => {
+        if (!options.onlyNode) {
+          arr.push(item)
+        } else {
+          // replace existing entry
+          arr[0] = item
+        }
+        return arr
+      }, [], callback)
+    )
+  }
+
+  getPullStream (cid, path, options) {
     // this removes occurrences of ./, //, ../
     // makes sure that path never starts with ./ or /
     // path.join is OS specific. Need to convert back to POSIX format.
+
     if (typeof path === 'string') {
       path = joinPath('/', path)
         .substr(1)
@@ -135,67 +153,55 @@ class IPLDResolver {
         .join('/')
     }
 
+    let stop = false
     if (path === '' || !path) {
-      return this._get(cid, (err, node) => {
-        if (err) {
-          return callback(err)
-        }
-        callback(null, {
-          value: node,
-          remainderPath: ''
-        })
-      })
-    }
-
-    let value
-
-    doUntil(
-      (cb) => {
-        // get block
-        // use local resolver
-        // update path value
-        this.bs.get(cid, (err, block) => {
+      return function read (abort, cb) {
+        if (stop) return cb(stop)
+        this._get(cid, (err, node) => {
           if (err) {
             return cb(err)
           }
-          const r = this.resolvers[cid.codec]
-          if (!r) {
-            return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
-          }
-          r.resolver.resolve(block.data, path, (err, result) => {
-            if (err) {
-              return cb(err)
-            }
-            value = result.value
-            path = result.remainderPath
-            cb()
+          stop = true
+          cb(null, {
+            value: node,
+            remainderPath: ''
           })
         })
-      },
-      () => {
-        const endReached = !path || path === '' || path === '/'
-        const isTerminal = value && !value['/']
+      }.bind(this)
+    }
 
-        if ((endReached && isTerminal) || options.localResolve) {
-          return true
-        } else {
-          // continue traversing
+    return function read (abort, cb) {
+      if (stop) return cb(stop)
+      this.bs.get(cid, (err, block) => {
+        if (err || abort) {
+          return cb(err)
+        }
+        const r = this.resolvers[cid.codec]
+        if (!r) {
+          return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
+        }
+        r.resolver.resolve(block.data, path, (err, result) => {
+          if (err) {
+            return cb(err)
+          }
+          const value = result.value
+          path = result.remainderPath
+          const endReached = !path || path === '' || path === '/'
+          const isTerminal = value && !value['/']
+
+          if ((endReached && isTerminal) || options.localResolve) {
+            stop = true
+            return cb(null, { value, remainderPath: path })
+          }
+
           if (value) {
             cid = new CID(value['/'])
           }
-          return false
-        }
-      },
-      (err, results) => {
-        if (err) {
-          return callback(err)
-        }
-        return callback(null, {
-          value: value,
-          remainderPath: path
+
+          cb(null, { value, remainderPath: path })
         })
-      }
-    )
+      })
+    }.bind(this)
   }
 
   getStream (cid, path, options) {
