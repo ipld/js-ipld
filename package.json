@@ -1,6 +1,6 @@
 {
   "name": "ipld",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "The JavaScript Implementation of IPLD",
   "main": "src/index.js",
   "pre-push": [
