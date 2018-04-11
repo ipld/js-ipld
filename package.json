@@ -24,12 +24,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ipld/js-ipld-resolver.git"
+    "url": "git+https://github.com/ipld/js-ipld.git"
   },
   "bugs": {
-    "url": "https://github.com/ipld/js-ipld-resolver/issues"
+    "url": "https://github.com/ipld/js-ipld/issues"
   },
-  "homepage": "https://github.com/ipld/js-ipld-resolver#readme",
+  "homepage": "https://github.com/ipld/js-ipld#readme",
   "license": "MIT",
   "devDependencies": {
     "aegir": "^13.0.6",
