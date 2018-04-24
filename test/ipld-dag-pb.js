@@ -8,6 +8,7 @@ chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
 const series = require('async/series')
+const waterfall = require('async/waterfall')
 const each = require('async/each')
 const pull = require('pull-stream')
 
@@ -147,6 +148,29 @@ module.exports = (repo) => {
     })
 
     describe('public api', () => {
+      it('resolver put and immediate get', (done) => {
+        waterfall([
+          // 1. Create a DAGNode with some links
+          (cb) => dagPB.DAGNode.create(Buffer.alloc(10, 0), [
+            new dagPB.DAGLink(undefined, 262158, 'Qmc8gaC51f52ugEoqn5MfSGbqJyo8bbiBMiGtQyMdroikb'),
+            new dagPB.DAGLink(undefined, 228538, 'QmTThonJ8kKtWBkJ764tw52UoZmoR4GaFDPEyYnD1cw1Cc')
+          ], cb),
+          (createdNode, cb) => {
+            waterfall([
+              // 2. Store it
+              (next) => resolver.put(createdNode, { format: 'dag-pb' }, next),
+              // 3. Now fetch it immediately
+              (cid, next) => resolver.get(cid, next),
+              (fetchedNode, next) => {
+                // The fetched node should have the same CID as the node stored in step 2
+                expect(createdNode.multihash).to.deep.equal(fetchedNode.value.multihash)
+                next()
+              }
+            ], cb)
+          }
+        ], done)
+      })
+
       it('resolver.put with CID', (done) => {
         resolver.put(node1, { cid: cid1 }, done)
       })
