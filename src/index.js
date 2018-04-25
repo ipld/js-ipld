@@ -130,11 +130,11 @@ class IPLDResolver {
 
     pull(this.getPullStream(cid, path, options),
       pull.reduce((arr, item) => {
-        if (!options.onlyNode) {
-          arr.push(item)
-        } else {
-          // replace existing entry
+        if (options.onlyNode) {
           arr[0] = item
+        } else {
+          // reducing to the last item
+          arr.push(item)
         }
         return arr
       }, [], callback)
