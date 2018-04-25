@@ -155,7 +155,7 @@ class IPLDResolver {
 
     let stop = false
     if (path === '' || !path) {
-      return function read (abort, cb) {
+      return function read (_abort, cb) {
         if (stop) return cb(stop)
         this._get(cid, (err, node) => {
           if (err) {
