@@ -69,4 +69,13 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     })
   })
 
+  it('resolve honors onlyNode option', (done) => {
+    resolver.get(cidCbor, 'pb/Data', { onlyNode: true }, (err, result) => {
+      expect(err).to.not.exist()
+      expect(result.length).to.eq(1)
+      expect(result[0].value).to.eql(Buffer.from('I am inside a Protobuf'))
+      done()
+    })
+  })
+
 })
