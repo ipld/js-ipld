@@ -61,11 +61,11 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   })
 
   it('resolve through different formats', (done) => {
-    resolver.get(cidCbor, 'pb/Data', (err, result) => {
+    resolver.get(cidCbor, 'pb/Data', (err, results) => {
       expect(err).to.not.exist()
-      expect(result.length).to.eq(2)
-      dagCBOR.util.cid(result[0].value['/'], (cid) => expect(cid).to.eql(cidPb))
-      expect(result[1].value).to.eql(Buffer.from('I am inside a Protobuf'))
+      expect(results.length).to.eq(2)
+      expect(results[0].value['/']).to.eql(cidPb.multihash)
+      expect(results[1].value).to.eql(Buffer.from('I am inside a Protobuf'))
       done()
     })
   })
@@ -75,17 +75,17 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
       pull.collect((err, results) => {
         expect(err).to.not.exist()
         expect(results.length).to.eq(2)
-        dagCBOR.util.cid(results[0].value['/'], (cid) => expect(cid).to.eql(cidPb))
+        expect(results[0].value['/']).to.eql(cidPb.multihash)
         expect(results[1].value).to.eql(Buffer.from('I am inside a Protobuf'))
         done()
       }))
   })
 
   it('resolve honors onlyNode option', (done) => {
-    resolver.get(cidCbor, 'pb/Data', { onlyNode: true }, (err, result) => {
+    resolver.get(cidCbor, 'pb/Data', { onlyNode: true }, (err, results) => {
       expect(err).to.not.exist()
-      expect(result.length).to.eq(1)
-      expect(result[0].value).to.eql(Buffer.from('I am inside a Protobuf'))
+      expect(results.length).to.eq(1)
+      expect(results[0].value).to.eql(Buffer.from('I am inside a Protobuf'))
       done()
     })
   })
