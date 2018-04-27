@@ -189,7 +189,7 @@ class IPLDResolver {
           const endReached = !path || path === '' || path === '/'
           const isTerminal = value && !value['/']
 
-          if ((endReached && isTerminal) || options.localResolve) {
+          if ((endReached && isTerminal) || (options && options.localResolve)) {
             stop = true
             return cb(null, { value, remainderPath: path })
           }

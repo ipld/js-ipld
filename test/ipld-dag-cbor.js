@@ -114,20 +114,6 @@ module.exports = (repo) => {
         }, done)
       })
 
-      it('resolver.getPullStream just CID', (done) => {
-        pull(resolver.getPullStream(cid1, null),
-          pull.collect((err, results) => {
-            expect(err).to.not.exist()
-            expect(results.length).to.eq(1)
-
-            dagCBOR.util.cid(results[0].value, (err, cid) => {
-              expect(err).to.not.exist()
-              expect(cid).to.eql(cid1)
-            })
-          }))
-        done()
-      })
-
       it('resolver.get just CID', (done) => {
         resolver.get(cid1, (err, results) => {
           expect(results.length).to.eq(1)
