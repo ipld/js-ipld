@@ -2,6 +2,7 @@
   "name": "ipld",
   "version": "0.17.0",
   "description": "The JavaScript Implementation of IPLD",
+  "lead-maintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
   "pre-push": [
     "lint",
