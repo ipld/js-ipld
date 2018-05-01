@@ -40,7 +40,6 @@
     "ethereumjs-block": "^1.7.1",
     "lodash": "^4.17.10",
     "ncp": "^2.0.0",
-    "pre-commit": "^1.2.2",
     "rimraf": "^2.6.2",
     "rlp": "^2.0.0"
   },
