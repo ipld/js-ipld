@@ -131,9 +131,9 @@ class IPLDResolver {
     pull(this.getPullStream(cid, path, options),
       pull.reduce((arr, item) => {
         if (options.onlyNode) {
+          // reducing to the last item
           arr[0] = item
         } else {
-          // reducing to the last item
           arr.push(item)
         }
         return arr
