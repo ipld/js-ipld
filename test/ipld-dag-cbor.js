@@ -115,11 +115,11 @@ module.exports = (repo) => {
       })
 
       it('resolver.get just CID', (done) => {
-        resolver.get(cid1, (err, results) => {
-          expect(results.length).to.eq(1)
+        resolver.get(cid1, (err, result) => {
+          expect(result.length).to.eq(1)
           expect(err).to.not.exist()
 
-          dagCBOR.util.cid(results[0].value, (err, cid) => {
+          dagCBOR.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
@@ -128,11 +128,11 @@ module.exports = (repo) => {
       })
 
       it('resolver.get root path', (done) => {
-        resolver.get(cid1, '/', (err, results) => {
-          expect(results.length).to.eq(1)
+        resolver.get(cid1, '/', (err, result) => {
+          expect(result.length).to.eq(1)
           expect(err).to.not.exist()
 
-          dagCBOR.util.cid(results[0].value, (err, cid) => {
+          dagCBOR.util.cid(result[0].value, (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.eql(cid1)
             done()
