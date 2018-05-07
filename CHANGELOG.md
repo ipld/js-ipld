@@ -1,3 +1,18 @@
+<a name="0.17.0"></a>
+# [0.17.0](https://github.com/ipld/js-ipld/compare/v0.16.0...v0.17.0) (2018-04-11)
+
+
+
+<a name="0.16.0"></a>
+# [0.16.0](https://github.com/ipld/js-ipld-resolver/compare/v0.15.0...v0.16.0) (2018-04-09)
+
+
+### Bug Fixes
+
+* handle required options for IPLDResolver.put ([3612289](https://github.com/ipld/js-ipld-resolver/commit/3612289))
+
+
+
 <a name="0.15.0"></a>
 # [0.15.0](https://github.com/ipld/js-ipld-resolver/compare/v0.14.1...v0.15.0) (2018-02-26)
 
