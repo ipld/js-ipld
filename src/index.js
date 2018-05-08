@@ -45,7 +45,7 @@ class IPLDResolver {
     // Adds support for an IPLD format
     this.support.add = (multicodec, resolver, util) => {
       if (this.resolvers[multicodec]) {
-        throw new Error(multicodec + 'already supported')
+        throw new Error('Resolver already exists for codec "' + multicodec + '"')
       }
 
       this.resolvers[multicodec] = {
