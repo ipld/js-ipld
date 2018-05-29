@@ -1,3 +1,13 @@
+<a name="0.17.1"></a>
+## [0.17.1](https://github.com/ipld/js-ipld/compare/v0.17.0...v0.17.1) (2018-05-29)
+
+
+### Bug Fixes
+
+* "resolver exists" error message typo ([d3d78e0](https://github.com/ipld/js-ipld/commit/d3d78e0))
+
+
+
 <a name="0.17.0"></a>
 # [0.17.0](https://github.com/ipld/js-ipld/compare/v0.16.0...v0.17.0) (2018-04-11)
 
