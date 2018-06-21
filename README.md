@@ -27,6 +27,8 @@ Want to get started? Check our examples folder. You can check the development st
 
 [![Throughput Graph](https://graphs.waffle.io/ipld/js-ipld/throughput.svg)](https://waffle.io/ipld/js-ipld/metrics/throughput)
 
+[**`Weekly Core Dev Calls`**](https://github.com/ipfs/pm/issues/650)
+
 ## Tech Lead
 
 [Volker Mische](https://github.com/vmx)
