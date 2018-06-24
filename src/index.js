@@ -228,15 +228,11 @@ class IPLDResolver {
       return this._put(options.cid, node, callback)
     }
 
-    options.hashAlg = options.hashAlg || 'sha2-256'
     const r = this.resolvers[options.format]
     if (!r) {
       return callback(new Error('No resolver found for codec "' + options.format + '"'))
     }
-    // TODO add support for different hash funcs in the utils of
-    // each format (just really needed for CBOR for now, really
-    // r.util.cid(node1, hashAlg, (err, cid) => {
-    r.util.cid(node, (err, cid) => {
+    r.util.cid(node, options, (err, cid) => {
       if (err) {
         return callback(err)
       }

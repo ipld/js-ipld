@@ -77,7 +77,8 @@ const Resolver = new Resolver(<ipfs-block-service instance>)
 
 `options` is an object that must contain one of the following combinations:
 - `cid` - the CID of the node
-- `hashAlg` and `format` - the hashAlg and the format that should be used to create the CID of the node
+- `[hashAlg]`, `[version]` and `format` - the hashAlg, version and the format that should be used to create the CID of the node. The 
+`hashAlg` and `version` defaults to the default values for the `format`.
 
 `callback` is a function that should have the signature as following: `function (err, cid) {}`, where `err` is an Error object in case of error and `cid` is the cid of the stored object.
 
