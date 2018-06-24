@@ -10,6 +10,7 @@ const dagCBOR = require('ipld-dag-cbor')
 const series = require('async/series')
 const each = require('async/each')
 const pull = require('pull-stream')
+const multihash = require('multihashes')
 
 const IPLDResolver = require('../src')
 
@@ -107,11 +108,30 @@ module.exports = (repo) => {
         resolver.put(node1, { cid: cid1 }, done)
       })
 
-      it('resolver.put with hashAlg + format', (done) => {
-        resolver.put(node1, {
-          format: 'dag-cbor',
-          hashAlg: 'sha2-256'
-        }, done)
+      it('resolver.put with format', (done) => {
+        resolver.put(node1, { format: 'dag-cbor' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('dag-cbor')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha2-256')
+          done()
+        })
+      })
+
+      it('resolver.put with format + hashAlg', (done) => {
+        resolver.put(node1, { format: 'dag-cbor', hashAlg: 'sha2-512' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('dag-cbor')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha2-512')
+          done()
+        })
       })
 
       it('resolver.get just CID', (done) => {
