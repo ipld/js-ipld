@@ -165,14 +165,14 @@ module.exports = (repo) => {
       })
 
       it('resolver.put with format + hashAlg', (done) => {
-        resolver.put(node1, { format: 'dag-pb', hashAlg: 'sha2-512' }, (err, cid) => {
+        resolver.put(node1, { format: 'dag-pb', hashAlg: 'sha3-512' }, (err, cid) => {
           expect(err).to.not.exist()
           expect(cid).to.exist()
           expect(cid.version).to.equal(1)
           expect(cid.codec).to.equal('dag-pb')
           expect(cid.multihash).to.exist()
           const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha2-512')
+          expect(mh.name).to.equal('sha3-512')
           done()
         })
       })
