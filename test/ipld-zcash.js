@@ -126,6 +126,32 @@ module.exports = (repo) => {
         resolver.put(node1, { cid: cid1 }, done)
       })
 
+      it('resolver.put with format', (done) => {
+        resolver.put(node1, { format: 'zcash-block' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('zcash-block')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('dbl-sha2-256')
+          done()
+        })
+      })
+
+      it('resolver.put with format + hashAlg', (done) => {
+        resolver.put(node1, { format: 'zcash-block', hashAlg: 'sha3-512' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('zcash-block')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha3-512')
+          done()
+        })
+      })
+
       it('root path (same as get)', (done) => {
         resolver.get(cid1, '/', (err, result) => {
           expect(err).to.not.exist()

@@ -7,6 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const ipldGit = require('ipld-git')
+const multihash = require('multihashes')
 const series = require('async/series')
 const each = require('async/each')
 const pull = require('pull-stream')
@@ -173,6 +174,32 @@ module.exports = (repo) => {
     describe('public api', () => {
       it('resolver.put', (done) => {
         resolver.put(blobNode, { cid: blobCid }, done)
+      })
+
+      it('resolver.put with format', (done) => {
+        resolver.put(blobNode, { format: 'git-raw' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('git-raw')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha1')
+          done()
+        })
+      })
+
+      it('resolver.put with format + hashAlg', (done) => {
+        resolver.put(blobNode, { format: 'git-raw', hashAlg: 'sha3-512' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('git-raw')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('sha3-512')
+          done()
+        })
       })
 
       it('resolver.get root path', (done) => {
