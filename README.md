@@ -13,6 +13,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/ipld/js-ipld/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld?branch=master)
 [![Dependency Status](https://david-dm.org/ipld/js-ipld.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+[![Greenkeeper badge](https://badges.greenkeeper.io/ipld/js-ipld.svg)](https://greenkeeper.io/)
 
 > The JavaScript implementation of the IPLD, InterPlanetary Linked-Data
 
