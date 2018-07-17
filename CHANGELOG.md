@@ -1,3 +1,13 @@
+<a name="0.17.3"></a>
+## [0.17.3](https://github.com/ipld/js-ipld/compare/v0.17.2...v0.17.3) (2018-07-17)
+
+
+### Bug Fixes
+
+* **put:** pass CID options to resolver ([a419048](https://github.com/ipld/js-ipld/commit/a419048))
+
+
+
 <a name="0.17.2"></a>
 ## [0.17.2](https://github.com/ipld/js-ipld/compare/v0.17.1...v0.17.2) (2018-05-29)
 
