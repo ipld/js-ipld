@@ -8,6 +8,7 @@ chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const ipldEthBlock = require('ipld-ethereum').ethBlock
 const EthBlockHeader = require('ethereumjs-block/header')
+const multihash = require('multihashes')
 const series = require('async/series')
 const each = require('async/each')
 const pull = require('pull-stream')
@@ -108,6 +109,32 @@ module.exports = (repo) => {
     describe('public api', () => {
       it('resolver.put', (done) => {
         resolver.put(node1, { cid: cid1 }, done)
+      })
+
+      it('resolver.put with format', (done) => {
+        resolver.put(node1, { format: 'eth-block' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('eth-block')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('keccak-256')
+          done()
+        })
+      })
+
+      it('resolver.put with format + hashAlg', (done) => {
+        resolver.put(node1, { format: 'eth-block', hashAlg: 'keccak-512' }, (err, cid) => {
+          expect(err).to.not.exist()
+          expect(cid).to.exist()
+          expect(cid.version).to.equal(1)
+          expect(cid.codec).to.equal('eth-block')
+          expect(cid.multihash).to.exist()
+          const mh = multihash.decode(cid.multihash)
+          expect(mh.name).to.equal('keccak-512')
+          done()
+        })
       })
 
       it('root path (same as get)', (done) => {
