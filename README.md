@@ -120,9 +120,11 @@ const Resolver = new Resolver(<ipfs-block-service instance>)
 
 ## Packages
 
+Listing of dependencies from the IPFS ecosystem.
+
 | Package | Version | Deps | CI | Coverage |
 | ---------|---------|---------|---------|--------- |
-| **Structured data** |
+| **IPLD Formats** |
 | [`ipld-bitcoin`](//github.com/ipld/js-ipld-bitcoin) | [![npm](https://img.shields.io/npm/v/ipld-bitcoin.svg?maxAge=86400&style=flat-square)](//github.com/ipld/js-ipld-bitcoin/releases) | [![Deps](https://david-dm.org/ipld/js-ipld-bitcoin.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-bitcoin) | [![jenkins](https://ci.ipfs.team/buildStatus/icon?job=ipld/js-ipld-bitcoin/master)](https://ci.ipfs.team/job/ipld/job/js-ipld-bitcoin/job/master/) | [![codecov](https://codecov.io/gh/ipld/js-ipld-bitcoin/branch/master/graph/badge.svg)](https://codecov.io/gh/ipld/js-ipld-bitcoin) |
 | [`ipld-dag-cbor`](//github.com/ipld/js-ipld-dag-cbor) | [![npm](https://img.shields.io/npm/v/ipld-dag-cbor.svg?maxAge=86400&style=flat-square)](//github.com/ipld/js-ipld-dag-cbor/releases) | [![Deps](https://david-dm.org/ipld/js-ipld-dag-cbor.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-dag-cbor) | [![jenkins](https://ci.ipfs.team/buildStatus/icon?job=ipld/js-ipld-dag-cbor/master)](https://ci.ipfs.team/job/ipld/job/js-ipld-dag-cbor/job/master/) | [![codecov](https://codecov.io/gh/ipld/js-ipld-dag-cbor/branch/master/graph/badge.svg)](https://codecov.io/gh/ipld/js-ipld-dag-cbor) |
 | [`ipld-dag-pb`](//github.com/ipld/js-ipld-dag-pb) | [![npm](https://img.shields.io/npm/v/ipld-dag-pb.svg?maxAge=86400&style=flat-square)](//github.com/ipld/js-ipld-dag-pb/releases) | [![Deps](https://david-dm.org/ipld/js-ipld-dag-pb.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-dag-pb) | [![jenkins](https://ci.ipfs.team/buildStatus/icon?job=ipld/js-ipld-dag-pb/master)](https://ci.ipfs.team/job/ipld/job/js-ipld-dag-pb/job/master/) | [![codecov](https://codecov.io/gh/ipld/js-ipld-dag-pb/branch/master/graph/badge.svg)](https://codecov.io/gh/ipld/js-ipld-dag-pb) |
