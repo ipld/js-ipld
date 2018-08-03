@@ -122,6 +122,10 @@ const Resolver = new Resolver(<ipfs-block-service instance>)
 
 Listing of dependencies from the IPFS ecosystem.
 
+<!---
+This table is generated from the script located in `scripts/generate-package-table-for-readme.js`
+Please use the same script if you need to update this table.
+-->
 | Package | Version | Deps | CI | Coverage |
 | ---------|---------|---------|---------|--------- |
 | **IPLD Formats** |
