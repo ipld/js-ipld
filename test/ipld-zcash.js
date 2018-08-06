@@ -7,7 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const ipldZcash = require('ipld-zcash')
-const ZcashBlock = require('zcash-bitcore-lib').Block
+const ZcashBlockHeader = require('zcash-bitcore-lib').BlockHeader
 const multihash = require('multihashes')
 const series = require('async/series')
 const each = require('async/each')
@@ -23,12 +23,10 @@ const buildZcashBlock = (header) => {
   header.time = header.time || 0
   header.bits = header.bits || 0
   header.nonce = header.nonce || Buffer.alloc(32)
-  header.solution = header.solution || Buffer.alloc(0)
-  const block = ZcashBlock.fromObject({
-    header: header,
-    transactions: []
-  })
-  return block
+  header.solution = header.solution || Buffer.alloc(1344)
+
+  const blockHeader = ZcashBlockHeader(header)
+  return blockHeader
 }
 
 module.exports = (repo) => {
@@ -114,7 +112,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(node1.header.version).to.eql(result.value.header.version)
+            expect(node1.version).to.eql(result.value.version)
             done()
           })
         })
@@ -193,7 +191,7 @@ module.exports = (repo) => {
           expect(err).to.not.exist()
           resolver.get(cid1, (err, result) => {
             expect(err).to.not.exist()
-            expect(result.value.header.version).to.eql(1)
+            expect(result.value.version).to.eql(1)
             remove()
           })
         })
