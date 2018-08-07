@@ -16,6 +16,8 @@ const pull = require('pull-stream')
 const IPLDResolver = require('../src')
 
 const buildZcashBlock = (header) => {
+  // All these fields have a fixed size, if they are not defined, fill them
+  // with zeros with the corresponding size
   header.version = header.version || 0
   header.prevHash = header.prevHash || Buffer.alloc(32)
   header.merkleRoot = header.merkleRoot || Buffer.alloc(32)
