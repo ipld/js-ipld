@@ -63,11 +63,30 @@ Want to get started? Check our examples folder. You can check the development st
 ## Usage
 
 ```js
-const Resolver = require('ipld')
+const Ipld = require('ipld')
+const IpfsRepo = require('ipfs-repo')
+const IpfsBlockService = require('ipfs-block-service')
 
-// You need to create and pass an ipfs-block-service instance
-// https://github.com/ipfs/js-ipfs-block-service
-const Resolver = new Resolver(<ipfs-block-service instance>)
+const initIpld = (ipfsRepoPath, callback) => {
+  const repo = new IpfsRepo(ipfsRepoPath)
+  repo.init({}, (err) => {
+    if (err) {
+      return callback(err)
+    }
+    repo.open((err) => {
+      if (err) {
+        return callback(err)
+      }
+      const blockService = new IpfsBlockService(repo)
+      const ipld = new Ipld(blockService)
+      return callback(null, ipld)
+    })
+  })
+}
+
+initIpld('/tmp/ifpsrepo', (err, ipld) => {
+  // Do something with the `ipld`, e.g. `ipld.get(…)`
+})
 ```
 
 ## API
