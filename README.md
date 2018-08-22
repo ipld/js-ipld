@@ -141,6 +141,8 @@ initIpld('/tmp/ifpsrepo', (err, ipld) => {
 
 Listing of dependencies from the IPLD ecosystem.
 
+> This table is generated using the module `package-table` with `package-table --data=package-list.json`.
+
 | Package | Version | Deps | CI | Coverage |
 | ---------|---------|---------|---------|--------- |
 | **IPLD Formats** |
