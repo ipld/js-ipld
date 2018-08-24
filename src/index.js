@@ -71,7 +71,7 @@ class IPLDResolver {
         const format = require('ipld-ethereum').ethTxTrie
         return { resolver: format.resolver, util: format.util }
       },
-      get 'raw' () {
+      get raw () {
         const format = require('ipld-raw')
         return { resolver: format.resolver, util: format.util }
       },
