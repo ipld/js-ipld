@@ -15,20 +15,6 @@ const series = require('async/series')
 const waterfall = require('async/waterfall')
 const MemoryStore = require('interface-datastore').MemoryDatastore
 
-const dagPB = require('ipld-dag-pb')
-const dagCBOR = require('ipld-dag-cbor')
-const ipldGit = require('ipld-git')
-const ipldBitcoin = require('ipld-bitcoin')
-const ipldEthAccountSnapshot = require('ipld-ethereum').ethAccountSnapshot
-const ipldEthBlock = require('ipld-ethereum').ethBlock
-const ipldEthBlockList = require('ipld-ethereum').ethBlockList
-const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie
-const ipldEthStorageTrie = require('ipld-ethereum').ethStorageTrie
-const ipldEthTx = require('ipld-ethereum').ethTx
-const ipldEthTxTrie = require('ipld-ethereum').ethTxTrie
-const ipldRaw = require('ipld-raw')
-const ipldZcash = require('ipld-zcash')
-
 function noop () {}
 
 class IPLDResolver {
@@ -38,7 +24,62 @@ class IPLDResolver {
     }
 
     this.bs = blockService
-    this.resolvers = {}
+
+    // Support by default dag-pb, dag-cbor, git, and eth-*
+    this.resolvers = {
+      get 'dag-pb' () {
+        const format = require('ipld-dag-pb')
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'dag-cbor' () {
+        const format = require('ipld-dag-cbor')
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'git-raw' () {
+        const format = require('ipld-git')
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'bitcoin-block' () {
+        const format = require('ipld-bitcoin')
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-account-snapshot' () {
+        const format = require('ipld-ethereum').ethAccountSnapshot
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-block' () {
+        const format = require('ipld-ethereum').ethBlock
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-block-list' () {
+        const format = require('ipld-ethereum').ethBlockList
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-state-trie' () {
+        const format = require('ipld-ethereum').ethStateTrie
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-storage-trie' () {
+        const format = require('ipld-ethereum').ethStorageTrie
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-tx' () {
+        const format = require('ipld-ethereum').ethTx
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'eth-tx-trie' () {
+        const format = require('ipld-ethereum').ethTxTrie
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'raw' () {
+        const format = require('ipld-raw')
+        return { resolver: format.resolver, util: format.util }
+      },
+      get 'zcash-block' () {
+        const format = require('ipld-zcash')
+        return { resolver: format.resolver, util: format.util }
+      }
+    }
 
     this.support = {}
 
@@ -59,59 +100,6 @@ class IPLDResolver {
         delete this.resolvers[multicodec]
       }
     }
-
-    // Support by default dag-pb, dag-cbor, git, and eth-*
-    this.support.add(dagPB.resolver.multicodec,
-      dagPB.resolver,
-      dagPB.util)
-
-    this.support.add(dagCBOR.resolver.multicodec,
-      dagCBOR.resolver,
-      dagCBOR.util)
-
-    this.support.add(ipldGit.resolver.multicodec,
-      ipldGit.resolver,
-      ipldGit.util)
-
-    this.support.add(ipldBitcoin.resolver.multicodec,
-      ipldBitcoin.resolver,
-      ipldBitcoin.util)
-
-    this.support.add(ipldEthAccountSnapshot.resolver.multicodec,
-      ipldEthAccountSnapshot.resolver,
-      ipldEthAccountSnapshot.util)
-
-    this.support.add(ipldEthBlock.resolver.multicodec,
-      ipldEthBlock.resolver,
-      ipldEthBlock.util)
-
-    this.support.add(ipldEthBlockList.resolver.multicodec,
-      ipldEthBlockList.resolver,
-      ipldEthBlockList.util)
-
-    this.support.add(ipldEthStateTrie.resolver.multicodec,
-      ipldEthStateTrie.resolver,
-      ipldEthStateTrie.util)
-
-    this.support.add(ipldEthStorageTrie.resolver.multicodec,
-      ipldEthStorageTrie.resolver,
-      ipldEthStorageTrie.util)
-
-    this.support.add(ipldEthTx.resolver.multicodec,
-      ipldEthTx.resolver,
-      ipldEthTx.util)
-
-    this.support.add(ipldEthTxTrie.resolver.multicodec,
-      ipldEthTxTrie.resolver,
-      ipldEthTxTrie.util)
-
-    this.support.add(ipldRaw.resolver.multicodec,
-      ipldRaw.resolver,
-      ipldRaw.util)
-
-    this.support.add(ipldZcash.resolver.multicodec,
-      ipldZcash.resolver,
-      ipldZcash.util)
   }
 
   get (cid, path, options, callback) {
