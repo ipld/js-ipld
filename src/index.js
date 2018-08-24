@@ -180,7 +180,7 @@ class IPLDResolver {
           return true
         } else {
           // continue traversing
-          if (value) {
+          if (value && value['/']) {
             cid = new CID(value['/'])
           }
           return false
