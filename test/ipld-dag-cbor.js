@@ -250,6 +250,14 @@ module.exports = (repo) => {
         })
       })
 
+      it('resolver.get calls callback for unavailable path', (done) => {
+        resolver.get(cid3, `foo/${Date.now()}`, (err) => {
+          expect(err).to.exist()
+          expect(err.message).to.contain('path not available')
+          done()
+        })
+      })
+
       it('resolver.tree', (done) => {
         pull(
           resolver.treeStream(cid3),
