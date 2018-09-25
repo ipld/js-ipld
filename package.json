@@ -68,10 +68,12 @@
     "pull-traverse": "^1.0.3"
   },
   "contributors": [
+    "Alan Shaw <alan@tableflip.io>",
     "Alex Potsides <alex@achingbrain.net>",
     "David Dias <daviddias.p@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
     "Jacob Heun <jacobheun@gmail.com>",
+    "Jonah Weissman <jonahrweissman@gmail.com>",
     "Nicola Greco <me@nicola.io>",
     "Oli Evans <oli@tableflip.io>",
     "Pedro Teixeira <i@pgte.me>",
