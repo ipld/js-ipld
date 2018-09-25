@@ -1,3 +1,24 @@
+<a name="0.17.4"></a>
+## [0.17.4](https://github.com/ipld/js-ipld/compare/v0.17.3...v0.17.4) (2018-09-25)
+
+
+### Bug Fixes
+
+* get missing path ([a069a0f](https://github.com/ipld/js-ipld/commit/a069a0f))
+* tests of Zcash were broken ([05b6424](https://github.com/ipld/js-ipld/commit/05b6424))
+
+
+### Features
+
+* use package-table vs custom script ([366176c](https://github.com/ipld/js-ipld/commit/366176c))
+
+
+### Performance Improvements
+
+* lazy load format resolvers ([f4a094a](https://github.com/ipld/js-ipld/commit/f4a094a))
+
+
+
 <a name="0.17.3"></a>
 ## [0.17.3](https://github.com/ipld/js-ipld/compare/v0.17.2...v0.17.3) (2018-07-17)
 
