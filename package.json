@@ -37,7 +37,6 @@
     "bitcoinjs-lib": "^4.0.2",
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
-    "eth-hash-to-cid": "~0.1.1",
     "ethereumjs-block": "^2.1.0",
     "ipld-bitcoin": "~0.1.8",
     "ipld-ethereum": "^2.0.1",
