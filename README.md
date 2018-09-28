@@ -9,13 +9,9 @@
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 [![](https://img.shields.io/badge/pm-waffle-blue.svg?style=flat-square")](https://waffle.io/ipld/js-ipld)
 
-[![Travis CI](https://travis-ci.org/ipld/js-ipld.svg?branch=master)](https://travis-ci.org/ipld/js-ipld)
-[![Circle CI](https://circleci.com/gh/ipld/js-ipld.svg?style=svg)]("https://circleci.com/gh/ipld/js-ipld)
 [![Coverage Status](https://coveralls.io/repos/github/ipld/js-ipld/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld?branch=master)
 [![Dependency Status](https://david-dm.org/ipld/js-ipld.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
-![](https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square)
-![](https://img.shields.io/badge/Node.js-%3E%3D6.0.0-orange.svg?style=flat-square)
 
 > The JavaScript implementation of the IPLD, InterPlanetary Linked-Data
 
