@@ -24,9 +24,6 @@
     "Storage", 
     ["ipfs/js-ipfs-repo", "ipfs-repo"],
     ["ipfs/interface-datastore", "interface-datastore"],
-    ["ipfs/js-ipfs-block-service", "ipfs-block-service"],
-
-    "Generics/Utils",
-    ["ipfs/is-ipfs", "is-ipfs"]
+    ["ipfs/js-ipfs-block-service", "ipfs-block-service"]
   ]
 }
