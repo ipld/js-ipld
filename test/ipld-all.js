@@ -41,7 +41,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
         cidPb = cid
         nodeCbor = {
           someData: 'I am inside a Cbor object',
-          pb: { '/': cidPb.toBaseEncodedString() }
+          pb: cidPb
         }
 
         dagCBOR.util.cid(nodeCbor, cb)

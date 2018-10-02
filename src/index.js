@@ -162,14 +162,15 @@ class IPLDResolver {
       },
       () => {
         const endReached = !path || path === '' || path === '/'
-        const isTerminal = value && !value['/']
+        const isTerminal = value && !IPLDResolver._maybeCID(value)
 
         if ((endReached && isTerminal) || options.localResolve) {
           return true
         } else {
+          value = IPLDResolver._maybeCID(value)
           // continue traversing
-          if (value && value['/']) {
-            cid = new CID(value['/'])
+          if (value) {
+            cid = value
           }
           return false
         }
@@ -308,7 +309,7 @@ class IPLDResolver {
               if (p.link) {
                 return {
                   basePath: base,
-                  cid: new CID(p.link['/'])
+                  cid: IPLDResolver._maybeCID(p.link)
                 }
               }
               return base
@@ -391,6 +392,25 @@ class IPLDResolver {
       }
       callback(null, cid)
     })
+  }
+
+  /**
+   * Return a CID instance if it is a link.
+   *
+   * If something is a link `{"/": "baseencodedcid"}` or a CID, then return
+   * a CID object, else return `null`.
+   *
+   * @param {*} link - The object to check
+   * @returns {?CID} - A CID instance
+   */
+  static _maybeCID (link) {
+    if (CID.isCID(link)) {
+      return link
+    }
+    if (link && link['/'] !== undefined) {
+      return new CID(link['/'])
+    }
+    return null
   }
 }
 

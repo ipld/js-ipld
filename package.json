@@ -51,7 +51,7 @@
     "ipfs-block-service": "~0.14.0",
     "ipfs-repo": "~0.24.0",
     "ipld-bitcoin": "~0.1.7",
-    "ipld-dag-cbor": "~0.12.1",
+    "ipld-dag-cbor": "~0.13.0",
     "ipld-dag-pb": "~0.14.10",
     "ipld-ethereum": "^2.0.1",
     "ipld-git": "~0.2.1",
