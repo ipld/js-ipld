@@ -1,7 +1,14 @@
 <a name="0.18.0"></a>
 # [0.18.0](https://github.com/ipld/js-ipld/compare/v0.17.4...v0.18.0) (2018-10-12)
 
+### BREAKING CHANGES
 
+* The API of ipld-dag-cbor changed. Links are no longer represented as JSON
+(`{"/": "base-encoded-cid"}`), but as a CID object.
+
+Example:
+
+    ipld.put({link: new CID('base-encoded-cid')}, {format: 'dag-cbor'}, (err, cid) => {…})
 
 <a name="0.17.4"></a>
 ## [0.17.4](https://github.com/ipld/js-ipld/compare/v0.17.3...v0.17.4) (2018-09-25)
