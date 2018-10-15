@@ -3,12 +3,55 @@
 
 ### BREAKING CHANGES
 
-* The API of ipld-dag-cbor changed. Links are no longer represented as JSON
-(`{"/": "base-encoded-cid"}`), but as a CID object.
+* The API for [dag-cbor](https://github.com/ipld/js-ipld-dag-cbor) changed.
+  Links are no longer represented as JSON objects  (`{"/": "base-encoded-cid"}`,
+  but as [CID objects](https://github.com/ipld/js-cid). `get()` and
+  `getStream()` now always return links as CID objects. `put()` also takes
+  CID objects as input. Link represented as old-style JSON objects is still
+  supported, but deprecated.
 
 Example:
 
-    ipld.put({link: new CID('base-encoded-cid')}, {format: 'dag-cbor'}, (err, cid) => {…})
+Prior to this change:
+
+```js
+const cid = new CID('QmXed8RihWcWFXRRmfSRG9yFjEbXNxu1bDwgCFAN8Dxcq5')
+ipld.put({link: {'/': cid.toBaseEncodedString()}}, {format: 'dag-cbor'}, (err, putCid) => {
+  ipld.get(putCid, (err, result) => {
+      console.log(result.value)
+  })
+})
+```
+
+Output:
+
+```js
+{ link:
+   { '/':
+      <Buffer 12 20 8a…> } }
+```
+
+Now:
+
+```js
+const cid = new CID('QmXed8RihWcWFXRRmfSRG9yFjEbXNxu1bDwgCFAN8Dxcq5')
+ipld.put({link: cid}, {format: 'dag-cbor'}, (err, putCid) => {
+  ipld.get(putCid, (err, result) => {
+      console.log(result.value)
+  })
+})
+```
+
+Output:
+
+```js
+{ link:
+   CID {
+     codec: 'dag-pb',
+     version: 0,
+     multihash:
+      <Buffer 12 20 8a…> } }
+```
 
 <a name="0.17.4"></a>
 ## [0.17.4](https://github.com/ipld/js-ipld/compare/v0.17.3...v0.17.4) (2018-09-25)
