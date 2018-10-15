@@ -53,6 +53,10 @@ Output:
       <Buffer 12 20 8a…> } }
 ```
 
+See https://github.com/ipld/ipld/issues/44 for more information on why this
+change was made.
+
+
 <a name="0.17.4"></a>
 ## [0.17.4](https://github.com/ipld/js-ipld/compare/v0.17.3...v0.17.4) (2018-09-25)
 
