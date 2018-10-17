@@ -18,12 +18,12 @@ const MemoryStore = require('interface-datastore').MemoryDatastore
 function noop () {}
 
 class IPLDResolver {
-  constructor (blockService) {
-    if (!blockService) {
+  constructor (options) {
+    if (!options.blockService) {
       throw new Error('Missing blockservice')
     }
 
-    this.bs = blockService
+    this.bs = options.blockService
 
     // Support by default dag-pb, dag-cbor, git, and eth-*
     this.resolvers = {
@@ -439,7 +439,7 @@ IPLDResolver.inMemory = function (callback) {
     if (err) {
       return callback(err)
     }
-    callback(null, new IPLDResolver(blockService))
+    callback(null, new IPLDResolver({blockService}))
   })
 }
 
