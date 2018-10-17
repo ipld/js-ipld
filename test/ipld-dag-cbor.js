@@ -28,7 +28,7 @@ module.exports = (repo) => {
     before((done) => {
       const bs = new BlockService(repo)
 
-      resolver = new IPLDResolver(bs)
+      resolver = new IPLDResolver({blockService: bs})
 
       series([
         (cb) => {

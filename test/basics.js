@@ -16,7 +16,7 @@ module.exports = (repo) => {
   describe('basics', () => {
     it('creates an instance', () => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       expect(r.bs).to.exist()
     })
 
@@ -34,7 +34,7 @@ module.exports = (repo) => {
   describe('validation', () => {
     it('get - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       // choosing a format that is not supported
       const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       r.get(cid, '/', {}, (err, result) => {
@@ -46,7 +46,7 @@ module.exports = (repo) => {
 
     it('_get - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       // choosing a format that is not supported
       const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       r.get(cid, (err, result) => {
@@ -58,7 +58,7 @@ module.exports = (repo) => {
 
     it('put - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       // choosing a format that is not supported
       r.put(null, { format: 'base1' }, (err, result) => {
         expect(err).to.exist()
@@ -69,7 +69,7 @@ module.exports = (repo) => {
 
     it('put - errors if no options', (done) => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       r.put(null, (err, result) => {
         expect(err).to.exist()
         expect(err.message).to.eql('IPLDResolver.put requires options')
@@ -79,7 +79,7 @@ module.exports = (repo) => {
 
     it('_put - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       // choosing a format that is not supported
       const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       r._put(cid, null, (err, result) => {
@@ -91,7 +91,7 @@ module.exports = (repo) => {
 
     it('treeStream - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
-      const r = new IPLDResolver(bs)
+      const r = new IPLDResolver({blockService: bs})
       // choosing a format that is not supported
       const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
       pull(
