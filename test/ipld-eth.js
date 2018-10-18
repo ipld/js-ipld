@@ -7,6 +7,8 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const rlp = require('rlp')
 const BlockService = require('ipfs-block-service')
+const ipldEthBlock = require('ipld-ethereum').ethBlock
+const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie
 const loadFixture = require('aegir/fixtures')
 const async = require('async')
 const cidForHash = require('eth-hash-to-cid')
@@ -24,7 +26,10 @@ module.exports = (repo) => {
     before(function (done) {
       this.timeout(10 * 1000)
       const bs = new BlockService(repo)
-      resolver = new IPLDResolver({blockService: bs})
+      resolver = new IPLDResolver({
+        blockService: bs,
+        formats: [ipldEthBlock, ipldEthStateTrie]
+      })
 
       async.waterfall([
         readFilesFixture,
