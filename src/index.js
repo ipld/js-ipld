@@ -14,73 +14,26 @@ const map = require('async/map')
 const series = require('async/series')
 const waterfall = require('async/waterfall')
 const MemoryStore = require('interface-datastore').MemoryDatastore
+const mergeOptions = require('merge-options')
+const ipldDagCbor = require('ipld-dag-cbor')
+const ipldDagPb = require('ipld-dag-pb')
+const ipldRaw = require('ipld-raw')
 
 function noop () {}
 
 class IPLDResolver {
-  constructor (options) {
+  constructor (userOptions) {
+    const options = mergeOptions(IPLDResolver.defaultOptions, userOptions)
+
     if (!options.blockService) {
       throw new Error('Missing blockservice')
     }
-
     this.bs = options.blockService
 
-    // Support by default dag-pb, dag-cbor, git, and eth-*
-    this.resolvers = {
-      get 'dag-pb' () {
-        const format = require('ipld-dag-pb')
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'dag-cbor' () {
-        const format = require('ipld-dag-cbor')
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'git-raw' () {
-        const format = require('ipld-git')
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'bitcoin-block' () {
-        const format = require('ipld-bitcoin')
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-account-snapshot' () {
-        const format = require('ipld-ethereum').ethAccountSnapshot
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-block' () {
-        const format = require('ipld-ethereum').ethBlock
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-block-list' () {
-        const format = require('ipld-ethereum').ethBlockList
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-state-trie' () {
-        const format = require('ipld-ethereum').ethStateTrie
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-storage-trie' () {
-        const format = require('ipld-ethereum').ethStorageTrie
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-tx' () {
-        const format = require('ipld-ethereum').ethTx
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'eth-tx-trie' () {
-        const format = require('ipld-ethereum').ethTxTrie
-        return { resolver: format.resolver, util: format.util }
-      },
-      get raw () {
-        const format = require('ipld-raw')
-        return { resolver: format.resolver, util: format.util }
-      },
-      get 'zcash-block' () {
-        const format = require('ipld-zcash')
-        return { resolver: format.resolver, util: format.util }
-      }
-    }
+    // Object with current list of active resolvers
+    this.resolvers = {}
 
+    // API entry point
     this.support = {}
 
     // Adds support for an IPLD format
@@ -99,6 +52,13 @@ class IPLDResolver {
       if (this.resolvers[multicodec]) {
         delete this.resolvers[multicodec]
       }
+    }
+
+    // Enable all supplied formats
+    for (const format of options.formats) {
+      const {resolver, util} = format
+      const multicodec = resolver.multicodec
+      this.support.add(multicodec, resolver, util)
     }
   }
 
@@ -412,6 +372,13 @@ class IPLDResolver {
     }
     return null
   }
+}
+
+/**
+ * Default options for IPLD.
+ */
+IPLDResolver.defaultOptions = {
+  formats: [ipldDagCbor, ipldDagPb, ipldRaw]
 }
 
 /**

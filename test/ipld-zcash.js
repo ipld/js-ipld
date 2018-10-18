@@ -44,7 +44,10 @@ module.exports = (repo) => {
 
     before((done) => {
       const bs = new BlockService(repo)
-      resolver = new IPLDResolver({blockService: bs})
+      resolver = new IPLDResolver({
+        blockService: bs,
+        formats: [ipldZcash]
+      })
 
       series([
         (cb) => {
