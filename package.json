@@ -33,7 +33,7 @@
   "homepage": "https://github.com/ipld/js-ipld#readme",
   "license": "MIT",
   "devDependencies": {
-    "aegir": "^15.2.0",
+    "aegir": "^15.3.0",
     "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",
     "eth-hash-to-cid": "~0.1.1",
@@ -46,7 +46,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "cids": "~0.5.4",
-    "interface-datastore": "~0.5.0",
+    "interface-datastore": "~0.6.0",
     "ipfs-block": "~0.7.1",
     "ipfs-block-service": "~0.14.0",
     "ipfs-repo": "~0.24.0",
