@@ -1,3 +1,74 @@
+<a name="0.19.0"></a>
+# [0.19.0](https://github.com/ipld/js-ipld/compare/v0.18.0...v0.19.0) (2018-10-25)
+
+
+### Code Refactoring
+
+* make blockService an option parameter ([f1c2e12](https://github.com/ipld/js-ipld/commit/f1c2e12))
+* pass in IPLD Formats into the constructor ([b003ad1](https://github.com/ipld/js-ipld/commit/b003ad1))
+
+
+### BREAKING CHANGES
+
+* Not all IPLD Formats are included by default
+
+By default only the [ipld-dag-cbor], [ipld-dag-pb] and [raw]
+[IPLD Format]s are included. If you want to use other IPLD Formats
+you need to pass them into the constructor.
+
+The code to restore the old behaviour could look like this:
+
+```js
+const ipldBitcoin = require('ipld-bitcoin')
+const ipldDagCbor = require('ipld-dag-cbor')
+const ipldDagPb = require('ipld-dag-pb')
+const ipldEthAccountSnapshot = require('ipld-ethereum').ethAccountSnapshot
+const ipldEthBlock = require('ipld-ethereum').ethBlock
+const ipldEthBlockList = require('ipld-ethereum').ethBlockList
+const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie
+const ipldEthStorageTrie = require('ipld-ethereum').ethStorageTrie
+const ipldEthTrie = require('ipld-ethereum').ethTxTrie
+const ipldEthTx = require('ipld-ethereum').ethTx
+const ipldGit = require('ipld-git')
+const ipldRaw = require('ipld-raw')
+const ipldZcash = require('ipld-zcash')
+
+…
+
+const ipld = new Ipld({
+  blockService: blockService,
+  formats: [
+    ipldBitcoin, ipldDagCbor, ipldDagPb, ipldEthAccountSnapshot,
+    ipldEthBlock, ipldEthBlockList, ipldEthStateTrie, ipldEthStorageTrie,
+    ipldEthTrie, ipldEthTx, ipldGit, ipldRaw, ipldZcash
+  ]
+})
+```
+
+[ipld-dag-cbor]: https://github.com/ipld/js-ipld-dag-cbor
+[ipld-dag-pb]: https://github.com/ipld/js-ipld-dag-pb
+[ipld-raw]: https://github.com/ipld/js-ipld-raw
+[IPLD Format]: https://github.com/ipld/interface-ipld-format
+* The IPLD constructor is no longer taking a BlockService as its
+only parameter, but an objects object with `blockService` as a
+key.
+
+You need to upgrade your code if you initialize IPLD.
+
+Prior to this change:
+
+```js
+const ipld = new Ipld(blockService)
+```
+
+Now:
+
+```js
+const ipld = new Ipld({blockService: blockService})
+```
+
+
+
 <a name="0.18.0"></a>
 # [0.18.0](https://github.com/ipld/js-ipld/compare/v0.17.4...v0.18.0) (2018-10-12)
 
