@@ -24,7 +24,7 @@ module.exports = (repo) => {
     before(function (done) {
       this.timeout(10 * 1000)
       const bs = new BlockService(repo)
-      resolver = new IPLDResolver({blockService: bs})
+      resolver = new IPLDResolver(bs)
 
       async.waterfall([
         readFilesFixture,

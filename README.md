@@ -43,7 +43,6 @@ Want to get started? Check our examples folder. You can check the development st
 - [Usage](#usage)
 - [API](#api)
   - IPLD Resolver
-    - [Constructor](#ipld-constructor)
     - [`.put(node, options, callback)`](#putnode-options-callback)
     - [`.get(cid [, path] [, options], callback)`](#getcid--path--options-callback)
     - [`.getStream(cid [, path] [, options])`](#getstreamcid--path--options)
@@ -79,7 +78,7 @@ const initIpld = (ipfsRepoPath, callback) => {
         return callback(err)
       }
       const blockService = new IpfsBlockService(repo)
-      const ipld = new Ipld({blockService: blockService})
+      const ipld = new Ipld(blockService)
       return callback(null, ipld)
     })
   })
@@ -91,29 +90,6 @@ initIpld('/tmp/ifpsrepo', (err, ipld) => {
 ```
 
 ## API
-
-### IPLD constructor
-
-> Creates and returns an instance of IPLD.
-
-```js
-const ipld = new Ipld(options)
-```
-
-The `options` is an object with any of these properties:
-
-##### `options.blockService`
-
-| Type | Default |
-|------|---------|
-| [`ipfs.BlockService`](https://github.com/ipfs/js-ipfs-block-service) instance | Required (no default) |
-
-Example:
-
-```js
-const blockService = new IpfsBlockService(repo)
-const ipld = new Ipld({blockService: blockService})
-```
 
 ### `.put(node, options, callback)`
 
