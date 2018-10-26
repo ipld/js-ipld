@@ -1,11 +1,22 @@
-# Quarterly Objectives and Key Results
+# IPLD OKRs
 
-We try to frame our ongoing work using a process based on quarterly Objectives and Key Results (OKRs). Objectives reflect outcomes that are challenging, but realistic. Results are tangible and measurable.
+We frame our ongoing work using a process based on quarterly Objectives and Key Results (OKRs). Objectives reflect outcomes that are challenging, but realistic. Results are tangible and measurable.
+
+More: https://github.com/ipld/ipld
 
 ## 2018 Q4
 
-Writting in Progress
+- [IPLD 2018 Q4 OKRs](https://docs.google.com/spreadsheets/d/1Lfd91hi3nFlLRS1r-FHvK2ip2Ll6ukraufCgepw43bw/edit#gid=35874512)
 
-## Previous Quarters
+## 2018 Q3
 
-The previous Quarters OKRs can be found on the [Main IPLD OKR Spreadsheet](https://docs.google.com/spreadsheets/u/1/d/1Lfd91hi3nFlLRS1r-FHvK2ip2Ll6ukraufCgepw43bw/edit#gid=754421585).
+- [IPLD 2018 Q3 OKRs](https://docs.google.com/spreadsheets/d/1Lfd91hi3nFlLRS1r-FHvK2ip2Ll6ukraufCgepw43bw/edit#gid=221584476)
+
+## 2018 Q2
+
+- [IPLD 2018 Q2 OKRs](https://docs.google.com/spreadsheets/d/1Lfd91hi3nFlLRS1r-FHvK2ip2Ll6ukraufCgepw43bw/edit#gid=94942032)
+
+## 2018 Q1
+
+- [IPLD 2018 Q1 OKRs](https://docs.google.com/spreadsheets/d/1Lfd91hi3nFlLRS1r-FHvK2ip2Ll6ukraufCgepw43bw/edit#gid=1836252568)
+
