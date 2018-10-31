@@ -174,6 +174,10 @@ class IPLDResolver {
     callback = callback || noop
 
     if (options.cid && CID.isCID(options.cid)) {
+      if (options.onlyHash) {
+        return setImmediate(() => callback(null, options.cid))
+      }
+
       return this._put(options.cid, node, callback)
     }
 
@@ -184,6 +188,10 @@ class IPLDResolver {
     r.util.cid(node, options, (err, cid) => {
       if (err) {
         return callback(err)
+      }
+
+      if (options.onlyHash) {
+        return callback(null, cid)
       }
 
       this._put(cid, node, callback)
