@@ -136,8 +136,12 @@ const ipld = new Ipld({
 
 `options` is an object that must contain one of the following combinations:
 - `cid` - the CID of the node
-- `[hashAlg]`, `[version]` and `format` - the hashAlg, version and the format that should be used to create the CID of the node. The 
+- `[hashAlg]`, `[version]` and `format` - the hashAlg, version and the format that should be used to create the CID of the node. The
 `hashAlg` and `version` defaults to the default values for the `format`.
+
+It may contain any of the following:
+
+- `onlyHash` - If true the serialized form of the node will not be passed to the underlying block store but the passed callback will be invoked as if it had been
 
 `callback` is a function that should have the signature as following: `function (err, cid) {}`, where `err` is an Error object in case of error and `cid` is the cid of the stored object.
 
