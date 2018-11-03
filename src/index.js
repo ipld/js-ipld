@@ -99,16 +99,18 @@ class IPLDResolver {
 
     doUntil(
       (cb) => {
+        const r = this.resolvers[cid.codec]
+
+        if (!r) {
+          return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
+        }
+
         // get block
         // use local resolver
         // update path value
         this.bs.get(cid, (err, block) => {
           if (err) {
             return cb(err)
-          }
-          const r = this.resolvers[cid.codec]
-          if (!r) {
-            return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
           }
           r.resolver.resolve(block.data, path, (err, result) => {
             if (err) {
