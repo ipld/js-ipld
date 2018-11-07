@@ -1,3 +1,19 @@
+<a name="0.19.2"></a>
+## [0.19.2](https://github.com/ipld/js-ipld/compare/v0.19.1...v0.19.2) (2018-11-07)
+
+
+### Features
+
+* add getMany() ([db7dc8b](https://github.com/ipld/js-ipld/commit/db7dc8b)), closes [#132](https://github.com/ipld/js-ipld/issues/132)
+* adds onlyHash option to ipld.put ([0c78f0e](https://github.com/ipld/js-ipld/commit/0c78f0e))
+
+
+### Performance Improvements
+
+* fail fast for missing format ([ebd2d1b](https://github.com/ipld/js-ipld/commit/ebd2d1b))
+
+
+
 <a name="0.19.1"></a>
 ## [0.19.1](https://github.com/ipld/js-ipld/compare/v0.19.0...v0.19.1) (2018-10-27)
 
