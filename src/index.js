@@ -166,6 +166,39 @@ class IPLDResolver {
     return deferred
   }
 
+  /**
+   * Get multiple nodes back from an array of CIDs.
+   *
+   * @param {Array<CID>} cids
+   * @param {function(Error, Array)} callback
+   * @returns {void}
+   */
+  getMany (cids, callback) {
+    if (!Array.isArray(cids)) {
+      return callback(new Error('Argument must be an array of CIDs'))
+    }
+    this.bs.getMany(cids, (err, blocks) => {
+      if (err) {
+        return callback(err)
+      }
+      map(blocks, (block, mapCallback) => {
+        const resolver = this.resolvers[block.cid.codec]
+        if (!resolver) {
+          return mapCallback(
+            new Error('No resolver found for codec "' + block.cid.codec + '"'))
+        }
+
+        resolver.util.deserialize(block.data, (err, deserialized) => {
+          if (err) {
+            return mapCallback(err)
+          }
+          return mapCallback(null, deserialized)
+        })
+      },
+      callback)
+    })
+  }
+
   put (node, options, callback) {
     if (typeof options === 'function') {
       callback = options

@@ -111,4 +111,50 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
       done()
     })
   })
+
+  describe('getMany', () => {
+    it('should return nodes correctly', (done) => {
+      resolver.getMany([cidCbor, cidPb], (err, result) => {
+        expect(err).to.not.exist()
+        expect(result.length).to.equal(2)
+        expect(result).to.deep.equal([nodeCbor, nodePb])
+        done()
+      })
+    })
+
+    it('should return nodes in input order', (done) => {
+      resolver.getMany([cidPb, cidCbor], (err, result) => {
+        expect(err).to.not.exist()
+        expect(result.length).to.equal(2)
+        expect(result).to.deep.equal([nodePb, nodeCbor])
+        done()
+      })
+    })
+
+    it('should return error on invalid CID', (done) => {
+      resolver.getMany([cidCbor, 'invalidcid'], (err, result) => {
+        expect(err.message).to.equal('Not a valid cid')
+        expect(result).to.be.undefined()
+        done()
+      })
+    })
+
+    it('should return error on non-existent CID', (done) => {
+      const nonExistentCid = new CID(
+        'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
+      resolver.getMany([cidCbor, nonExistentCid], (err, result) => {
+        expect(err.message).to.equal('Not Found')
+        expect(result).to.be.undefined()
+        done()
+      })
+    })
+
+    it('should return error on invalid input', (done) => {
+      resolver.getMany('astring', (err, result) => {
+        expect(err.message).to.equal('Argument must be an array of CIDs')
+        expect(result).to.be.undefined()
+        done()
+      })
+    })
+  })
 })
