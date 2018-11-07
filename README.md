@@ -158,6 +158,13 @@ It may contain any of the following:
 - `value` - the value that resulted from the get
 - `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
 
+### `.getMany(cids, callback)`
+
+> Retrieve several nodes at once
+
+`callback` should be a function with the signature `function (err, result)`, the result is an array with the nodes corresponding to the CIDs.
+
+
 ### `.getStream(cid [, path] [, options])`
 
 > Same as get, but returns a source pull-stream that is used to pass the fetched node.
