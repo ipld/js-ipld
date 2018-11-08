@@ -27,6 +27,7 @@ describe('Node.js', () => {
   })
 
   require('./basics')(repo)
+  require('./format-support')(repo)
   require('./ipld-dag-pb')(repo)
   require('./ipld-dag-cbor')(repo)
   require('./ipld-git')(repo)
