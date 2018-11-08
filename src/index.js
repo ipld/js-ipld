@@ -48,6 +48,10 @@ class IPLDResolver {
       }
     }
 
+    this.support.load = options.loadFormat || ((codec, callback) => {
+      callback(new Error(`No resolver found for codec "${codec}"`))
+    })
+
     this.support.rm = (multicodec) => {
       if (this.resolvers[multicodec]) {
         delete this.resolvers[multicodec]
@@ -99,26 +103,24 @@ class IPLDResolver {
 
     doUntil(
       (cb) => {
-        const r = this.resolvers[cid.codec]
+        this._getFormat(cid.codec, (err, format) => {
+          if (err) return cb(err)
 
-        if (!r) {
-          return cb(new Error('No resolver found for codec "' + cid.codec + '"'))
-        }
-
-        // get block
-        // use local resolver
-        // update path value
-        this.bs.get(cid, (err, block) => {
-          if (err) {
-            return cb(err)
-          }
-          r.resolver.resolve(block.data, path, (err, result) => {
+          // get block
+          // use local resolver
+          // update path value
+          this.bs.get(cid, (err, block) => {
             if (err) {
               return cb(err)
             }
-            value = result.value
-            path = result.remainderPath
-            cb()
+            format.resolver.resolve(block.data, path, (err, result) => {
+              if (err) {
+                return cb(err)
+              }
+              value = result.value
+              path = result.remainderPath
+              cb()
+            })
           })
         })
       },
@@ -182,17 +184,9 @@ class IPLDResolver {
         return callback(err)
       }
       map(blocks, (block, mapCallback) => {
-        const resolver = this.resolvers[block.cid.codec]
-        if (!resolver) {
-          return mapCallback(
-            new Error('No resolver found for codec "' + block.cid.codec + '"'))
-        }
-
-        resolver.util.deserialize(block.data, (err, deserialized) => {
-          if (err) {
-            return mapCallback(err)
-          }
-          return mapCallback(null, deserialized)
+        this._getFormat(block.cid.codec, (err, format) => {
+          if (err) return mapCallback(err)
+          format.util.deserialize(block.data, mapCallback)
         })
       },
       callback)
@@ -216,20 +210,20 @@ class IPLDResolver {
       return this._put(options.cid, node, callback)
     }
 
-    const r = this.resolvers[options.format]
-    if (!r) {
-      return callback(new Error('No resolver found for codec "' + options.format + '"'))
-    }
-    r.util.cid(node, options, (err, cid) => {
-      if (err) {
-        return callback(err)
-      }
+    this._getFormat(options.format, (err, format) => {
+      if (err) return callback(err)
 
-      if (options.onlyHash) {
-        return callback(null, cid)
-      }
+      format.util.cid(node, options, (err, cid) => {
+        if (err) {
+          return callback(err)
+        }
 
-      this._put(cid, node, callback)
+        if (options.onlyHash) {
+          return callback(null, cid)
+        }
+
+        this._put(cid, node, callback)
+      })
     })
   }
 
@@ -245,15 +239,14 @@ class IPLDResolver {
 
     if (!options.recursive) {
       p = pullDeferSource()
-      const r = this.resolvers[cid.codec]
-      if (!r) {
-        p.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
-        return p
-      }
 
       waterfall([
-        (cb) => this.bs.get(cid, cb),
-        (block, cb) => r.resolver.tree(block.data, cb)
+        (cb) => this._getFormat(cid.codec, cb),
+        (format, cb) => this.bs.get(cid, (err, block) => {
+          if (err) return cb(err)
+          cb(null, format, block)
+        }),
+        (format, block, cb) => format.resolver.tree(block.data, cb)
       ], (err, paths) => {
         if (err) {
           p.abort(err)
@@ -280,20 +273,19 @@ class IPLDResolver {
 
           const deferred = pullDeferSource()
           const cid = el.cid
-          const r = this.resolvers[cid.codec]
-          if (!r) {
-            deferred.abort(new Error('No resolver found for codec "' + cid.codec + '"'))
-            return deferred
-          }
 
           waterfall([
-            (cb) => this.bs.get(el.cid, cb),
-            (block, cb) => r.resolver.tree(block.data, (err, paths) => {
+            (cb) => this._getFormat(cid.codec, cb),
+            (format, cb) => this.bs.get(cid, (err, block) => {
+              if (err) return cb(err)
+              cb(null, format, block)
+            }),
+            (format, block, cb) => format.resolver.tree(block.data, (err, paths) => {
               if (err) {
                 return cb(err)
               }
               map(paths, (p, cb) => {
-                r.resolver.isLink(block.data, p, (err, link) => {
+                format.resolver.isLink(block.data, p, (err, link) => {
                   if (err) {
                     return cb(err)
                   }
@@ -356,38 +348,42 @@ class IPLDResolver {
   /*           */
 
   _get (cid, callback) {
-    const r = this.resolvers[cid.codec]
-    if (!r) {
-      return callback(new Error('No resolver found for codec "' + cid.codec + '"'))
-    }
-
     waterfall([
-      (cb) => this.bs.get(cid, cb),
-      (block, cb) => {
-        if (r) {
-          r.util.deserialize(block.data, (err, deserialized) => {
-            if (err) {
-              return cb(err)
-            }
-            cb(null, deserialized)
-          })
-        } else { // multicodec unknown, send back raw data
-          cb(null, block.data)
-        }
+      (cb) => this._getFormat(cid.codec, cb),
+      (format, cb) => this.bs.get(cid, (err, block) => {
+        if (err) return cb(err)
+        cb(null, format, block)
+      }),
+      (format, block, cb) => {
+        format.util.deserialize(block.data, (err, deserialized) => {
+          if (err) {
+            return cb(err)
+          }
+          cb(null, deserialized)
+        })
       }
     ], callback)
+  }
+
+  _getFormat (codec, callback) {
+    if (this.resolvers[codec]) {
+      return callback(null, this.resolvers[codec])
+    }
+
+    // If not supported, attempt to dynamically load this format
+    this.support.load(codec, (err, format) => {
+      if (err) return callback(err)
+      this.resolvers[codec] = format
+      callback(null, format)
+    })
   }
 
   _put (cid, node, callback) {
     callback = callback || noop
 
-    const r = this.resolvers[cid.codec]
-    if (!r) {
-      return callback(new Error('No resolver found for codec "' + cid.codec + '"'))
-    }
-
     waterfall([
-      (cb) => r.util.serialize(node, cb),
+      (cb) => this._getFormat(cid.codec, cb),
+      (format, cb) => format.util.serialize(node, cb),
       (buf, cb) => this.bs.put(new Block(buf, cid), cb)
     ], (err) => {
       if (err) {
@@ -425,7 +421,7 @@ IPLDResolver.defaultOptions = {
 }
 
 /**
- * Create an IPLD resolver with an inmemory blockservice and
+ * Create an IPLD resolver with an in memory blockservice and
  * repo.
  *
  * @param {function(Error, IPLDResolver)} callback
