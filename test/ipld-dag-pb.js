@@ -51,36 +51,48 @@ module.exports = (repo) => {
           })
         },
         (cb) => {
-          dagPB.DAGNode.addLink(node2, {
-            name: '1',
-            size: node1.size,
-            multihash: node1.multihash
-          }, (err, node) => {
+          dagPB.util.cid(node1, (err, cid) => {
             expect(err).to.not.exist()
-            node2 = node
-            cb()
+
+            dagPB.DAGNode.addLink(node2, {
+              name: '1',
+              size: node1.size,
+              cid
+            }, (err, node) => {
+              expect(err).to.not.exist()
+              node2 = node
+              cb()
+            })
           })
         },
         (cb) => {
-          dagPB.DAGNode.addLink(node3, {
-            name: '1',
-            size: node1.size,
-            multihash: node1.multihash
-          }, (err, node) => {
+          dagPB.util.cid(node1, (err, cid) => {
             expect(err).to.not.exist()
-            node3 = node
-            cb()
+
+            dagPB.DAGNode.addLink(node3, {
+              name: '1',
+              size: node1.size,
+              cid
+            }, (err, node) => {
+              expect(err).to.not.exist()
+              node3 = node
+              cb()
+            })
           })
         },
         (cb) => {
-          dagPB.DAGNode.addLink(node3, {
-            name: '2',
-            size: node2.size,
-            multihash: node2.multihash
-          }, (err, node) => {
+          dagPB.util.cid(node2, (err, cid) => {
             expect(err).to.not.exist()
-            node3 = node
-            cb()
+
+            dagPB.DAGNode.addLink(node3, {
+              name: '2',
+              size: node2.size,
+              cid
+            }, (err, node) => {
+              expect(err).to.not.exist()
+              node3 = node
+              cb()
+            })
           })
         }
       ], cids)
