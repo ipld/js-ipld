@@ -78,6 +78,23 @@ module.exports = (repo) => {
           done()
         })
       })
+
+      it('should not dynamically load format added statically', (done) => {
+        const bs = new BlockService(repo)
+        const resolver = new IPLDResolver({
+          blockService: bs,
+          formats: [dagCBOR],
+          loadFormat (codec) {
+            throw new Error(`unexpected load format ${codec}`)
+          }
+        })
+
+        resolver.get(cid, '/', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.value).to.eql(data)
+          done()
+        })
+      })
     })
   })
 }
