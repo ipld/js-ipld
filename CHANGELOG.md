@@ -1,3 +1,13 @@
+<a name="0.19.3"></a>
+## [0.19.3](https://github.com/ipld/js-ipld/compare/v0.19.2...v0.19.3) (2018-11-09)
+
+
+### Features
+
+* dynamic format loading ([b41033b](https://github.com/ipld/js-ipld/commit/b41033b)), closes [/github.com/ipld/js-ipld/pull/164#discussion_r228121092](https://github.com//github.com/ipld/js-ipld/pull/164/issues/discussion_r228121092)
+
+
+
 <a name="0.19.2"></a>
 ## [0.19.2](https://github.com/ipld/js-ipld/compare/v0.19.1...v0.19.2) (2018-11-07)
 
