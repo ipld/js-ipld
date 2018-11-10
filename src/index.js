@@ -202,28 +202,30 @@ class IPLDResolver {
     }
     callback = callback || noop
 
-    if (options.cid && CID.isCID(options.cid)) {
-      if (options.onlyHash) {
-        return setImmediate(() => callback(null, options.cid))
-      }
+    let format = options.format
+    let cid
 
-      return this._put(options.cid, node, callback)
+    if (options.cid && CID.isCID(options.cid)) {
+      cid = options.cid
+      format = cid.codec
     }
 
-    this._getFormat(options.format, (err, format) => {
-      if (err) return callback(err)
-
-      format.util.cid(node, options, (err, cid) => {
-        if (err) {
-          return callback(err)
-        }
-
+    waterfall([
+      (cb) => this._getFormat(format, cb),
+      (format, cb) => format.util.serialize(node, (err, buf) => cb(err, { format, buf })),
+      ({ format, buf }, cb) => format.util.cid(buf, options, (err, cid) => cb(err, { buf, cid })),
+      ({ cid, buf }, cb) => {
         if (options.onlyHash) {
-          return callback(null, cid)
+          return cb(null, cid)
         }
 
-        this._put(cid, node, callback)
-      })
+        this.bs.put(new Block(buf, cid), (err) => cb(err, cid))
+      }
+    ], (err, cid) => {
+      if (err) {
+        return callback(err)
+      }
+      callback(null, cid)
     })
   }
 
@@ -375,21 +377,6 @@ class IPLDResolver {
       if (err) return callback(err)
       this.resolvers[codec] = format
       callback(null, format)
-    })
-  }
-
-  _put (cid, node, callback) {
-    callback = callback || noop
-
-    waterfall([
-      (cb) => this._getFormat(cid.codec, cb),
-      (format, cb) => format.util.serialize(node, cb),
-      (buf, cb) => this.bs.put(new Block(buf, cid), cb)
-    ], (err) => {
-      if (err) {
-        return callback(err)
-      }
-      callback(null, cid)
     })
   }
 

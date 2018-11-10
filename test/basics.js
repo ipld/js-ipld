@@ -20,10 +20,11 @@ module.exports = (repo) => {
       expect(r.bs).to.exist()
     })
 
-    it('creates an in memory repo if no blockService is passed', () => {
+    it('creates an in memory repo if no blockService is passed', (done) => {
       IPLDResolver.inMemory((err, r) => {
         expect(err).to.not.exist()
         expect(r.bs).to.exist()
+        done()
       })
     })
 
@@ -77,18 +78,6 @@ module.exports = (repo) => {
       })
     })
 
-    it('_put - errors on unknown resolver', (done) => {
-      const bs = new BlockService(repo)
-      const r = new IPLDResolver({blockService: bs})
-      // choosing a format that is not supported
-      const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
-      r._put(cid, null, (err, result) => {
-        expect(err).to.exist()
-        expect(err.message).to.eql('No resolver found for codec "base1"')
-        done()
-      })
-    })
-
     it('treeStream - errors on unknown resolver', (done) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({blockService: bs})
@@ -102,6 +91,53 @@ module.exports = (repo) => {
           done()
         })
       )
+    })
+  })
+
+  describe('performance', () => {
+    it('put does not double-serialize nodes', (done) => {
+      const r = new IPLDResolver({blockService: {
+        put: (block, cb) => cb()
+      }})
+
+      let serializationCount = 0
+      let cidCount = 0
+
+      const node = 'foo'
+      const codec = 'bar'
+
+      const cid = new CID(1, codec, multihash.fromB58String('QmTmxQfEHbQzntsXPTU4ae2ZgBGwseBmS12AkZnKCkuf2G'))
+
+      const resolver = {}
+      const util = {
+        cid: (node, options, cb) => {
+          cidCount++
+
+          if (!Buffer.isBuffer(node)) {
+            // need to serialize to get the cid...
+            serializationCount++
+          }
+
+          cb(null, cid)
+        },
+        serialize: (node, cb) => {
+          serializationCount++
+
+          cb(null, Buffer.alloc(0))
+        }
+      }
+
+      r.support.add(codec, resolver, util)
+
+      r.put(node, {
+        format: codec
+      }, (err, cid) => {
+        expect(err).to.not.exist()
+        expect(cidCount).to.equal(1)
+        expect(serializationCount).to.equal(1)
+
+        done()
+      })
     })
   })
 }

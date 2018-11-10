@@ -9,7 +9,6 @@ const BlockService = require('ipfs-block-service')
 const ipldGit = require('ipld-git')
 const multihash = require('multihashes')
 const series = require('async/series')
-const each = require('async/each')
 const pull = require('pull-stream')
 
 const IPLDResolver = require('../src')
@@ -150,18 +149,6 @@ module.exports = (repo) => {
     })
 
     describe('internals', () => {
-      it('resolver._put', (done) => {
-        each([
-          { node: blobNode, cid: blobCid },
-          { node: treeNode, cid: treeCid },
-          { node: commitNode, cid: commitCid },
-          { node: commit2Node, cid: commit2Cid },
-          { node: tagNode, cid: tagCid }
-        ], (nc, cb) => {
-          resolver._put(nc.cid, nc.node, cb)
-        }, done)
-      })
-
       it('resolver._get', (done) => {
         resolver.put(blobNode, { cid: blobCid }, (err) => {
           expect(err).to.not.exist()
