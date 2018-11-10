@@ -1,6 +1,6 @@
 {
   "name": "ipld",
-  "version": "0.19.3",
+  "version": "0.20.0",
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
