@@ -1,3 +1,18 @@
+<a name="0.20.0"></a>
+# [0.20.0](https://github.com/ipld/js-ipld/compare/v0.19.3...v0.20.0) (2018-11-10)
+
+
+### Bug Fixes
+
+* updates ipld-dag-pb dep to version ([add49fe](https://github.com/ipld/js-ipld/commit/add49fe)), closes [ipld/js-ipld-dag-pb#99](https://github.com/ipld/js-ipld-dag-pb/issues/99) [ipld/js-ipld-dag-pb#99](https://github.com/ipld/js-ipld-dag-pb/issues/99)
+
+
+### BREAKING CHANGES
+
+* DAGNodes no longer have `.cid` or `.multihash` properties - see
+
+
+
 <a name="0.19.3"></a>
 ## [0.19.3](https://github.com/ipld/js-ipld/compare/v0.19.2...v0.19.3) (2018-11-09)
 
