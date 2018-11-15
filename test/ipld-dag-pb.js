@@ -253,6 +253,14 @@ module.exports = (repo) => {
         })
       })
 
+      it('resolver.get value within nested scope (1 level) returns cid of node traversed to', (done) => {
+        resolver.get(cid2, 'Links/0/Hash/Data', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.cid).to.deep.equal(cid1)
+          done()
+        })
+      })
+
       it('resolver.remove', (done) => {
         resolver.put(node1, { cid: cid1 }, (err) => {
           expect(err).to.not.exist()
