@@ -177,6 +177,7 @@ It may contain any of the following:
 
 - `value` - the value that resulted from the get
 - `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
+- `cid` - the last CID to be resolved during the traversal
 
 ### `.getMany(cids, callback)`
 

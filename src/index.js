@@ -114,6 +114,7 @@ class IPLDResolver {
             if (err) {
               return cb(err)
             }
+
             format.resolver.resolve(block.data, path, (err, result) => {
               if (err) {
                 return cb(err)
@@ -130,6 +131,8 @@ class IPLDResolver {
         const isTerminal = value && !IPLDResolver._maybeCID(value)
 
         if ((endReached && isTerminal) || options.localResolve) {
+          cid = IPLDResolver._maybeCID(value) || cid
+
           return true
         } else {
           value = IPLDResolver._maybeCID(value)

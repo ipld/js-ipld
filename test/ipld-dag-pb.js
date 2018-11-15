@@ -249,6 +249,7 @@ module.exports = (repo) => {
           expect(result.value).to.eql({
             '/': 'QmS149H7EbyMuZ2wtEF1sAd7gPwjj4rKAorweAjKMkxr8D'
           })
+          expect(result.cid).to.deep.equal(cid2)
           done()
         })
       })
