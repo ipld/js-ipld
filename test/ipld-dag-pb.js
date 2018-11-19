@@ -249,6 +249,15 @@ module.exports = (repo) => {
           expect(result.value).to.eql({
             '/': 'QmS149H7EbyMuZ2wtEF1sAd7gPwjj4rKAorweAjKMkxr8D'
           })
+          expect(result.cid).to.deep.equal(cid2)
+          done()
+        })
+      })
+
+      it('resolver.get value within nested scope (1 level) returns cid of node traversed to', (done) => {
+        resolver.get(cid2, 'Links/0/Hash/Data', (err, result) => {
+          expect(err).to.not.exist()
+          expect(result.cid).to.deep.equal(cid1)
           done()
         })
       })
