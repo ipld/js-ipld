@@ -1,3 +1,13 @@
+<a name="0.20.1"></a>
+## [0.20.1](https://github.com/ipld/js-ipld/compare/v0.20.0...v0.20.1) (2018-11-19)
+
+
+### Features
+
+* return cid of last node traversed from ipld.get and friends ([#181](https://github.com/ipld/js-ipld/issues/181)) ([ebcc541](https://github.com/ipld/js-ipld/commit/ebcc541))
+
+
+
 <a name="0.20.0"></a>
 # [0.20.0](https://github.com/ipld/js-ipld/compare/v0.19.3...v0.20.0) (2018-11-10)
 
