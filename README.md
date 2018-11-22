@@ -39,17 +39,22 @@ Want to get started? Check our examples folder. You can check the development st
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-  - IPLD Resolver
-    - [Constructor](#ipld-constructor)
-    - [`.put(node, options, callback)`](#putnode-options-callback)
-    - [`.get(cid [, path] [, options], callback)`](#getcid--path--options-callback)
-    - [`.getStream(cid [, path] [, options])`](#getstreamcid--path--options)
-    - [`.treeStream(cid [, path] [, options])`](#treestreamcid--path--options)
-    - [`.remove(cid, callback)`](#removecid-callback)
-    - [`.support.add(multicodec, formatResolver, formatUtil)`](#supportaddmulticodec-formatresolver-formatutil)
-    - [`.support.rm(multicodec)`](#supportrmmulticodec)
-    - [Properties](#properties)
-      - [`defaultOptions`](#defaultoptions)
+  - [IPLD constructor](#ipld-constructor)
+      - [`options.blockService`](#optionsblockservice)
+      - [`options.formats`](#optionsformats)
+      - [`options.loadFormat(codec)`](#optionsloadformatcodec)
+  - [`.put(node, format, options)`](#putnode-format-options)
+  - [`.putMany(nodes, format, options)`](#putmanynode-format-options)
+  - [`.resolve(cid, path)`](#resolvecid-path)
+  - [`.get(cid)`](#getcid)
+  - [`.getMany(cids)`](#getmanycids)
+  - [`.remove(cid)`](#removecid)
+  - [`.removeMany(cids)`](#removemanycids)
+  - [`.tree(cid, [path], [options])`](#treecid-path-options)
+  - [`.addFormat(ipldFormatImplementation)`](#addformatipldformatimplementation)
+  - [`.removeFormat(codec)`](#removeformatcodec)
+  - [Properties](#properties)
+    - [`defaultOptions`](#defaultoptions)
 - [Packages](#packages)
 - [Contribute](#contribute)
 - [License](#license)
@@ -91,6 +96,21 @@ initIpld('/tmp/ifpsrepo', (err, ipld) => {
 
 ## API
 
+The IPLD API works strictly with CIDs and deserialized IPLD Nodes. Interacting with the binary data happens on lower levels. To access the binary data directly, use the [Block API](https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/BLOCK.md).
+
+All methods that return an async iterator return one that got extended with convenience methods:
+
+  - `iter.first()`: Return the first item only
+  - `iter.last()`: Return the last item only
+  - `iter.all()`: Return all items as array
+
+Example:
+
+```js
+const result = ipld.getMany([cid1, cid2])
+const node1 = await result.first()
+```
+
 ### IPLD constructor
 
 > Creates and returns an instance of IPLD.
@@ -131,83 +151,136 @@ const ipld = new Ipld({
 })
 ```
 
-##### `options.loadFormat(codec, callback)`
+##### `options.loadFormat(codec)`
 
 | Type | Default |
 |------|---------|
-| `Function` | `null` |
+| `async Function` | `null` |
 
-Function to dynamically load an [IPLD Format](https://github.com/ipld/interface-ipld-format). It is passed a string `codec`, the multicodec of the IPLD format to load and a callback function to call when the format has been loaded. e.g.
+Function to dynamically load an [IPLD Format](https://github.com/ipld/interface-ipld-format). It is passed a `codec`, the multicodec code of the IPLD format to load and returns an IPLD Format implementation. For example:
 
 ```js
+const multicodec = require('multicodec')
 const ipld = new Ipld({
-  loadFormat (codec, callback) {
-    if (codec === 'git-raw') {
-      callback(null, require('ipld-git'))
+  async loadFormat (codec) {
+    if (codec === multicodec.GIT_RAW) {
+      return require('ipld-git')
     } else {
-      callback(new Error('unable to load format ' + codec))
+      throw new Error('unable to load format ' + multicodec.print[codec])
     }
   }
 })
 ```
 
-### `.put(node, options, callback)`
+### `.put(node, format, options)`
 
-> Store the given node of a recognized IPLD Format.
+> Stores the given IPLD Node of a recognized IPLD Format.
 
-`options` is an object that must contain one of the following combinations:
-- `cid` - the CID of the node
-- `[hashAlg]`, `[version]` and `format` - the hashAlg, version and the format that should be used to create the CID of the node. The
-`hashAlg` and `version` defaults to the default values for the `format`.
+ - `node` (`Object`): the deserialized IPLD node that should be inserted.
+ - `format` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
+ - `options` is an object with the following properties:
+   - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
+   - `cidVersion` (`number`, default: 1): the CID version to use.
+   - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
 
-It may contain any of the following:
-
-- `onlyHash` - If true the serialized form of the node will not be passed to the underlying block store but the passed callback will be invoked as if it had been
-
-`callback` is a function that should have the signature as following: `function (err, cid) {}`, where `err` is an Error object in case of error and `cid` is the cid of the stored object.
-
-### `.get(cid [, path] [, options], callback)`
-
-> Retrieve a node by the given `cid` or `cid + path`
-
-`options` is an optional object containing:
-
-- `localResolve: bool` - if true, get will only attempt to resolve the path locally
-
-`callback` should be a function with the signature `function (err, result)`, the result being an object with:
-
-- `value` - the value that resulted from the get
-- `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
-- `cid` - Where the graph traversal finished - if `remainderPath` has a value, this will be where it has its root
-
-### `.getMany(cids, callback)`
-
-> Retrieve several nodes at once
-
-`callback` should be a function with the signature `function (err, result)`, the result is an array with the nodes corresponding to the CIDs.
+Returns a Promise with the CID of the serialized IPLD Node.
 
 
-### `.getStream(cid [, path] [, options])`
+### `.putMany(nodes, format, options)`
 
-> Same as get, but returns a source pull-stream that is used to pass the fetched node.
+> Stores the given IPLD Nodes of a recognized IPLD Format.
 
-### `.treeStream(cid [, path] [, options])`
+ - `nodes` (`AsyncIterable<Object>`): deserialized IPLD nodes that should be inserted.
+ - `format` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
+ - `options` is applied to any of the `nodes` and is an object with the following properties:
+   - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
+   - `cidVersion` (`number`, default: 1): the CID version to use.
+   - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
 
-> Returns all the paths under a cid + path through a pull-stream. Accepts the following options:
+Returns an async iterator with the CIDs of the serialized IPLD Nodes. The iterator will throw an exception on the first error that occurs.
 
-- `recursive` - bool - traverse through links to complete the graph.
 
-### `.remove(cid, callback)`
+### `.resolve(cid, path)`
 
-> Remove a node by the given `cid`
+> Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
 
-### `.support.add(multicodec, formatResolver, formatUtil)`
+ - `cid` (`CID`, required): the CID the resolving starts.
+ - `path` (`IPLD Path`, required): the path that should be resolved.
 
-> Add support to another IPLD Format
+Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
+  - `remainderPath` (`string`): the part of the path that wasn’t resolved yet.
+  - `value` (`*`): the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, `value` is the value the `path` points to. So if you need the CID of the IPLD Node you’re currently at, just take the `value` of the previously returned IPLD Node.
 
-### `.support.rm(multicodec)`
 
-> Removes support of an IPLD Format
+### `.get(cid)`
+
+> Retrieve an IPLD Node.
+
+ - `cid` (`CID`): the CID of the IPLD Node that should be retrieved.
+
+Returns a Promise with the IPLD Node that correspond to the given `cid`.
+
+Throws an error if the IPLD Node can’t be retrieved.
+
+
+### `.getMany(cids)`
+
+> Retrieve several IPLD Nodes at once.
+
+ - `cids` (`AsyncIterable<CID>`): the CIDs of the IPLD Nodes that should be retrieved.
+
+Returns an async iterator with the IPLD Nodes that correspond to the given `cids`.
+
+Throws an error if a IPLD Node can’t be retrieved.
+
+
+### `.remove(cid)`
+
+> Remove an IPLD Node by the given `cid`
+
+ - `cid` (`CID`): the CIDs of the IPLD Node that should be removed.
+
+Throws an error if the IPLD Node can’t be removed.
+
+
+### `.removeMany(cids)`
+
+> Remove IPLD Nodes by the given `cids`
+
+ - `cids` (`AsyncIterable<CID>`): the CIDs of the IPLD Nodes that should be removed.
+
+Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.
+
+
+### `.tree(cid, [path], [options])`
+
+> Returns all the paths that can be resolved into.
+
+ - `cid` (`CID`, required): the CID to get the paths from.
+ - `path` (`IPLD Path`, default: ''): the path to start to retrieve the other paths from.
+ - `options`:
+   - `recursive` (`bool`, default: false): whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
+
+Returns an async iterator of all the paths (as Strings) you could resolve into.
+
+
+### `.addFormat(ipldFormatImplementation)`
+
+> Add support for an IPLD Format
+
+ - `ipldFormatImplementation` (`IPLD Format`, required): the implementation of an IPLD Format.
+
+Returns the IPLD instance. This way you can chain `addFormat()` calls.
+
+
+### `.removeFormat(codec)`
+
+> Remove support for an IPLD Format
+
+ - `codec` (`multicodec`, required): the codec of the IPLD Format to remove.
+
+Returns the IPLD instance. This way you can chain `removeFormat()` calls.
+
 
 ### Properties
 
