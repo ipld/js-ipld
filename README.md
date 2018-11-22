@@ -90,6 +90,8 @@ initIpld('/tmp/ifpsrepo', (err, ipld) => {
 
 ## API
 
+The IPLD API works strictly with CIDs and deserialized IPLD Nodes. Interacting with the binary data happens on lower levels. To access the binary data directly, use the [Block API](https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/BLOCK.md).
+
 ### IPLD constructor
 
 > Creates and returns an instance of IPLD.
@@ -150,63 +152,74 @@ const ipld = new Ipld({
 })
 ```
 
-### `.put(node, options, callback)`
+### `.put(nodes, options)`
 
-> Store the given node of a recognized IPLD Format.
+> Stores the given IPLD Nodes of a recognized IPLD Format.
 
-`options` is an object that must contain one of the following combinations:
-- `cid` - the CID of the node
-- `[hashAlg]`, `[version]` and `format` - the hashAlg, version and the format that should be used to create the CID of the node. The
-`hashAlg` and `version` defaults to the default values for the `format`.
+ - `cids` (`Iterable<Object>`): deserialized IPLD nodes that should be inserted.
 
-It may contain any of the following:
+ - `options` is applied to any of the `nodes` and is an object with the following properties:
+   - `codec` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
+   - `hashCode` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
+   - `version` (`boolean`, default: 1): the CID version to use.
+   - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
 
-- `onlyHash` - If true the serialized form of the node will not be passed to the underlying block store but the passed callback will be invoked as if it had been
-
-`callback` is a function that should have the signature as following: `function (err, cid) {}`, where `err` is an Error object in case of error and `cid` is the cid of the stored object.
-
-### `.get(cid [, path] [, options], callback)`
-
-> Retrieve a node by the given `cid` or `cid + path`
-
-`options` is an optional object containing:
-
-- `localResolve: bool` - if true, get will only attempt to resolve the path locally
-
-`callback` should be a function with the signature `function (err, result)`, the result being an object with:
-
-- `value` - the value that resulted from the get
-- `remainderPath` - If it didn't manage to successfully resolve the whole path through or if simply the `localResolve` option was passed.
-- `cid` - Where the graph traversal finished - if `remainderPath` has a value, this will be where it has its root
-
-### `.getMany(cids, callback)`
-
-> Retrieve several nodes at once
-
-`callback` should be a function with the signature `function (err, result)`, the result is an array with the nodes corresponding to the CIDs.
+Returns an async iterator with the CIDs of the serialized IPLD Nodes.
 
 
-### `.getStream(cid [, path] [, options])`
+### `.resolve(cid, path)`
 
-> Same as get, but returns a source pull-stream that is used to pass the fetched node.
+> Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
 
-### `.treeStream(cid [, path] [, options])`
+ - `cid` (`CID`, required): the CID the resolving starts.
+ - `path` (`IPLD Path`, required): the path that should be resolved.
 
-> Returns all the paths under a cid + path through a pull-stream. Accepts the following options:
+Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
+  - `remainderPath` (`string`): the part of the path that wasn’t resolved yet.
+  - `value` (`*`): the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, `value` is the value the `path` points to. So if you need the CID of the IPLD Node you’re currently at, just take the `value` of the previously returned IPLD Node.
 
-- `recursive` - bool - traverse through links to complete the graph.
 
-### `.remove(cid, callback)`
+### `.get(cids)`
 
-> Remove a node by the given `cid`
+> Retrieve several IPLD Nodes at once.
 
-### `.support.add(multicodec, formatResolver, formatUtil)`
+ - `cids` (`Iterable<CID>`): the CIDs of the IPLD Nodes that should be retrieved.
+
+Returns an async iterator with the IPLD Nodes that correspond to the given `cids`.
+
+Throws an error if a IPLD Node can’t be retrieved.
+
+### `.remove(cids)`
+
+> Remove IPLD Nodes by the given `cids`
+
+ - `cids` (`Iterable<CID>`): the CIDs of the IPLD Nodes that should be retrieved.
+
+Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.
+
+
+### `.addFormat(ipldFormatImplementation)`
 
 > Add support to another IPLD Format
 
-### `.support.rm(multicodec)`
+ - `ipldFormatImplementation` (`IPLD Format`, required): the implementation of an IPLD Format.
+
+
+### `.removeFormat(codec)`
 
 > Removes support of an IPLD Format
+
+ - `codec` (`multicodec`, required): the IPLD Format the should be removed.
+
+
+### `.remove(cids)`
+
+> Remove IPLD Nodes by the given `cids`
+
+`cids` is an iterable — most often an array — with CIDs of the Blocks that should be removed.
+
+Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.
+
 
 ### Properties
 
