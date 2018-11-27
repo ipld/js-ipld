@@ -51,7 +51,7 @@ module.exports = (repo) => {
         (cb) => {
           treeNode = {
             somefile: {
-              hash: {'/': blobCid.buffer},
+              hash: { '/': blobCid.buffer },
               mode: '100644'
             }
           }
@@ -65,7 +65,7 @@ module.exports = (repo) => {
         (cb) => {
           commitNode = {
             gitType: 'commit',
-            tree: {'/': treeCid.buffer},
+            tree: { '/': treeCid.buffer },
             parents: [],
             author: {
               name: 'John Doe',
@@ -89,9 +89,9 @@ module.exports = (repo) => {
         (cb) => {
           commit2Node = {
             gitType: 'commit',
-            tree: {'/': treeCid.buffer},
+            tree: { '/': treeCid.buffer },
             parents: [
-              {'/': commitCid.buffer}
+              { '/': commitCid.buffer }
             ],
             author: {
               name: 'John Doe',
@@ -115,7 +115,7 @@ module.exports = (repo) => {
         (cb) => {
           tagNode = {
             gitType: 'tag',
-            object: {'/': commit2Cid.buffer},
+            object: { '/': commit2Cid.buffer },
             type: 'commit',
             tag: 'v0.0.0',
             tagger: {

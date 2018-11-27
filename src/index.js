@@ -60,7 +60,7 @@ class IPLDResolver {
 
     // Enable all supplied formats
     for (const format of options.formats) {
-      const {resolver, util} = format
+      const { resolver, util } = format
       const multicodec = resolver.multicodec
       this.support.add(multicodec, resolver, util)
     }
@@ -294,7 +294,7 @@ class IPLDResolver {
                   if (err) {
                     return cb(err)
                   }
-                  cb(null, {path: p, link: link})
+                  cb(null, { path: p, link: link })
                 })
               }, cb)
             })
@@ -450,7 +450,7 @@ IPLDResolver.inMemory = function (callback) {
     if (err) {
       return callback(err)
     }
-    callback(null, new IPLDResolver({blockService}))
+    callback(null, new IPLDResolver({ blockService }))
   })
 }
 
