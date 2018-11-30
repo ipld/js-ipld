@@ -3,8 +3,10 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
+const chaiAsProised = require('chai-as-promised')
 const expect = chai.expect
 chai.use(dirtyChai)
+chai.use(chaiAsProised)
 const BlockService = require('ipfs-block-service')
 const dagCBOR = require('ipld-dag-cbor')
 const series = require('async/series')
@@ -91,16 +93,17 @@ module.exports = (repo) => {
         }, done)
       })
 
-      it('resolver._get', (done) => {
-        resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist()
-          resolver._get(cid1, (err, node) => {
-            expect(err).to.not.exist()
-            expect(node1).to.eql(node)
-            done()
-          })
-        })
-      })
+      // TODO vmx 2018-11-30 Change this test to use `get()`.
+      // it('resolver._get', (done) => {
+      //   resolver.put(node1, { cid: cid1 }, (err) => {
+      //     expect(err).to.not.exist()
+      //     resolver._get(cid1, (err, node) => {
+      //       expect(err).to.not.exist()
+      //       expect(node1).to.eql(node)
+      //       done()
+      //     })
+      //   })
+      // })
     })
 
     describe('public api', () => {
@@ -134,129 +137,70 @@ module.exports = (repo) => {
         })
       })
 
-      it('resolver.get just CID', (done) => {
-        resolver.get(cid1, (err, result) => {
-          expect(err).to.not.exist()
+      // TODO vmx 2018-11-30: Implement getting the whole object properly
+      // it('resolver.get root path', (done) => {
+      //   resolver.get(cid1, '/', (err, result) => {
+      //     expect(err).to.not.exist()
+      //
+      //     dagCBOR.util.cid(result.value, (err, cid) => {
+      //       expect(err).to.not.exist()
+      //       expect(cid).to.eql(cid1)
+      //       done()
+      //     })
+      //   })
+      // })
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist()
-            expect(cid).to.eql(cid1)
-            done()
-          })
-        })
+      it('resolves value within 1st node scope', async () => {
+        const result = resolver.resolve(cid1, 'someData')
+        const node = await result.first()
+        expect(node.remainderPath).to.eql('')
+        expect(node.value).to.eql('I am 1')
       })
 
-      it('resolver.get root path', (done) => {
-        resolver.get(cid1, '/', (err, result) => {
-          expect(err).to.not.exist()
+      it('resolves value within nested scope (0 level)', async () => {
+        const result = resolver.resolve(cid2, 'one')
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist()
-            expect(cid).to.eql(cid1)
-            done()
-          })
-        })
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('')
+        expect(node1.value).to.eql(cid1)
+
+        const node2 = await result.first()
+        expect(node2.remainderPath).to.eql('')
+        expect(node2.value).to.eql({ someData: 'I am 1' })
       })
 
-      it('resolver.get relative path `.` (same as get /)', (done) => {
-        resolver.get(cid1, '.', (err, result) => {
-          expect(err).to.not.exist()
+      it('resolves value within nested scope (1 level)', async () => {
+        const result = resolver.resolve(cid2, 'one/someData')
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist()
-            expect(cid).to.eql(cid1)
-            done()
-          })
-        })
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('someData')
+        expect(node1.value).to.eql(cid1)
+
+        const node2 = await result.first()
+        expect(node2.remainderPath).to.eql('')
+        expect(node2.value).to.eql('I am 1')
       })
 
-      it('resolver.get relative path `./` (same as get /)', (done) => {
-        resolver.get(cid1, './', (err, result) => {
-          expect(err).to.not.exist()
+      it('resolves value within nested scope (2 levels)', async () => {
+        const result = resolver.resolve(cid3, 'two/one/someData')
 
-          dagCBOR.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist()
-            expect(cid).to.eql(cid1)
-            done()
-          })
-        })
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('one/someData')
+        expect(node1.value).to.eql(cid2)
+
+        const node2 = await result.first()
+        expect(node2.remainderPath).to.eql('someData')
+        expect(node2.value).to.eql(cid1)
+
+        const node3 = await result.first()
+        expect(node3.remainderPath).to.eql('')
+        expect(node3.value).to.eql('I am 1')
       })
 
-      it('resolver.get relative path `./one/someData` (same as get one/someData)', (done) => {
-        resolver.get(cid2, './one/someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          done()
-        })
-      })
-
-      it('resolver.get relative path `one/./someData` (same as get one/someData)', (done) => {
-        resolver.get(cid2, 'one/./someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          done()
-        })
-      })
-
-      it('resolver.get double slash at the beginning `//one/someData` (same as get one/someData)', (done) => {
-        resolver.get(cid2, '//one/someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          done()
-        })
-      })
-
-      it('resolver.get double slash in the middle `one//someData` (same as get one/someData)', (done) => {
-        resolver.get(cid2, 'one//someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          done()
-        })
-      })
-
-      it('resolver.get value within 1st node scope', (done) => {
-        resolver.get(cid1, 'someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          done()
-        })
-      })
-
-      it('resolver.get value within nested scope (0 level)', (done) => {
-        resolver.get(cid2, 'one', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql({
-            someData: 'I am 1'
-          })
-          done()
-        })
-      })
-
-      it('resolver.get value within nested scope (1 level)', (done) => {
-        resolver.get(cid2, 'one/someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          done()
-        })
-      })
-
-      it('resolver.get value within nested scope (2 levels)', (done) => {
-        resolver.get(cid3, 'two/one/someData', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('I am 1')
-          expect(result.remainderPath).to.eql('')
-          expect(result.cid).to.deep.eql(cid1)
-
-          done()
-        })
-      })
-
-      it('resolver.get calls callback for unavailable path', (done) => {
-        resolver.get(cid3, `foo/${Date.now()}`, (err) => {
-          expect(err).to.exist()
-          expect(err.message).to.contain('path not available')
-          done()
-        })
+      it('fails resolving unavailable path', async () => {
+        const result = resolver.resolve(cid3, `foo/${Date.now()}`)
+        await expect(result.next()).to.be.rejectedWith(
+          'path not available at root')
       })
 
       it('resolver.tree', (done) => {
@@ -330,26 +274,27 @@ module.exports = (repo) => {
         )
       })
 
-      it('resolver.remove', (done) => {
-        resolver.put(node1, { cid: cid1 }, (err) => {
-          expect(err).to.not.exist()
-          resolver.get(cid1, (err, result) => {
-            expect(err).to.not.exist()
-            expect(node1).to.eql(result.value)
-            remove()
-          })
-        })
-
-        function remove () {
-          resolver.remove(cid1, (err) => {
-            expect(err).to.not.exist()
-            resolver.get(cid1, (err) => {
-              expect(err).to.exist()
-              done()
-            })
-          })
-        }
-      })
+      // // TODO vmx 2018-11-30: remove this `get()` call with the new `get()`
+      // it('resolver.remove', (done) => {
+      //   resolver.put(node1, { cid: cid1 }, (err) => {
+      //     expect(err).to.not.exist()
+      //     resolver.get(cid1, (err, result) => {
+      //       expect(err).to.not.exist()
+      //       expect(node1).to.eql(result.value)
+      //       remove()
+      //     })
+      //   })
+      //
+      //   function remove () {
+      //     resolver.remove(cid1, (err) => {
+      //       expect(err).to.not.exist()
+      //       resolver.get(cid1, (err) => {
+      //         expect(err).to.exist()
+      //         done()
+      //       })
+      //     })
+      //   }
+      // })
     })
   })
 }

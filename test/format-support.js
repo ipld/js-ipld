@@ -3,8 +3,10 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
+const chaiAsProised = require('chai-as-promised')
 const expect = chai.expect
 chai.use(dirtyChai)
+chai.use(chaiAsProised)
 const BlockService = require('ipfs-block-service')
 const dagCBOR = require('ipld-dag-cbor')
 
@@ -28,21 +30,19 @@ module.exports = (repo) => {
     })
 
     describe('Dynamic format loading', () => {
-      it('should fail to dynamically load format', (done) => {
+      it('should fail to dynamically load format', async () => {
         const bs = new BlockService(repo)
         const resolver = new IPLDResolver({
           blockService: bs,
           formats: []
         })
 
-        resolver.get(cid, '/', (err) => {
-          expect(err).to.exist()
-          expect(err.message).to.equal('No resolver found for codec "dag-cbor"')
-          done()
-        })
+        const result = resolver.resolve(cid, '')
+        await expect(result.next()).to.be.rejectedWith(
+          'No resolver found for codec "dag-cbor"')
       })
 
-      it('should fail to dynamically load format via loadFormat option', (done) => {
+      it('should fail to dynamically load format via loadFormat option', async () => {
         const errMsg = 'BOOM' + Date.now()
         const bs = new BlockService(repo)
         const resolver = new IPLDResolver({
@@ -54,14 +54,11 @@ module.exports = (repo) => {
           }
         })
 
-        resolver.get(cid, '/', (err) => {
-          expect(err).to.exist()
-          expect(err.message).to.equal(errMsg)
-          done()
-        })
+        const result = resolver.resolve(cid, '')
+        await expect(result.next()).to.be.rejectedWith(errMsg)
       })
 
-      it('should dynamically load missing format', (done) => {
+      it('should dynamically load missing format', async () => {
         const bs = new BlockService(repo)
         const resolver = new IPLDResolver({
           blockService: bs,
@@ -72,14 +69,12 @@ module.exports = (repo) => {
           }
         })
 
-        resolver.get(cid, '/', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(data)
-          done()
-        })
+        const result = resolver.resolve(cid, '')
+        const node = await result.first()
+        expect(node.value).to.eql(data)
       })
 
-      it('should not dynamically load format added statically', (done) => {
+      it('should not dynamically load format added statically', async () => {
         const bs = new BlockService(repo)
         const resolver = new IPLDResolver({
           blockService: bs,
@@ -89,11 +84,8 @@ module.exports = (repo) => {
           }
         })
 
-        resolver.get(cid, '/', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql(data)
-          done()
-        })
+        const result = resolver.resolve(cid, '')
+        await result.next()
       })
     })
   })
