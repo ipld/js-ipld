@@ -162,16 +162,17 @@ module.exports = (repo) => {
         }, done)
       })
 
-      it('resolver._get', (done) => {
-        resolver.put(blobNode, { cid: blobCid }, (err) => {
-          expect(err).to.not.exist()
-          resolver.get(blobCid, (err, result) => {
-            expect(err).to.not.exist()
-            expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
-            done()
-          })
-        })
-      })
+      // TODO vmx 2018-11-30 Change this test to use `get()`.
+      // it('resolver._get', (done) => {
+      //   resolver.put(blobNode, { cid: blobCid }, (err) => {
+      //     expect(err).to.not.exist()
+      //     resolver.get(blobCid, (err, result) => {
+      //       expect(err).to.not.exist()
+      //       expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
+      //       done()
+      //     })
+      //   })
+      // })
     })
 
     describe('public api', () => {
@@ -205,79 +206,103 @@ module.exports = (repo) => {
         })
       })
 
-      it('resolver.get root path', (done) => {
-        resolver.get(blobCid, '/', (err, result) => {
-          expect(err).to.not.exist()
+      // TODO vmx 2018-11-30: Implement getting the whole object properly
+      // it('resolver.get empty path', (done) => {
+      //   resolver.get(blobCid, '', (err, result) => {
+      //     expect(err).to.not.exist()
+      //
+      //     ipldGit.util.cid(result.value, (err, cid) => {
+      //       expect(err).to.not.exist()
+      //       expect(cid).to.eql(blobCid)
+      //       done()
+      //     })
+      //   })
+      // })
 
-          ipldGit.util.cid(result.value, (err, cid) => {
-            expect(err).to.not.exist()
-            expect(cid).to.eql(blobCid)
-            done()
-          })
-        })
+      it('resolves value within 1st node scope', async () => {
+        const result = resolver.resolve(commitCid, 'message')
+        const node = await result.first()
+        expect(node.remainderPath).to.eql('')
+        expect(node.value).to.eql('Initial commit\n')
       })
 
-      it('value within 1st node scope', (done) => {
-        resolver.get(commitCid, 'message', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('Initial commit\n')
-          done()
-        })
+      it('resolves value within nested node scope (commit/tree)', async () => {
+        const result = resolver.resolve(commitCid, 'tree/somefile/mode')
+
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('somefile/mode')
+        expect(node1.value).to.eql(treeCid)
+
+        const node2 = await result.first()
+        expect(node2.remainderPath).to.eql('')
+        expect(node2.value).to.eql('100644')
       })
 
-      it('value within nested node scope (commit/tree)', (done) => {
-        resolver.get(commitCid, 'tree/somefile/mode', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql('100644')
-          done()
-        })
+      it('resolves value within nested node scope (commit/tree/blob)', async () => {
+        const result = resolver.resolve(commitCid, 'tree/somefile/hash')
+
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('somefile/hash')
+        expect(node1.value).to.eql(treeCid)
+
+        const node2 = await result.first()
+        expect(node2.remainderPath).to.eql('')
+        expect(node2.value).to.eql(blobCid)
+
+        const node3 = await result.first()
+        expect(node3.remainderPath).to.eql('')
+        expect(node3.value).to.eql(blobNode)
       })
 
-      it('value within nested node scope (commit/tree/blob)', (done) => {
-        resolver.get(commitCid, 'tree/somefile/hash', (err, result) => {
-          expect(err).to.not.exist()
-          expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
-          done()
-        })
+      it('resolves value within nested node scope (commit/commit/tree/blob)', async () => {
+        const result = resolver.resolve(commit2Cid, 'parents/0/tree/somefile/hash')
+
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('tree/somefile/hash')
+        expect(node1.value).to.eql(commitCid)
+
+        // The nodes in between were already tested by some other test
+        const last = await result.last()
+        expect(last.remainderPath).to.eql('')
+        expect(last.value).to.eql(blobNode)
       })
 
-      it('value within nested node scope (commit/commit/tree/blob)', (done) => {
-        resolver.get(commit2Cid, 'parents/0/tree/somefile/hash', (err, result) => {
-          expect(err).to.not.exist()
-          expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
-          done()
-        })
+      it('resolves value within nested node scope (tag/commit/commit/tree/blob)', async () => {
+        const result = resolver.resolve(tagCid,
+          'object/parents/0/tree/somefile/hash')
+
+        const node1 = await result.first()
+        expect(node1.remainderPath).to.eql('parents/0/tree/somefile/hash')
+        expect(node1.value).to.eql(commit2Cid)
+
+        // The nodes in between were already tested by some other test
+        const last = await result.last()
+        expect(last.remainderPath).to.eql('')
+        expect(last.value).to.eql(blobNode)
       })
 
-      it('value within nested node scope (tag/commit/commit/tree/blob)', (done) => {
-        resolver.get(tagCid, 'object/parents/0/tree/somefile/hash', (err, result) => {
-          expect(err).to.not.exist()
-          expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
-          done()
-        })
-      })
-
-      it('resolver.remove', (done) => {
-        resolver.put(blobNode, { cid: blobCid }, (err) => {
-          expect(err).to.not.exist()
-          resolver.get(blobCid, (err, result) => {
-            expect(err).to.not.exist()
-            const node = result.value
-            expect(blobNode.toString('hex')).to.eql(node.toString('hex'))
-            remove()
-          })
-        })
-
-        function remove () {
-          resolver.remove(blobCid, (err) => {
-            expect(err).to.not.exist()
-            resolver.get(blobCid, (err) => {
-              expect(err).to.exist()
-              done()
-            })
-          })
-        }
-      })
+      // // TODO vmx 2018-11-30: remove this `get()` call with the new `get()`
+      // it('resolver.remove', (done) => {
+      //   resolver.put(blobNode, { cid: blobCid }, (err) => {
+      //     expect(err).to.not.exist()
+      //     resolver.get(blobCid, (err, result) => {
+      //       expect(err).to.not.exist()
+      //       const node = result.value
+      //       expect(blobNode.toString('hex')).to.eql(node.toString('hex'))
+      //       remove()
+      //     })
+      //   })
+      //
+      //   function remove () {
+      //     resolver.remove(blobCid, (err) => {
+      //       expect(err).to.not.exist()
+      //       resolver.get(blobCid, (err) => {
+      //         expect(err).to.exist()
+      //         done()
+      //       })
+      //     })
+      //   }
+      // })
     })
   })
 }

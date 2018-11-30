@@ -3,9 +3,6 @@
 const Block = require('ipfs-block')
 const pull = require('pull-stream')
 const CID = require('cids')
-const doUntil = require('async/doUntil')
-const joinPath = require('path').join
-const osPathSep = require('path').sep
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const map = require('async/map')
@@ -14,6 +11,7 @@ const mergeOptions = require('merge-options')
 const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
+const { fancyIterator } = require('./util')
 
 function noop () {}
 
@@ -62,111 +60,76 @@ class IPLDResolver {
     }
   }
 
-  get (cid, path, options, callback) {
-    if (typeof path === 'function') {
-      callback = path
-      path = undefined
+  /**
+   * Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
+   *
+   * @param {CID} cid - the CID the resolving starts.
+   * @param {string} path - the path that should be resolved.
+   * @returns {Iterable.<Promise.<{remainderPath: string, value}>>} - Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
+   *   - `remainderPath`: the part of the path that wasn’t resolved yet.
+   *   - `value`: the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, value is the value the path points to. So if you need the CID of the IPLD Node you’re currently at, just take the value of the previously returned IPLD Node.
+   */
+  resolve (cid, path) {
+    if (!CID.isCID(cid)) {
+      throw new Error('`cid` argument must be a CID')
+    }
+    if (typeof path !== 'string') {
+      throw new Error('`path` argument must be a string')
     }
 
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
+    const next = () => {
+      // End iteration if there isn't a CID to follow anymore
+      if (cid === null) {
+        return Promise.resolve({ done: true })
+      }
 
-    // this removes occurrences of ./, //, ../
-    // makes sure that path never starts with ./ or /
-    // path.join is OS specific. Need to convert back to POSIX format.
-    if (typeof path === 'string') {
-      path = joinPath('/', path)
-        .substr(1)
-        .split(osPathSep)
-        .join('/')
-    }
-
-    if (path === '' || !path) {
-      return this._get(cid, (err, node) => {
-        if (err) {
-          return callback(err)
-        }
-        callback(null, {
-          value: node,
-          remainderPath: '',
-          cid
-        })
-      })
-    }
-
-    let value
-
-    doUntil(
-      (cb) => {
+      return new Promise((resolve, reject) => {
         this._getFormat(cid.codec, (err, format) => {
-          if (err) return cb(err)
+          if (err) {
+            return reject(err)
+          }
 
           // get block
           // use local resolver
           // update path value
           this.bs.get(cid, (err, block) => {
             if (err) {
-              return cb(err)
+              return reject(err)
             }
 
             format.resolver.resolve(block.data, path, (err, result) => {
               if (err) {
-                return cb(err)
+                return reject(err)
               }
-              value = result.value
+
+              // Prepare for the next iteration if there is a `remainderPath`
               path = result.remainderPath
-              cb()
+              let value = result.value
+              // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
+              // CIDs yet. Hence try to convert old style links to CIDs
+              if (Object.keys(value).length === 1 && '/' in value) {
+                value = new CID(value['/'])
+              }
+              if (CID.isCID(value)) {
+                cid = value
+              } else {
+                cid = null
+              }
+
+              return resolve({
+                done: false,
+                value: {
+                  remainderPath: path,
+                  value
+                }
+              })
             })
           })
         })
-      },
-      () => {
-        const endReached = !path || path === '' || path === '/'
-        const isTerminal = value && !IPLDResolver._maybeCID(value)
+      })
+    }
 
-        if ((endReached && isTerminal) || options.localResolve) {
-          cid = IPLDResolver._maybeCID(value) || cid
-
-          return true
-        } else {
-          value = IPLDResolver._maybeCID(value)
-          // continue traversing
-          if (value) {
-            cid = value
-          }
-          return false
-        }
-      },
-      (err, results) => {
-        if (err) {
-          return callback(err)
-        }
-        return callback(null, {
-          value: value,
-          remainderPath: path,
-          cid
-        })
-      }
-    )
-  }
-
-  getStream (cid, path, options) {
-    const deferred = pullDeferSource()
-
-    this.get(cid, path, options, (err, result) => {
-      if (err) {
-        return deferred.resolve(
-          pull.error(err)
-        )
-      }
-      deferred.resolve(
-        pull.values([result])
-      )
-    })
-
-    return deferred
+    return fancyIterator(next)
   }
 
   /**
@@ -347,25 +310,6 @@ class IPLDResolver {
   /*           */
   /* internals */
   /*           */
-
-  _get (cid, callback) {
-    waterfall([
-      (cb) => this._getFormat(cid.codec, cb),
-      (format, cb) => this.bs.get(cid, (err, block) => {
-        if (err) return cb(err)
-        cb(null, format, block)
-      }),
-      (format, block, cb) => {
-        format.util.deserialize(block.data, (err, deserialized) => {
-          if (err) {
-            return cb(err)
-          }
-          cb(null, deserialized)
-        })
-      }
-    ], callback)
-  }
-
   _getFormat (codec, callback) {
     if (this.resolvers[codec]) {
       return callback(null, this.resolvers[codec])

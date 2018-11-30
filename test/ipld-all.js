@@ -61,12 +61,16 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     ], done)
   })
 
-  it('resolve through different formats', (done) => {
-    resolver.get(cidCbor, 'pb/Data', (err, result) => {
-      expect(err).to.not.exist()
-      expect(result.value).to.eql(Buffer.from('I am inside a Protobuf'))
-      done()
-    })
+  it('resolve through different formats', async () => {
+    const result = resolver.resolve(cidCbor, 'pb/Data')
+
+    const node1 = await result.first()
+    expect(node1.remainderPath).to.eql('Data')
+    expect(node1.value).to.eql(cidPb)
+
+    const node2 = await result.first()
+    expect(node2.remainderPath).to.eql('')
+    expect(node2.value).to.eql(Buffer.from('I am inside a Protobuf'))
   })
 
   it('does not store nodes when onlyHash is passed', (done) => {

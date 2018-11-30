@@ -36,6 +36,7 @@
     "aegir": "^18.2.1",
     "bitcoinjs-lib": "^4.0.2",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
     "ethereumjs-block": "^2.1.0",
     "ipfs-block-service": "~0.15.2",
