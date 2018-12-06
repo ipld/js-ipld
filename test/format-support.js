@@ -48,9 +48,9 @@ module.exports = (repo) => {
         const resolver = new IPLDResolver({
           blockService: bs,
           formats: [],
-          loadFormat (codec, callback) {
-            if (codec !== 'dag-cbor') return callback(new Error('unexpected codec'))
-            setTimeout(() => callback(new Error(errMsg)))
+          async loadFormat (codec) {
+            if (codec !== 'dag-cbor') throw new Error('unexpected codec')
+            throw new Error(errMsg)
           }
         })
 
@@ -63,9 +63,9 @@ module.exports = (repo) => {
         const resolver = new IPLDResolver({
           blockService: bs,
           formats: [],
-          loadFormat (codec, callback) {
-            if (codec !== 'dag-cbor') return callback(new Error('unexpected codec'))
-            setTimeout(() => callback(null, dagCBOR))
+          async loadFormat (codec) {
+            if (codec !== 'dag-cbor') throw new Error('unexpected codec')
+            return dagCBOR
           }
         })
 

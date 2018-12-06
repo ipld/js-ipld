@@ -42,9 +42,13 @@ class IPLDResolver {
       }
     }
 
-    this.support.load = options.loadFormat || ((codec, callback) => {
-      callback(new Error(`No resolver found for codec "${codec}"`))
-    })
+    if (options.loadFormat === undefined) {
+      this.support.load = async (codec) => {
+        throw new Error(`No resolver found for codec "${codec}"`)
+      }
+    } else {
+      this.support.load = options.loadFormat
+    }
 
     this.support.rm = (multicodec) => {
       if (this.resolvers[multicodec]) {
@@ -83,46 +87,47 @@ class IPLDResolver {
         return Promise.resolve({ done: true })
       }
 
-      return new Promise((resolve, reject) => {
-        this._getFormat(cid.codec, (err, format) => {
+      return new Promise(async (resolve, reject) => {
+        let format
+        try {
+          format = await this._getFormat(cid.codec)
+        } catch (err) {
+          return reject(err)
+        }
+
+        // get block
+        // use local resolver
+        // update path value
+        this.bs.get(cid, (err, block) => {
           if (err) {
             return reject(err)
           }
 
-          // get block
-          // use local resolver
-          // update path value
-          this.bs.get(cid, (err, block) => {
+          format.resolver.resolve(block.data, path, (err, result) => {
             if (err) {
               return reject(err)
             }
 
-            format.resolver.resolve(block.data, path, (err, result) => {
-              if (err) {
-                return reject(err)
-              }
+            // Prepare for the next iteration if there is a `remainderPath`
+            path = result.remainderPath
+            let value = result.value
+            // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
+            // CIDs yet. Hence try to convert old style links to CIDs
+            if (Object.keys(value).length === 1 && '/' in value) {
+              value = new CID(value['/'])
+            }
+            if (CID.isCID(value)) {
+              cid = value
+            } else {
+              cid = null
+            }
 
-              // Prepare for the next iteration if there is a `remainderPath`
-              path = result.remainderPath
-              let value = result.value
-              // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
-              // CIDs yet. Hence try to convert old style links to CIDs
-              if (Object.keys(value).length === 1 && '/' in value) {
-                value = new CID(value['/'])
+            return resolve({
+              done: false,
+              value: {
+                remainderPath: path,
+                value
               }
-              if (CID.isCID(value)) {
-                cid = value
-              } else {
-                cid = null
-              }
-
-              return resolve({
-                done: false,
-                value: {
-                  remainderPath: path,
-                  value
-                }
-              })
             })
           })
         })
@@ -148,9 +153,12 @@ class IPLDResolver {
         return callback(err)
       }
       map(blocks, (block, mapCallback) => {
-        this._getFormat(block.cid.codec, (err, format) => {
-          if (err) return mapCallback(err)
+        // TODO vmx 2018-12-07: Make this one async/await once
+        // `util.serialize()` is a Promise
+        this._getFormat(block.cid.codec).then((format) => {
           format.util.deserialize(block.data, mapCallback)
+        }).catch((err) => {
+          mapCallback(err)
         })
       },
       callback)
@@ -174,9 +182,9 @@ class IPLDResolver {
       return this._put(options.cid, node, callback)
     }
 
-    this._getFormat(options.format, (err, format) => {
-      if (err) return callback(err)
-
+    // TODO vmx 2018-12-07: Make this async/await once `put()` returns a
+    // Promise
+    this._getFormat(options.format).then((format) => {
       format.util.cid(node, options, (err, cid) => {
         if (err) {
           return callback(err)
@@ -188,6 +196,8 @@ class IPLDResolver {
 
         this._put(cid, node, callback)
       })
+    }).catch((err) => {
+      callback(err)
     })
   }
 
@@ -205,7 +215,9 @@ class IPLDResolver {
       p = pullDeferSource()
 
       waterfall([
-        (cb) => this._getFormat(cid.codec, cb),
+        async () => {
+          return this._getFormat(cid.codec)
+        },
         (format, cb) => this.bs.get(cid, (err, block) => {
           if (err) return cb(err)
           cb(null, format, block)
@@ -239,7 +251,9 @@ class IPLDResolver {
           const cid = el.cid
 
           waterfall([
-            (cb) => this._getFormat(cid.codec, cb),
+            async () => {
+              return this._getFormat(cid.codec)
+            },
             (format, cb) => this.bs.get(cid, (err, block) => {
               if (err) return cb(err)
               cb(null, format, block)
@@ -310,24 +324,27 @@ class IPLDResolver {
   /*           */
   /* internals */
   /*           */
-  _getFormat (codec, callback) {
+  async _getFormat (codec) {
     if (this.resolvers[codec]) {
-      return callback(null, this.resolvers[codec])
+      return this.resolvers[codec]
     }
 
     // If not supported, attempt to dynamically load this format
-    this.support.load(codec, (err, format) => {
-      if (err) return callback(err)
-      this.resolvers[codec] = format
-      callback(null, format)
-    })
+    const format = await this.support.load(codec)
+    this.resolvers[codec] = format
+    return format
   }
 
   _put (cid, node, callback) {
     callback = callback || noop
 
     waterfall([
-      (cb) => this._getFormat(cid.codec, cb),
+      (cb) => {
+        this._getFormat(cid.codec).then(
+          (format) => cb(null, format),
+          (error) => cb(error)
+        )
+      },
       (format, cb) => format.util.serialize(node, cb),
       (buf, cb) => this.bs.put(new Block(buf, cid), cb)
     ], (err) => {
