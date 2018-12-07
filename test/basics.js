@@ -10,6 +10,7 @@ chai.use(chaiAsProised)
 const BlockService = require('ipfs-block-service')
 const CID = require('cids')
 const multihash = require('multihashes')
+const multicodec = require('multicodec')
 const pull = require('pull-stream')
 const inMemory = require('ipld-in-memory')
 
@@ -62,25 +63,19 @@ module.exports = (repo) => {
     //   })
     // }
 
-    it('put - errors on unknown resolver', (done) => {
+    it('put - errors on unknown resolver', async () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })
       // choosing a format that is not supported
-      r.put(null, { format: 'blake2b-8' }, (err, result) => {
-        expect(err).to.exist()
-        expect(err.message).to.eql('No resolver found for codec "blake2b-8"')
-        done()
-      })
+      const result = r.put([null], multicodec.BLAKE2B_8)
+      await expect(result.next()).to.be.rejectedWith(
+        'No resolver found for codec "blake2b-8"')
     })
 
-    it('put - errors if no options', (done) => {
+    it('put - errors if no format is provided', () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })
-      r.put(null, (err, result) => {
-        expect(err).to.exist()
-        expect(err.message).to.eql('IPLDResolver.put requires options')
-        done()
-      })
+      expect(() => r.put([null])).to.be.throw('`put` requires a format')
     })
 
     it('_put - errors on unknown resolver', (done) => {

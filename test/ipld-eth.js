@@ -13,8 +13,7 @@ const loadFixture = require('aegir/fixtures')
 const async = require('async')
 const EthBlockHeader = require('ethereumjs-block/header')
 const EthTrieNode = require('merkle-patricia-tree/trieNode')
-const multihashes = require('multihashes')
-const CID = require('cids')
+const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
 
@@ -34,8 +33,7 @@ module.exports = (repo) => {
 
       async.waterfall([
         readFilesFixture,
-        generateCids,
-        putInStore
+        generateCids
       ], done)
 
       function readFilesFixture (cb) {
@@ -54,48 +52,44 @@ module.exports = (repo) => {
 
       function generateCids (fileData, cb) {
         ethObjs = {
-          child: generateForType('child', 'eth-block', fileData.child),
-          block: generateForType('block', 'eth-block', fileData.block),
-          stateRoot: generateForType('stateRoot', 'eth-state-trie', fileData.stateRoot),
-          state0: generateForType('state0', 'eth-state-trie', fileData.state0),
-          state00: generateForType('state00', 'eth-state-trie', fileData.state00),
-          state000: generateForType('state000', 'eth-state-trie', fileData.state000),
-          state0000: generateForType('state0000', 'eth-state-trie', fileData.state0000),
-          state00001: generateForType('state00001', 'eth-state-trie', fileData.state00001),
-          state000017: generateForType('state000017', 'eth-state-trie', fileData.state000017)
+          child: generateForType('child', multicodec.ETH_BLOCK, fileData.child),
+          block: generateForType('block', multicodec.ETH_BLOCK, fileData.block),
+          stateRoot: generateForType('stateRoot', multicodec.ETH_STATE_TRIE, fileData.stateRoot),
+          state0: generateForType('state0', multicodec.ETH_STATE_TRIE, fileData.state0),
+          state00: generateForType('state00', multicodec.ETH_STATE_TRIE, fileData.state00),
+          state000: generateForType('state000', multicodec.ETH_STATE_TRIE, fileData.state000),
+          state0000: generateForType('state0000', multicodec.ETH_STATE_TRIE, fileData.state0000),
+          state00001: generateForType('state00001', multicodec.ETH_STATE_TRIE, fileData.state00001),
+          state000017: generateForType('state000017', multicodec.ETH_STATE_TRIE, fileData.state000017)
         }
 
         cb()
       }
 
-      function generateForType (label, type, rawData) {
+      async function generateForType (label, type, rawData) {
         let node
 
         switch (type) {
-          case 'eth-block': node = new EthBlockHeader(rawData); break
-          case 'eth-state-trie': node = new EthTrieNode(rlp.decode(rawData)); break
+          case multicodec.ETH_BLOCK: node = new EthBlockHeader(rawData); break
+          case multicodec.ETH_STATE_TRIE: node = new EthTrieNode(rlp.decode(rawData)); break
           default: throw new Error('Unknown type!')
         }
 
-        const multihash = multihashes.encode(node.hash(), 'keccak-256')
-        const cid = new CID(1, type, multihash)
+        const result = resolver.put([node], type)
+        const cid = await result.first()
+
         return {
           raw: rawData,
           node: node,
           cid: cid
         }
       }
-
-      function putInStore (cb) {
-        async.each(ethObjs, (nodeData, next) => {
-          resolver.put(nodeData.node, { cid: nodeData.cid }, next)
-        }, cb)
-      }
     })
 
     describe('resolver.resolve', () => {
       it('block-to-block', async () => {
-        const result = resolver.resolve(ethObjs.child.cid, 'parent')
+        const child = await ethObjs.child
+        const result = resolver.resolve(child.cid, 'parent')
 
         const node1 = await result.first()
         expect(node1.remainderPath).to.eql('')
@@ -106,7 +100,8 @@ module.exports = (repo) => {
       })
 
       it('block-to-account resolve', async () => {
-        const result = resolver.resolve(ethObjs.child.cid,
+        const child = await ethObjs.child
+        const result = resolver.resolve(child.cid,
           'parent/state/0/0/0/0/1/7/2/7/8/a/1/e/6/e/9/6/3/5/e/1/a/3/f/1/1/e/b/0/2/2/d/a/1/f/5/7/e/a/0/0/4/d/8/5/2/d/9/d/1/9/4/2/d/4/3/6/0/8/5/4/0/4/7/1/nonce')
         const node = await result.last()
         expect(node.value.toString('hex'), '03')

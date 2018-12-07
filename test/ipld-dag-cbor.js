@@ -12,6 +12,7 @@ const dagCBOR = require('ipld-dag-cbor')
 const series = require('async/series')
 const each = require('async/each')
 const pull = require('pull-stream')
+const multicodec = require('multicodec')
 const multihash = require('multihashes')
 
 const IPLDResolver = require('../src')
@@ -69,16 +70,12 @@ module.exports = (repo) => {
         }
       ], store)
 
-      function store () {
-        pull(
-          pull.values([
-            { node: node1, cid: cid1 },
-            { node: node2, cid: cid2 },
-            { node: node3, cid: cid3 }
-          ]),
-          pull.asyncMap((nac, cb) => resolver.put(nac.node, { cid: nac.cid }, cb)),
-          pull.onEnd(done)
-        )
+      async function store () {
+        const nodes = [node1, node2, node3]
+        const result = resolver.put(nodes, multicodec.DAG_CBOR)
+        ;[cid1, cid2, cid3] = await result.all()
+
+        done()
       }
     })
 
@@ -107,34 +104,27 @@ module.exports = (repo) => {
     })
 
     describe('public api', () => {
-      it('resolver.put with CID', (done) => {
-        resolver.put(node1, { cid: cid1 }, done)
+      it('resolver.put with format', async () => {
+        const result = resolver.put([node1], multicodec.DAG_CBOR)
+        const cid = await result.first()
+        expect(cid.version).to.equal(1)
+        expect(cid.codec).to.equal('dag-cbor')
+        expect(cid.multihash).to.exist()
+        const mh = multihash.decode(cid.multihash)
+        expect(mh.name).to.equal('sha2-256')
       })
 
-      it('resolver.put with format', (done) => {
-        resolver.put(node1, { format: 'dag-cbor' }, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid).to.exist()
-          expect(cid.version).to.equal(1)
-          expect(cid.codec).to.equal('dag-cbor')
-          expect(cid.multihash).to.exist()
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha2-256')
-          done()
+      it('resolver.put with format + hashAlg', async () => {
+        const result = resolver.put([node1], multicodec.DAG_CBOR, {
+          hashAlg: multicodec.SHA3_512
         })
-      })
-
-      it('resolver.put with format + hashAlg', (done) => {
-        resolver.put(node1, { format: 'dag-cbor', hashAlg: 'sha3-512' }, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid).to.exist()
-          expect(cid.version).to.equal(1)
-          expect(cid.codec).to.equal('dag-cbor')
-          expect(cid.multihash).to.exist()
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha3-512')
-          done()
-        })
+        const cid = await result.first()
+        expect(cid).to.exist()
+        expect(cid.version).to.equal(1)
+        expect(cid.codec).to.equal('dag-cbor')
+        expect(cid.multihash).to.exist()
+        const mh = multihash.decode(cid.multihash)
+        expect(mh.name).to.equal('sha3-512')
       })
 
       // TODO vmx 2018-11-30: Implement getting the whole object properly

@@ -64,7 +64,8 @@
     "multicodec": "~0.5.0",
     "pull-defer": "~0.2.3",
     "pull-stream": "^3.6.9",
-    "pull-traverse": "^1.0.3"
+    "pull-traverse": "^1.0.3",
+    "typical": "^3.0.0"
   },
   "contributors": [
     "Alan Shaw <alan.shaw@protocol.ai>",

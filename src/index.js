@@ -12,6 +12,7 @@ const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
+const typical = require('typical')
 const { fancyIterator } = require('./util')
 
 function noop () {}
@@ -170,40 +171,82 @@ class IPLDResolver {
     })
   }
 
-  put (node, options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      return setImmediate(() => callback(
-        new Error('IPLDResolver.put requires options')
-      ))
+  /**
+   * Stores the given IPLD Nodes of a recognized IPLD Format.
+   *
+   * @param {Iterable.<Object>} nodes - Deserialized IPLD nodes that should be inserted.
+   * @param {number} format - The multicodec of the format that IPLD Node should be encoded in.
+   * @param {Object} [userOptions] -  Options are applied to any of the `nodes` and is an object with the following properties.
+   * @param {number} [userOtions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
+   * @param {number} [userOptions.cidVersion=1]`- The CID version to use.
+   * @param {boolean} [userOptions.onlyHash=false] - If true the serialized form of the IPLD Node will not be passed to the underlying block store.
+   * @returns {Iterable.<Promise.<CID>>} - Returns an async iterator with the CIDs of the serialized IPLD Nodes.
+   */
+  put (nodes, format, userOptions) {
+    if (!typical.isIterable(nodes) || typical.isString(nodes) ||
+        Buffer.isBuffer(nodes)) {
+      throw new Error('`nodes` must be an iterable')
     }
-    callback = callback || noop
+    if (format === undefined) {
+      throw new Error('`put` requires a format')
+    }
+    if (typeof format !== 'number') {
+      throw new Error('`format` parameter must be number (multicodec)')
+    }
 
-    if (options.cid && CID.isCID(options.cid)) {
-      if (options.onlyHash) {
-        return setImmediate(() => callback(null, options.cid))
+    let options
+    let formatImpl
+
+    const next = () => {
+      // End iteration if there are no more nodes to put
+      if (nodes.length === 0) {
+        return Promise.resolve({ done: true })
       }
 
-      return this._put(options.cid, node, callback)
+      return new Promise(async (resolve, reject) => {
+        // Lazy load the options not when the iterator is initialized, but
+        // when we hit the first iteration. This way the constructor can be
+        // a synchronous function.
+        if (options === undefined) {
+          try {
+            formatImpl = await this._getFormat(format)
+          } catch (err) {
+            return reject(err)
+          }
+          const defaultOptions = {
+            hashAlg: formatImpl.defaultHashAlg,
+            cidVersion: 1,
+            onlyHash: false
+          }
+          options = mergeOptions(defaultOptions, userOptions)
+        }
+
+        const node = nodes.shift()
+        const cidOptions = {
+          version: options.cidVersion,
+          hashAlg: options.hashAlg,
+          onlyHash: options.onlyHash
+        }
+        formatImpl.util.cid(node, cidOptions, (err, cid) => {
+          if (err) {
+            return reject(err)
+          }
+
+          if (options.onlyHash) {
+            return resolve({ done: false, value: cid })
+          }
+
+          this._put(cid, node, (err, cid) => {
+            if (err) {
+              return reject(err)
+            }
+            return resolve({ done: false, value: cid })
+          })
+        })
+      })
     }
 
-    // TODO vmx 2018-12-07: Make this async/await once `put()` returns a
-    // Promise
-    this._getFormat(options.format).then((format) => {
-      format.util.cid(node, options, (err, cid) => {
-        if (err) {
-          return callback(err)
-        }
-
-        if (options.onlyHash) {
-          return callback(null, cid)
-        }
-
-        this._put(cid, node, callback)
-      })
-    }).catch((err) => {
-      callback(err)
-    })
+    return fancyIterator(next)
   }
 
   treeStream (cid, path, options) {

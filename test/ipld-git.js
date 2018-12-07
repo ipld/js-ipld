@@ -10,7 +10,7 @@ const ipldGit = require('ipld-git')
 const multihash = require('multihashes')
 const series = require('async/series')
 const each = require('async/each')
-const pull = require('pull-stream')
+const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
 
@@ -134,18 +134,12 @@ module.exports = (repo) => {
         }
       ], store)
 
-      function store () {
-        pull(
-          pull.values([
-            { node: blobNode, cid: blobCid },
-            { node: treeNode, cid: treeCid },
-            { node: commitNode, cid: commitCid },
-            { node: commit2Node, cid: commit2Cid },
-            { node: tagNode, cid: tagCid }
-          ]),
-          pull.asyncMap((nac, cb) => resolver.put(nac.node, { cid: nac.cid }, cb)),
-          pull.onEnd(done)
-        )
+      async function store () {
+        const nodes = [blobNode, treeNode, commitNode, commit2Node, tagNode]
+        const result = resolver.put(nodes, multicodec.GIT_RAW)
+        ;[blobCid, treeCid, commitCid, commit2Cid, tagCid] = await result.all()
+
+        done()
       }
     })
 
@@ -176,34 +170,26 @@ module.exports = (repo) => {
     })
 
     describe('public api', () => {
-      it('resolver.put', (done) => {
-        resolver.put(blobNode, { cid: blobCid }, done)
+      it('resolver.put with format', async () => {
+        const result = resolver.put([blobNode], multicodec.GIT_RAW)
+        const cid = await result.first()
+        expect(cid.version).to.equal(1)
+        expect(cid.codec).to.equal('git-raw')
+        expect(cid.multihash).to.exist()
+        const mh = multihash.decode(cid.multihash)
+        expect(mh.name).to.equal('sha1')
       })
 
-      it('resolver.put with format', (done) => {
-        resolver.put(blobNode, { format: 'git-raw' }, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid).to.exist()
-          expect(cid.version).to.equal(1)
-          expect(cid.codec).to.equal('git-raw')
-          expect(cid.multihash).to.exist()
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha1')
-          done()
+      it('resolver.put with format + hashAlg', async () => {
+        const result = resolver.put([blobNode], multicodec.GIT_RAW, {
+          hashAlg: multicodec.SHA3_512
         })
-      })
-
-      it('resolver.put with format + hashAlg', (done) => {
-        resolver.put(blobNode, { format: 'git-raw', hashAlg: 'sha3-512' }, (err, cid) => {
-          expect(err).to.not.exist()
-          expect(cid).to.exist()
-          expect(cid.version).to.equal(1)
-          expect(cid.codec).to.equal('git-raw')
-          expect(cid.multihash).to.exist()
-          const mh = multihash.decode(cid.multihash)
-          expect(mh.name).to.equal('sha3-512')
-          done()
-        })
+        const cid = await result.first()
+        expect(cid.version).to.equal(1)
+        expect(cid.codec).to.equal('git-raw')
+        expect(cid.multihash).to.exist()
+        const mh = multihash.decode(cid.multihash)
+        expect(mh.name).to.equal('sha3-512')
       })
 
       // TODO vmx 2018-11-30: Implement getting the whole object properly

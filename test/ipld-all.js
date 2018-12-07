@@ -17,6 +17,7 @@ const each = require('async/each')
 const waterfall = require('async/waterfall')
 const CID = require('cids')
 const inMemory = require('ipld-in-memory')
+const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
 
@@ -52,10 +53,15 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
         cidCbor = cid
 
         each([
-          { node: nodePb, cid: cidPb },
-          { node: nodeCbor, cid: cidCbor }
+          { node: nodePb, format: multicodec.DAG_PB, cidVersion: 0 },
+          { node: nodeCbor, format: multicodec.DAG_CBOR, cidVersion: 1 }
         ], (nac, cb) => {
-          resolver.put(nac.node, { cid: nac.cid }, cb)
+          resolver.put([nac.node], nac.format, {
+            cidVersion: nac.cidVersion
+          }).first().then(
+            () => cb(null),
+            (error) => cb(error)
+          )
         }, cb)
       }
     ], done)
@@ -76,37 +82,18 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   it('does not store nodes when onlyHash is passed', (done) => {
     waterfall([
       (cb) => dagPB.DAGNode.create(Buffer.from('Some data here'), cb),
-      (node, cb) => resolver.put(node, {
-        onlyHash: true,
-        version: 1,
-        hashAlg: 'sha2-256',
-        format: 'dag-pb'
-      }, cb),
+      (node, cb) => {
+        const result = resolver.put([node], multicodec.DAG_PB, {
+          onlyHash: true,
+          cidVersion: 1,
+          hashAlg: multicodec.SHA2_256
+        })
+        result.first().then(
+          (cid) => cb(null, cid),
+          (error) => cb(error)
+        )
+      },
       (cid, cb) => resolver.bs._repo.blocks.has(cid, cb)
-    ], (error, result) => {
-      if (error) {
-        return done(error)
-      }
-
-      expect(result).to.be.false()
-      done()
-    })
-  })
-
-  it('does not store nodes when onlyHash is passed and a CID is passed', (done) => {
-    const cid = new CID('QmTmxQfEHbQzntsXPTU4ae2ZgBGwseBmS12AkZnKCkuf2G')
-
-    waterfall([
-      (cb) => dagPB.DAGNode.create(Buffer.from('Some data here'), cb),
-      (node, cb) => resolver.put(node, {
-        onlyHash: true,
-        cid
-      }, cb),
-      (cid2, cb) => {
-        expect(cid2).to.equal(cid)
-
-        resolver.bs._repo.blocks.has(cid2, cb)
-      }
     ], (error, result) => {
       if (error) {
         return done(error)
