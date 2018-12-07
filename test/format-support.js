@@ -17,17 +17,14 @@ module.exports = (repo) => {
   describe('IPLD format support', () => {
     let data, cid
 
-    before((done) => {
+    before(async () => {
       const bs = new BlockService(repo)
       const resolver = new IPLDResolver({ blockService: bs })
 
       data = { now: Date.now() }
 
-      dagCBOR.util.cid(data, (err, c) => {
-        expect(err).to.not.exist()
-        cid = c
-        resolver.put(data, { cid }, done)
-      })
+      const result = resolver.put([data], multicodec.DAG_CBOR)
+      cid = await result.last()
     })
 
     describe('Dynamic format loading', () => {
