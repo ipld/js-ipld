@@ -29,44 +29,51 @@ class IPLDResolver {
     // Object with current list of active resolvers
     this.resolvers = {}
 
-    // API entry point
-    this.support = {}
-
-    // Adds support for an IPLD format
-    this.support.add = (codec, resolver, util) => {
-      if (this.resolvers[codec]) {
-        const codecName = multicodec.print[codec]
-        throw new Error(`Resolver already exists for codec "${codecName}"`)
-      }
-
-      this.resolvers[codec] = {
-        resolver: resolver,
-        util: util
-      }
-    }
-
     if (options.loadFormat === undefined) {
-      this.support.load = async (codec) => {
+      this.loadFormat = async (codec) => {
         const codecName = multicodec.print[codec]
         throw new Error(`No resolver found for codec "${codecName}"`)
       }
     } else {
-      this.support.load = options.loadFormat
-    }
-
-    this.support.rm = (codec) => {
-      if (this.resolvers[codec]) {
-        delete this.resolvers[codec]
-      }
+      this.loadFormat = options.loadFormat
     }
 
     // Enable all supplied formats
     for (const format of options.formats) {
-      const { resolver, util } = format
-      // IPLD Formats are using strings instead of constants for the multicodec
-      const codecBuffer = multicodec.getCodeVarint(resolver.multicodec)
-      const codec = multicodec.getCode(codecBuffer)
-      this.support.add(codec, resolver, util)
+      this.addFormat(format)
+    }
+  }
+
+  /**
+   * Add support for an IPLD Format.
+   *
+   * @param {Object} format - The implementation of an IPLD Format.
+   * @returns {void}
+   */
+  addFormat (format) {
+    // IPLD Formats are using strings instead of constants for the multicodec
+    const codecBuffer = multicodec.getCodeVarint(format.resolver.multicodec)
+    const codec = multicodec.getCode(codecBuffer)
+    if (this.resolvers[codec]) {
+      const codecName = multicodec.print[codec]
+      throw new Error(`Resolver already exists for codec "${codecName}"`)
+    }
+
+    this.resolvers[codec] = {
+      resolver: format.resolver,
+      util: format.util
+    }
+  }
+
+  /**
+   * Remove support for an IPLD Format.
+   *
+   * @param {number} codec - The codec of the IPLD Format to remove.
+   * @returns {void}
+   */
+  removeFormat (codec) {
+    if (this.resolvers[codec]) {
+      delete this.resolvers[codec]
     }
   }
 
@@ -443,7 +450,7 @@ class IPLDResolver {
     }
 
     // If not supported, attempt to dynamically load this format
-    const format = await this.support.load(codec)
+    const format = await this.loadFormat(codec)
     this.resolvers[codec] = format
     return format
   }
