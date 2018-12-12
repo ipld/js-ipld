@@ -2,8 +2,10 @@
 'use strict'
 
 const chai = require('chai')
+const chaiAsProised = require('chai-as-promised')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
+chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
@@ -116,17 +118,6 @@ module.exports = (repo) => {
           resolver._put(nc.cid, nc.node, cb)
         }, done)
       })
-
-      // TODO vmx 2018-11-29 Change this test to use `get()`.
-      // it('resolver._get', (done) => {
-      //   resolver.put(node1, { cid: cid1 }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver._get(cid1, (err, node) => {
-      //       expect(err).to.not.exist()
-      //       done()
-      //     })
-      //   })
-      // })
     })
 
     describe('public api', () => {
@@ -151,19 +142,6 @@ module.exports = (repo) => {
         const mh = multihash.decode(cid.multihash)
         expect(mh.name).to.equal('sha3-512')
       })
-
-      // TODO vmx 2018-11-29: Change this test to use the new `get()`
-      // it('resolver.get with empty path', (done) => {
-      //   resolver.get(cid1, '/', (err, result) => {
-      //     expect(err).to.not.exist()
-      //
-      //     dagPB.util.cid(result.value, (err, cid) => {
-      //       expect(err).to.not.exist()
-      //       expect(cid).to.eql(cid1)
-      //       done()
-      //     })
-      //   })
-      // })
 
       it('resolves a value within 1st node scope', async () => {
         const result = resolver.resolve(cid1, 'Data')
@@ -200,36 +178,52 @@ module.exports = (repo) => {
         expect(node3.value).to.eql(Buffer.from('I am 1'))
       })
 
-      // TODO vmx 2018-11-29: Think about if every returned node should contain
-      // a `cid` field or not
-      // it('resolver.get value within nested scope (1 level) returns cid of node traversed to', (done) => {
-      //   resolver.get(cid2, 'Links/0/Hash/Data', (err, result) => {
-      //     expect(err).to.not.exist()
-      //     expect(result.cid).to.deep.equal(cid1)
-      //     done()
-      //   })
-      // })
+      it('resolver.get round-trip', async () => {
+        const resultPut = resolver.put([node1], multicodec.DAG_PB)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const node = await resultGet.first()
+        // `size` is lazy, without a call to it a deep equal check would fail
+        const _ = node.size // eslint-disable-line no-unused-vars
+        expect(node).to.deep.equal(node1)
+      })
 
-      // TODO vmx 2018-11-29: remove this `get()` call with the new `get()`
-      // it('resolver.remove', (done) => {
-      //   resolver.put(node1, { cid: cid1 }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver.get(cid1, (err, node) => {
-      //       expect(err).to.not.exist()
-      //       remove()
-      //     })
-      //   })
-      //
-      //   function remove () {
-      //     resolver.remove(cid1, (err) => {
-      //       expect(err).to.not.exist()
-      //       resolver.get(cid1, (err) => {
-      //         expect(err).to.exist()
-      //         done()
-      //       })
-      //     })
-      //   }
-      // })
+      it('resolver.remove', async () => {
+        // TODO vmx 2018-12-12: The same repo is used for all tests, there
+        // seems to be some race condition with inserting and removing items.
+        // Hence create a unique item for this test. Though the tests
+        // should really be independent so that there are no race conditions.
+        const createNode = new Promise((resolve, reject) => {
+          const data = Buffer.from('a dag-pb node')
+          dagPB.DAGNode.create(data, (err, node) => {
+            if (err) {
+              return reject(err)
+            }
+            return resolve(node)
+          })
+        })
+        const node = await createNode
+        const resultPut = resolver.put([node], multicodec.DAG_PB)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const sameAsNode = await resultGet.first()
+        // `size` is lazy, without a call to it a deep equal check would fail
+        const _ = sameAsNode.size // eslint-disable-line no-unused-vars
+        expect(sameAsNode.data).to.deep.equal(node.data)
+        return remove()
+
+        function remove () {
+          return new Promise((resolve, reject) => {
+            resolver.remove(cid, (err) => {
+              expect(err).to.not.exist()
+              const resultGet = resolver.get([cid])
+              expect(resultGet.next()).to.eventually.be.rejected()
+                .then(() => resolve())
+                .catch((err) => reject(err))
+            })
+          })
+        }
+      })
     })
   })
 }

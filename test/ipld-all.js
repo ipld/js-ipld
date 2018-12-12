@@ -8,8 +8,10 @@
  */
 
 const chai = require('chai')
+const chaiAsProised = require('chai-as-promised')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
+chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const dagPB = require('ipld-dag-pb')
 const dagCBOR = require('ipld-dag-cbor')
@@ -104,49 +106,50 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     })
   })
 
-  describe('getMany', () => {
-    it('should return nodes correctly', (done) => {
-      resolver.getMany([cidCbor, cidPb], (err, result) => {
-        expect(err).to.not.exist()
-        expect(result.length).to.equal(2)
-        expect(result).to.deep.equal([nodeCbor, nodePb])
-        done()
-      })
+  describe('get', () => {
+    it('should return nodes correctly', async () => {
+      const result = resolver.get([cidCbor, cidPb])
+      const node1 = await result.first()
+      expect(node1).to.eql(nodeCbor)
+
+      const node2 = await result.first()
+      expect(node2).to.eql(nodePb)
     })
 
-    it('should return nodes in input order', (done) => {
-      resolver.getMany([cidPb, cidCbor], (err, result) => {
-        expect(err).to.not.exist()
-        expect(result.length).to.equal(2)
-        expect(result).to.deep.equal([nodePb, nodeCbor])
-        done()
-      })
+    it('should return nodes in input order', async () => {
+      const result = resolver.get([cidPb, cidCbor])
+      const node1 = await result.first()
+      expect(node1).to.eql(nodePb)
+
+      const node2 = await result.first()
+      expect(node2).to.eql(nodeCbor)
     })
 
-    it('should return error on invalid CID', (done) => {
-      resolver.getMany([cidCbor, 'invalidcid'], (err, result) => {
-        expect(err.message).to.equal('Not a valid cid')
-        expect(result).to.be.undefined()
-        done()
-      })
+    it('should return error on invalid CID', async () => {
+      const result = resolver.get([cidCbor, 'invalidcid'])
+      // TODO vmx 2018-12-11: This should really fail on the second node
+      // we get, as the first one is valid. This is only possible once
+      // the `getmany()` call of the BlockService takes and returns an
+      // iterator and not an array.
+      await expect(result.next()).to.be.rejectedWith(
+        'Not a valid cid')
     })
 
-    it('should return error on non-existent CID', (done) => {
+    it('should return error on non-existent CID', async () => {
       const nonExistentCid = new CID(
         'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
-      resolver.getMany([cidCbor, nonExistentCid], (err, result) => {
-        expect(err.message).to.equal('Not Found')
-        expect(result).to.be.undefined()
-        done()
-      })
+      const result = resolver.get([cidCbor, nonExistentCid])
+      // TODO vmx 2018-12-11: This should really fail on the second node
+      // we get, as the first one is valid. This is only possible once
+      // the `getmany()` call of the BlockService takes and returns an
+      // iterator and not an array.
+      await expect(result.next()).to.be.rejectedWith(
+        'Not Found')
     })
 
-    it('should return error on invalid input', (done) => {
-      resolver.getMany('astring', (err, result) => {
-        expect(err.message).to.equal('Argument must be an array of CIDs')
-        expect(result).to.be.undefined()
-        done()
-      })
+    it('should return error on invalid input', () => {
+      expect(() => resolver.get('astring')).to.throw(
+        '`cids` must be an iterable of CIDs')
     })
   })
 })
