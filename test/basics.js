@@ -11,7 +11,6 @@ const BlockService = require('ipfs-block-service')
 const CID = require('cids')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
-const pull = require('pull-stream')
 const inMemory = require('ipld-in-memory')
 
 const IPLDResolver = require('../src')
@@ -81,7 +80,7 @@ module.exports = (repo) => {
       })
     })
 
-    it('treeStream - errors on unknown resolver', (done) => {
+    it('tree - errors on unknown resolver', async () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })
       // choosing a format that is not supported
@@ -90,14 +89,9 @@ module.exports = (repo) => {
         'blake2b-8',
         multihash.encode(Buffer.from('abcd', 'hex'), 'sha1')
       )
-      pull(
-        r.treeStream(cid, '/', {}),
-        pull.collect(function (err) {
-          expect(err).to.exist()
-          expect(err.message).to.eql('No resolver found for codec "blake2b-8"')
-          done()
-        })
-      )
+      const result = r.tree(cid)
+      await expect(result.next()).to.be.rejectedWith(
+        'No resolver found for codec "blake2b-8"')
     })
   })
 }
