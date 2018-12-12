@@ -1,11 +1,7 @@
 'use strict'
 
 const Block = require('ipfs-block')
-const pull = require('pull-stream')
 const CID = require('cids')
-const pullDeferSource = require('pull-defer').source
-const pullTraverse = require('pull-traverse')
-const map = require('async/map')
 const waterfall = require('async/waterfall')
 const mergeOptions = require('merge-options')
 const ipldDagCbor = require('ipld-dag-cbor')
@@ -283,122 +279,6 @@ class IPLDResolver {
     return fancyIterator(next)
   }
 
-  treeStream (cid, path, options) {
-    if (typeof path === 'object') {
-      options = path
-      path = undefined
-    }
-
-    options = options || {}
-
-    let p
-
-    if (!options.recursive) {
-      p = pullDeferSource()
-
-      waterfall([
-        async () => {
-          return this._getFormat(cid.codec)
-        },
-        (format, cb) => this.bs.get(cid, (err, block) => {
-          if (err) return cb(err)
-          cb(null, format, block)
-        }),
-        (format, block, cb) => format.resolver.tree(block.data, cb)
-      ], (err, paths) => {
-        if (err) {
-          p.abort(err)
-          return p
-        }
-        p.resolve(pull.values(paths))
-      })
-    }
-
-    // recursive
-    if (options.recursive) {
-      p = pull(
-        pullTraverse.widthFirst({
-          basePath: null,
-          cid: cid
-        }, (el) => {
-          // pass the paths through the pushable pull stream
-          // continue traversing the graph by returning
-          // the next cids with deferred
-
-          if (typeof el === 'string') {
-            return pull.empty()
-          }
-
-          const deferred = pullDeferSource()
-          const cid = el.cid
-
-          waterfall([
-            async () => {
-              return this._getFormat(cid.codec)
-            },
-            (format, cb) => this.bs.get(cid, (err, block) => {
-              if (err) return cb(err)
-              cb(null, format, block)
-            }),
-            (format, block, cb) => format.resolver.tree(block.data, (err, paths) => {
-              if (err) {
-                return cb(err)
-              }
-              map(paths, (p, cb) => {
-                format.resolver.isLink(block.data, p, (err, link) => {
-                  if (err) {
-                    return cb(err)
-                  }
-                  cb(null, { path: p, link: link })
-                })
-              }, cb)
-            })
-          ], (err, paths) => {
-            if (err) {
-              deferred.abort(err)
-              return deferred
-            }
-
-            deferred.resolve(pull.values(paths.map((p) => {
-              const base = el.basePath ? el.basePath + '/' + p.path : p.path
-              if (p.link) {
-                return {
-                  basePath: base,
-                  cid: IPLDResolver._maybeCID(p.link)
-                }
-              }
-              return base
-            })))
-          })
-          return deferred
-        }),
-        pull.map((e) => {
-          if (typeof e === 'string') {
-            return e
-          }
-          return e.basePath
-        }),
-        pull.filter(Boolean)
-      )
-    }
-
-    // filter out by path
-    if (path) {
-      return pull(
-        p,
-        pull.map((el) => {
-          if (el.indexOf(path) === 0) {
-            el = el.slice(path.length + 1)
-            return el
-          }
-        }),
-        pull.filter(Boolean)
-      )
-    }
-
-    return p
-  }
-
   /**
    * Remove IPLD Nodes by the given CIDs.
    *
@@ -428,6 +308,130 @@ class IPLDResolver {
           }
           return resolve({ done: false, value: cid })
         })
+      })
+    }
+
+    return fancyIterator(next)
+  }
+
+  /**
+   * Returns all the paths that can be resolved into.
+   *
+   * @param {Object} cid - The ID to get the paths from
+   * @param {string} [offsetPath=''] - the path to start to retrieve the other paths from.
+   * @param {Object} [userOptions]
+   * @param {number} [userOptions.recursive=false] - whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
+   * @returns {Iterable.<Promise.<String>>} - Returns an async iterator with paths that can be resolved into
+   */
+  tree (cid, offsetPath, userOptions) {
+    if (typeof offsetPath === 'object') {
+      userOptions = offsetPath
+      offsetPath = undefined
+    }
+    offsetPath = offsetPath || ''
+
+    const defaultOptions = {
+      recursive: false
+    }
+    const options = mergeOptions(defaultOptions, userOptions)
+
+    // Get available paths from a block
+    const getPaths = (cid) => {
+      return new Promise(async (resolve, reject) => {
+        let format
+        try {
+          format = await this._getFormat(cid.codec)
+        } catch (error) {
+          return reject(error)
+        }
+        this.bs.get(cid, (err, block) => {
+          if (err) {
+            return reject(err)
+          }
+          format.resolver.tree(block.data, (err, paths) => {
+            if (err) {
+              return reject(err)
+            }
+            return resolve({ paths, block })
+          })
+        })
+      })
+    }
+
+    // If a path is a link then follow it and return its CID
+    const maybeRecurse = (block, treePath) => {
+      return new Promise(async (resolve, reject) => {
+        // A treepath we might want to follow recursively
+        const format = await this._getFormat(block.cid.codec)
+        format.resolver.isLink(block.data, treePath, (err, link) => {
+          if (err) {
+            return reject(err)
+          }
+          // Something to follow recusively, hence push it into the queue
+          if (link) {
+            const cid = IPLDResolver._maybeCID(link)
+            resolve(cid)
+          } else {
+            resolve(null)
+          }
+        })
+      })
+    }
+
+    // The list of paths that will get returned
+    let treePaths = []
+    // The current block, needed to call `isLink()` on every interation
+    let block
+    // The list of items we want to follow recursively. The items are
+    // an object consisting of the CID and the currently already resolved
+    // path
+    const queue = [{ cid, basePath: '' }]
+    // The path that was already traversed
+    let basePath
+
+    const next = () => {
+      // End of iteration if there aren't any paths left to return or
+      // if we don't want to traverse recursively and have already
+      // returne the first level
+      if (treePaths.length === 0 && queue.length === 0) {
+        return { done: true }
+      }
+
+      return new Promise(async (resolve, reject) => {
+        // There aren't any paths left, get them from the given CID
+        if (treePaths.length === 0 && queue.length > 0) {
+          ({ cid, basePath } = queue.shift())
+
+          let paths
+          try {
+            ({ block, paths } = await getPaths(cid))
+          } catch (error) {
+            return reject(error)
+          }
+          treePaths.push(...paths)
+        }
+        const treePath = treePaths.shift()
+        let fullPath = basePath + treePath
+
+        // Only follow links if recursion is intended
+        if (options.recursive) {
+          cid = await maybeRecurse(block, treePath)
+          if (cid !== null) {
+            queue.push({ cid, basePath: fullPath + '/' })
+          }
+        }
+
+        // Return it if it matches the given offset path, but is not the
+        // offset path itself
+        if (fullPath.startsWith(offsetPath) &&
+            fullPath.length > offsetPath.length) {
+          if (offsetPath.length > 0) {
+            fullPath = fullPath.slice(offsetPath.length + 1)
+          }
+          return resolve({ done: false, value: fullPath })
+        } else { // Else move on to the next iteration before returning
+          return resolve(next())
+        }
       })
     }
 

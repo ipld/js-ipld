@@ -11,7 +11,6 @@ const BlockService = require('ipfs-block-service')
 const dagCBOR = require('ipld-dag-cbor')
 const series = require('async/series')
 const each = require('async/each')
-const pull = require('pull-stream')
 const multicodec = require('multicodec')
 const multihash = require('multihashes')
 
@@ -176,75 +175,50 @@ module.exports = (repo) => {
         expect(node).to.deep.equal(node1)
       })
 
-      it('resolver.tree', (done) => {
-        pull(
-          resolver.treeStream(cid3),
-          pull.collect((err, values) => {
-            expect(err).to.not.exist()
-            expect(values).to.eql([
-              'one',
-              'two',
-              'someData'
-            ])
-            done()
-          })
-        )
+      it('resolver.tree', async () => {
+        const result = resolver.tree(cid3)
+        const paths = await result.all()
+        expect(paths).to.eql([
+          'one',
+          'two',
+          'someData'
+        ])
       })
 
-      it('resolver.tree with exist()ent path', (done) => {
-        pull(
-          resolver.treeStream(cid3, 'one'),
-          pull.collect((err, values) => {
-            expect(err).to.not.exist()
-            expect(values).to.eql([])
-            done()
-          })
-        )
+      it('resolver.tree with exist()ent path', async () => {
+        const result = resolver.tree(cid3, 'one')
+        const paths = await result.all()
+        expect(paths).to.eql([])
       })
 
-      it('resolver.tree with non exist()ent path', (done) => {
-        pull(
-          resolver.treeStream(cid3, 'bananas'),
-          pull.collect((err, values) => {
-            expect(err).to.not.exist()
-            expect(values).to.eql([])
-            done()
-          })
-        )
+      it('resolver.tree with non exist()ent path', async () => {
+        const result = resolver.tree(cid3, 'bananas')
+        const paths = await result.all()
+        expect(paths).to.eql([])
       })
 
-      it('resolver.tree recursive', (done) => {
-        pull(
-          resolver.treeStream(cid3, { recursive: true }),
-          pull.collect((err, values) => {
-            expect(err).to.not.exist()
-            expect(values).to.eql([
-              'one',
-              'two',
-              'someData',
-              'one/someData',
-              'two/one',
-              'two/someData',
-              'two/one/someData'
-            ])
-            done()
-          })
-        )
+      it('resolver.tree recursive', async () => {
+        const result = resolver.tree(cid3, { recursive: true })
+        const paths = await result.all()
+        expect(paths).to.eql([
+          'one',
+          'two',
+          'someData',
+          'one/someData',
+          'two/one',
+          'two/someData',
+          'two/one/someData'
+        ])
       })
 
-      it('resolver.tree with exist()ent path recursive', (done) => {
-        pull(
-          resolver.treeStream(cid3, 'two', { recursive: true }),
-          pull.collect((err, values) => {
-            expect(err).to.not.exist()
-            expect(values).to.eql([
-              'one',
-              'someData',
-              'one/someData'
-            ])
-            done()
-          })
-        )
+      it('resolver.tree with exist()ent path recursive', async () => {
+        const result = resolver.tree(cid3, 'two', { recursive: true })
+        const paths = await result.all()
+        expect(paths).to.eql([
+          'one',
+          'someData',
+          'one/someData'
+        ])
       })
 
       it('resolver.remove', async () => {
