@@ -247,27 +247,23 @@ module.exports = (repo) => {
         )
       })
 
-      // // TODO vmx 2018-11-30: remove this `get()` call with the new `get()`
-      // it('resolver.remove', (done) => {
-      //   resolver.put(node1, { cid: cid1 }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver.get(cid1, (err, result) => {
-      //       expect(err).to.not.exist()
-      //       expect(node1).to.eql(result.value)
-      //       remove()
-      //     })
-      //   })
-      //
-      //   function remove () {
-      //     resolver.remove(cid1, (err) => {
-      //       expect(err).to.not.exist()
-      //       resolver.get(cid1, (err) => {
-      //         expect(err).to.exist()
-      //         done()
-      //       })
-      //     })
-      //   }
-      // })
+      it('resolver.remove', async () => {
+        const resultPut = resolver.put([node1], multicodec.DAG_CBOR)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const sameAsNode1 = await resultGet.first()
+        expect(sameAsNode1).to.deep.equal(node1)
+        return remove()
+
+        async function remove () {
+          const resultRemove = resolver.remove([cid])
+          // The items are deleted through iteration
+          await resultRemove.last()
+          // Verify that the item got really deleted
+          const resultGet = resolver.get([cid])
+          await expect(resultGet.next()).to.eventually.be.rejected()
+        }
+      })
     })
   })
 }

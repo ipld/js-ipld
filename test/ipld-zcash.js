@@ -183,16 +183,13 @@ module.exports = (repo) => {
         expect(sameAsNode1).to.deep.equal(node1)
         return remove()
 
-        function remove () {
-          return new Promise((resolve, reject) => {
-            resolver.remove(cid, (err) => {
-              expect(err).to.not.exist()
-              const resultGet = resolver.get([cid])
-              expect(resultGet.next()).to.eventually.be.rejected()
-                .then(() => resolve())
-                .catch((err) => reject(err))
-            })
-          })
+        async function remove () {
+          const resultRemove = resolver.remove([cid])
+          // The items are deleted through iteration
+          await resultRemove.last()
+          // Verify that the item got really deleted
+          const resultGet = resolver.get([cid])
+          await expect(resultGet.next()).to.eventually.be.rejected()
         }
       })
     })
