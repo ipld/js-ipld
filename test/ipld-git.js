@@ -155,18 +155,6 @@ module.exports = (repo) => {
           resolver._put(nc.cid, nc.node, cb)
         }, done)
       })
-
-      // TODO vmx 2018-11-30 Change this test to use `get()`.
-      // it('resolver._get', (done) => {
-      //   resolver.put(blobNode, { cid: blobCid }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver.get(blobCid, (err, result) => {
-      //       expect(err).to.not.exist()
-      //       expect(blobNode.toString('hex')).to.eql(result.value.toString('hex'))
-      //       done()
-      //     })
-      //   })
-      // })
     })
 
     describe('public api', () => {
@@ -191,19 +179,6 @@ module.exports = (repo) => {
         const mh = multihash.decode(cid.multihash)
         expect(mh.name).to.equal('sha3-512')
       })
-
-      // TODO vmx 2018-11-30: Implement getting the whole object properly
-      // it('resolver.get empty path', (done) => {
-      //   resolver.get(blobCid, '', (err, result) => {
-      //     expect(err).to.not.exist()
-      //
-      //     ipldGit.util.cid(result.value, (err, cid) => {
-      //       expect(err).to.not.exist()
-      //       expect(cid).to.eql(blobCid)
-      //       done()
-      //     })
-      //   })
-      // })
 
       it('resolves value within 1st node scope', async () => {
         const result = resolver.resolve(commitCid, 'message')
@@ -267,28 +242,34 @@ module.exports = (repo) => {
         expect(last.value).to.eql(blobNode)
       })
 
-      // // TODO vmx 2018-11-30: remove this `get()` call with the new `get()`
-      // it('resolver.remove', (done) => {
-      //   resolver.put(blobNode, { cid: blobCid }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver.get(blobCid, (err, result) => {
-      //       expect(err).to.not.exist()
-      //       const node = result.value
-      //       expect(blobNode.toString('hex')).to.eql(node.toString('hex'))
-      //       remove()
-      //     })
-      //   })
-      //
-      //   function remove () {
-      //     resolver.remove(blobCid, (err) => {
-      //       expect(err).to.not.exist()
-      //       resolver.get(blobCid, (err) => {
-      //         expect(err).to.exist()
-      //         done()
-      //       })
-      //     })
-      //   }
-      // })
+      it('resolver.get round-trip', async () => {
+        const resultPut = resolver.put([blobNode], multicodec.GIT_RAW)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const node = await resultGet.first()
+        expect(node).to.deep.equal(blobNode)
+      })
+
+      it('resolver.remove', async () => {
+        const resultPut = resolver.put([blobNode], multicodec.GIT_RAW)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const sameAsBlobNode = await resultGet.first()
+        expect(sameAsBlobNode).to.deep.equal(blobNode)
+        return remove()
+
+        function remove () {
+          return new Promise((resolve, reject) => {
+            resolver.remove(cid, (err) => {
+              expect(err).to.not.exist()
+              const resultGet = resolver.get([cid])
+              expect(resultGet.next()).to.eventually.be.rejected()
+                .then(() => resolve())
+                .catch((err) => reject(err))
+            })
+          })
+        }
+      })
     })
   })
 }

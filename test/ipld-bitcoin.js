@@ -102,18 +102,6 @@ module.exports = (repo) => {
           resolver._put(nc.cid, nc.node, cb)
         }, done)
       })
-
-      // TODO vmx 2018-11-30 Change this test to use `get()`.
-      // it('resolver._get', (done) => {
-      //   resolver.put(node1, { cid: cid1 }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver.get(cid1, (err, result) => {
-      //       expect(err).to.not.exist()
-      //       expect(node1.version).to.eql(result.value.version)
-      //       done()
-      //     })
-      //   })
-      // })
     })
 
     describe('public api', () => {
@@ -138,19 +126,6 @@ module.exports = (repo) => {
         const mh = multihash.decode(cid.multihash)
         expect(mh.name).to.equal('sha3-512')
       })
-
-      // TODO vmx 2018-11-30: Implement getting the whole object properly
-      // it('root path (same as get)', (done) => {
-      //   resolver.get(cid1, '/', (err, result) => {
-      //     expect(err).to.not.exist()
-      //
-      //     ipldBitcoin.util.cid(result.value, (err, cid) => {
-      //       expect(err).to.not.exist()
-      //       expect(cid).to.eql(cid1)
-      //       done()
-      //     })
-      //   })
-      // })
 
       it('resolves value within 1st node scope', async () => {
         const result = resolver.resolve(cid1, 'version')
@@ -187,27 +162,34 @@ module.exports = (repo) => {
         expect(node3.value).to.eql(1)
       })
 
-      // // TODO vmx 2018-11-30: remove this `get()` call with the new `get()`
-      // it('resolver.remove', (done) => {
-      //   resolver.put(node1, { cid: cid1 }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver.get(cid1, (err, result) => {
-      //       expect(err).to.not.exist()
-      //       expect(result.value.version).to.eql(1)
-      //       remove()
-      //     })
-      //   })
-      //
-      //   function remove () {
-      //     resolver.remove(cid1, (err) => {
-      //       expect(err).to.not.exist()
-      //       resolver.get(cid1, (err) => {
-      //         expect(err).to.exist()
-      //         done()
-      //       })
-      //     })
-      //   }
-      // })
+      it('resolver.get round-trip', async () => {
+        const resultPut = resolver.put([node1], multicodec.BITCOIN_BLOCK)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const node = await resultGet.first()
+        expect(node).to.deep.equal(node1)
+      })
+
+      it('resolver.remove', async () => {
+        const resultPut = resolver.put([node1], multicodec.BITCOIN_BLOCK)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const sameAsNode1 = await resultGet.first()
+        expect(sameAsNode1).to.deep.equal(node1)
+        return remove()
+
+        function remove () {
+          return new Promise((resolve, reject) => {
+            resolver.remove(cid, (err) => {
+              expect(err).to.not.exist()
+              const resultGet = resolver.get([cid])
+              expect(resultGet.next()).to.eventually.be.rejected()
+                .then(() => resolve())
+                .catch((err) => reject(err))
+            })
+          })
+        }
+      })
     })
   })
 }

@@ -50,19 +50,6 @@ module.exports = (repo) => {
         'No resolver found for codec "blake2b-8"')
     })
 
-    // TODO vmx 2018-11-29 Change this test to use `get()`.
-    // it('_get - errors on unknown resolver', (done) => {
-    //   const bs = new BlockService(repo)
-    //   const r = new IPLDResolver({ blockService: bs })
-    //   // choosing a format that is not supported
-    //   const cid = new CID(1, 'base1', multihash.encode(Buffer.from('abcd', 'hex'), 'sha1'))
-    //   r.get(cid, (err, result) => {
-    //     expect(err).to.exist()
-    //     expect(err.message).to.eql('No resolver found for codec "base1"')
-    //     done()
-    //   })
-    // }
-
     it('put - errors on unknown resolver', async () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })

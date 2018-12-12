@@ -89,18 +89,6 @@ module.exports = (repo) => {
           resolver._put(nc.cid, nc.node, cb)
         }, done)
       })
-
-      // TODO vmx 2018-11-30 Change this test to use `get()`.
-      // it('resolver._get', (done) => {
-      //   resolver.put(node1, { cid: cid1 }, (err) => {
-      //     expect(err).to.not.exist()
-      //     resolver._get(cid1, (err, node) => {
-      //       expect(err).to.not.exist()
-      //       expect(node1).to.eql(node)
-      //       done()
-      //     })
-      //   })
-      // })
     })
 
     describe('public api', () => {
@@ -126,19 +114,6 @@ module.exports = (repo) => {
         const mh = multihash.decode(cid.multihash)
         expect(mh.name).to.equal('sha3-512')
       })
-
-      // TODO vmx 2018-11-30: Implement getting the whole object properly
-      // it('resolver.get root path', (done) => {
-      //   resolver.get(cid1, '/', (err, result) => {
-      //     expect(err).to.not.exist()
-      //
-      //     dagCBOR.util.cid(result.value, (err, cid) => {
-      //       expect(err).to.not.exist()
-      //       expect(cid).to.eql(cid1)
-      //       done()
-      //     })
-      //   })
-      // })
 
       it('resolves value within 1st node scope', async () => {
         const result = resolver.resolve(cid1, 'someData')
@@ -191,6 +166,14 @@ module.exports = (repo) => {
         const result = resolver.resolve(cid3, `foo/${Date.now()}`)
         await expect(result.next()).to.be.rejectedWith(
           'path not available at root')
+      })
+
+      it('resolver.get round-trip', async () => {
+        const resultPut = resolver.put([node1], multicodec.DAG_CBOR)
+        const cid = await resultPut.first()
+        const resultGet = resolver.get([cid])
+        const node = await resultGet.first()
+        expect(node).to.deep.equal(node1)
       })
 
       it('resolver.tree', (done) => {
