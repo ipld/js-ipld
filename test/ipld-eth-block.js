@@ -2,8 +2,10 @@
 'use strict'
 
 const chai = require('chai')
+const chaiAsProised = require('chai-as-promised')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
+chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const ipldEthBlock = require('ipld-ethereum').ethBlock
@@ -136,18 +138,13 @@ module.exports = (repo) => {
         expect(sameAsNode1.raw).to.deep.equal(node1.raw)
         return remove()
 
-        function remove () {
-          return new Promise((resolve, reject) => {
-            resolver.remove(cid, (err) => {
-              expect(err).to.not.exist()
-              const resultGet = resolver.get([cid])
-              expect(resultGet.first()).to.eventually.be.rejected()
-                // eslint-disable-next-line max-nested-callbacks
-                .then(() => resolve())
-                // eslint-disable-next-line max-nested-callbacks
-                .catch((err) => reject(err))
-            })
-          })
+        async function remove () {
+          const resultRemove = resolver.remove([cid])
+          // The items are deleted through iteration
+          await resultRemove.last()
+          // Verify that the item got really deleted
+          const resultGet = resolver.get([cid])
+          await expect(resultGet.next()).to.eventually.be.rejected()
         }
       })
     })
