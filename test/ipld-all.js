@@ -71,7 +71,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   it('does not store nodes when onlyHash is passed', (done) => {
     waterfall([
       (cb) => dagPB.DAGNode.create(Buffer.from('Some data here'), cb),
-      (node, cb) => resolver.put(nodePb, {
+      (node, cb) => resolver.put(node, {
         onlyHash: true,
         version: 1,
         hashAlg: 'sha2-256',
@@ -93,7 +93,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
 
     waterfall([
       (cb) => dagPB.DAGNode.create(Buffer.from('Some data here'), cb),
-      (node, cb) => resolver.put(nodePb, {
+      (node, cb) => resolver.put(node, {
         onlyHash: true,
         cid
       }, cb),
