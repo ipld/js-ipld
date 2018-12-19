@@ -1,3 +1,13 @@
+<a name="0.20.2"></a>
+## [0.20.2](https://github.com/ipld/js-ipld/compare/v0.20.1...v0.20.2) (2018-12-19)
+
+
+### Bug Fixes
+
+* linting passes again ([4fc3c6e](https://github.com/ipld/js-ipld/commit/4fc3c6e))
+
+
+
 <a name="0.20.1"></a>
 ## [0.20.1](https://github.com/ipld/js-ipld/compare/v0.20.0...v0.20.1) (2018-11-19)
 
