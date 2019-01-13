@@ -41,6 +41,7 @@
     "ipld-bitcoin": "~0.1.8",
     "ipld-ethereum": "^2.0.1",
     "ipld-git": "~0.2.2",
+    "ipld-in-memory": "^2.0.0",
     "ipld-zcash": "~0.1.6",
     "merkle-patricia-tree": "^2.3.2",
     "multihashes": "~0.4.14",
@@ -52,10 +53,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "cids": "~0.5.5",
-    "interface-datastore": "~0.6.0",
     "ipfs-block": "~0.8.0",
-    "ipfs-block-service": "~0.15.0",
-    "ipfs-repo": "~0.26.0",
     "ipld-dag-cbor": "~0.13.0",
     "ipld-dag-pb": "~0.15.2",
     "ipld-raw": "^2.0.1",

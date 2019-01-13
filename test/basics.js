@@ -9,6 +9,7 @@ const BlockService = require('ipfs-block-service')
 const CID = require('cids')
 const multihash = require('multihashes')
 const pull = require('pull-stream')
+const inMemory = require('ipld-in-memory')
 
 const IPLDResolver = require('../src')
 
@@ -21,7 +22,7 @@ module.exports = (repo) => {
     })
 
     it('creates an in memory repo if no blockService is passed', () => {
-      IPLDResolver.inMemory((err, r) => {
+      inMemory(IPLDResolver, (err, r) => {
         expect(err).to.not.exist()
         expect(r.bs).to.exist()
       })
