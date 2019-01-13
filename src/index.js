@@ -4,16 +4,12 @@ const Block = require('ipfs-block')
 const pull = require('pull-stream')
 const CID = require('cids')
 const doUntil = require('async/doUntil')
-const IPFSRepo = require('ipfs-repo')
-const BlockService = require('ipfs-block-service')
 const joinPath = require('path').join
 const osPathSep = require('path').sep
 const pullDeferSource = require('pull-defer').source
 const pullTraverse = require('pull-traverse')
 const map = require('async/map')
-const series = require('async/series')
 const waterfall = require('async/waterfall')
-const MemoryStore = require('interface-datastore').MemoryDatastore
 const mergeOptions = require('merge-options')
 const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
@@ -423,35 +419,6 @@ class IPLDResolver {
  */
 IPLDResolver.defaultOptions = {
   formats: [ipldDagCbor, ipldDagPb, ipldRaw]
-}
-
-/**
- * Create an IPLD resolver with an in memory blockservice and
- * repo.
- *
- * @param {function(Error, IPLDResolver)} callback
- * @returns {void}
- */
-IPLDResolver.inMemory = function (callback) {
-  const repo = new IPFSRepo('in-memory', {
-    storageBackends: {
-      root: MemoryStore,
-      blocks: MemoryStore,
-      datastore: MemoryStore
-    },
-    lock: 'memory'
-  })
-  const blockService = new BlockService(repo)
-
-  series([
-    (cb) => repo.init({}, cb),
-    (cb) => repo.open(cb)
-  ], (err) => {
-    if (err) {
-      return callback(err)
-    }
-    callback(null, new IPLDResolver({ blockService }))
-  })
 }
 
 module.exports = IPLDResolver

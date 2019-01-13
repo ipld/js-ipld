@@ -16,6 +16,7 @@ const dagCBOR = require('ipld-dag-cbor')
 const each = require('async/each')
 const waterfall = require('async/waterfall')
 const CID = require('cids')
+const inMemory = require('ipld-in-memory')
 
 const IPLDResolver = require('../src')
 
@@ -29,7 +30,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
 
   before((done) => {
     waterfall([
-      (cb) => IPLDResolver.inMemory(cb),
+      (cb) => inMemory(IPLDResolver, cb),
       (res, cb) => {
         resolver = res
         dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'), cb)
