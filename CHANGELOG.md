@@ -1,3 +1,21 @@
+<a name="0.21.0"></a>
+# [0.21.0](https://github.com/ipld/js-ipld/compare/v0.20.2...v0.21.0) (2019-01-16)
+
+
+### Code Refactoring
+
+* remove inMemory util ([689afcc](https://github.com/ipld/js-ipld/commit/689afcc)), closes [#151](https://github.com/ipld/js-ipld/issues/151)
+
+
+### BREAKING CHANGES
+
+* This module no longer exports an `inMemory` utility to create an IPLD instance that uses a block service that stores data in memory. Please use the [`ipld-in-memory`](https://www.npmjs.com/package/ipld-in-memory) module instead.
+
+License: MIT
+Signed-off-by: Alan Shaw <alan.shaw@protocol.ai>
+
+
+
 <a name="0.20.2"></a>
 ## [0.20.2](https://github.com/ipld/js-ipld/compare/v0.20.1...v0.20.2) (2018-12-19)
 
