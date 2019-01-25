@@ -11,6 +11,7 @@ const mergeOptions = require('merge-options')
 const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
+const multicodec = require('multicodec')
 const { fancyIterator } = require('./util')
 
 function noop () {}
@@ -31,12 +32,13 @@ class IPLDResolver {
     this.support = {}
 
     // Adds support for an IPLD format
-    this.support.add = (multicodec, resolver, util) => {
-      if (this.resolvers[multicodec]) {
-        throw new Error('Resolver already exists for codec "' + multicodec + '"')
+    this.support.add = (codec, resolver, util) => {
+      if (this.resolvers[codec]) {
+        const codecName = multicodec.print[codec]
+        throw new Error(`Resolver already exists for codec "${codecName}"`)
       }
 
-      this.resolvers[multicodec] = {
+      this.resolvers[codec] = {
         resolver: resolver,
         util: util
       }
@@ -44,23 +46,26 @@ class IPLDResolver {
 
     if (options.loadFormat === undefined) {
       this.support.load = async (codec) => {
-        throw new Error(`No resolver found for codec "${codec}"`)
+        const codecName = multicodec.print[codec]
+        throw new Error(`No resolver found for codec "${codecName}"`)
       }
     } else {
       this.support.load = options.loadFormat
     }
 
-    this.support.rm = (multicodec) => {
-      if (this.resolvers[multicodec]) {
-        delete this.resolvers[multicodec]
+    this.support.rm = (codec) => {
+      if (this.resolvers[codec]) {
+        delete this.resolvers[codec]
       }
     }
 
     // Enable all supplied formats
     for (const format of options.formats) {
       const { resolver, util } = format
-      const multicodec = resolver.multicodec
-      this.support.add(multicodec, resolver, util)
+      // IPLD Formats are using strings instead of constants for the multicodec
+      const codecBuffer = multicodec.getCodeVarint(resolver.multicodec)
+      const codec = multicodec.getCode(codecBuffer)
+      this.support.add(codec, resolver, util)
     }
   }
 
@@ -325,6 +330,13 @@ class IPLDResolver {
   /* internals */
   /*           */
   async _getFormat (codec) {
+    // TODO vmx 2019-01-24: Once all CIDs support accessing the codec code
+    // instead of the name, remove this part
+    if (typeof codec === 'string') {
+      const constantName = codec.toUpperCase().replace(/-/g, '_')
+      codec = multicodec[constantName]
+    }
+
     if (this.resolvers[codec]) {
       return this.resolvers[codec]
     }
