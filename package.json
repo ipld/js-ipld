@@ -38,6 +38,8 @@
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
     "ethereumjs-block": "^2.1.0",
+    "ipfs-block-service": "~0.15.2",
+    "ipfs-repo": "~0.26.1",
     "ipld-bitcoin": "~0.1.8",
     "ipld-ethereum": "^2.0.1",
     "ipld-git": "~0.2.2",
