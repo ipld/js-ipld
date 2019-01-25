@@ -9,6 +9,7 @@ chai.use(dirtyChai)
 chai.use(chaiAsProised)
 const BlockService = require('ipfs-block-service')
 const dagCBOR = require('ipld-dag-cbor')
+const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
 
@@ -49,7 +50,9 @@ module.exports = (repo) => {
           blockService: bs,
           formats: [],
           async loadFormat (codec) {
-            if (codec !== 'dag-cbor') throw new Error('unexpected codec')
+            if (codec !== multicodec.DAG_CBOR) {
+              throw new Error('unexpected codec')
+            }
             throw new Error(errMsg)
           }
         })
@@ -64,7 +67,9 @@ module.exports = (repo) => {
           blockService: bs,
           formats: [],
           async loadFormat (codec) {
-            if (codec !== 'dag-cbor') throw new Error('unexpected codec')
+            if (codec !== multicodec.DAG_CBOR) {
+              throw new Error('unexpected codec')
+            }
             return dagCBOR
           }
         })
