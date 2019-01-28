@@ -132,21 +132,22 @@ const ipld = new Ipld({
 })
 ```
 
-##### `options.loadFormat(codec, callback)`
+##### `options.loadFormat(codec)`
 
 | Type | Default |
 |------|---------|
-| `Function` | `null` |
+| `async Function` | `null` |
 
-Function to dynamically load an [IPLD Format](https://github.com/ipld/interface-ipld-format). It is passed a string `codec`, the multicodec of the IPLD format to load and a callback function to call when the format has been loaded. e.g.
+Function to dynamically load an [IPLD Format](https://github.com/ipld/interface-ipld-format). It is passed a `codec`, the multicodec code of the IPLD format to load and returns an IPLD Format implementation. For example:
 
 ```js
+const multicodec = require('multicodec')
 const ipld = new Ipld({
-  loadFormat (codec, callback) {
-    if (codec === 'git-raw') {
-      callback(null, require('ipld-git'))
+  async loadFormat (codec) {
+    if (codec === multicodec.GIT_RAW) {
+      return require('ipld-git')
     } else {
-      callback(new Error('unable to load format ' + codec))
+      throw new Error('unable to load format ' + multicodec.print[codec])
     }
   }
 })
