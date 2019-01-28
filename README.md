@@ -156,12 +156,12 @@ const ipld = new Ipld({
 
 > Stores the given IPLD Nodes of a recognized IPLD Format.
 
- - `cids` (`Iterable<Object>`): deserialized IPLD nodes that should be inserted.
+ - `nodes` (`Iterable<Object>`): deserialized IPLD nodes that should be inserted.
 
  - `options` is applied to any of the `nodes` and is an object with the following properties:
-   - `codec` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
-   - `hashCode` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
-   - `version` (`boolean`, default: 1): the CID version to use.
+   - `format` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
+   - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
+   - `version` (`number`, default: 1): the CID version to use.
    - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
 
 Returns an async iterator with the CIDs of the serialized IPLD Nodes.
@@ -193,32 +193,35 @@ Throws an error if a IPLD Node can’t be retrieved.
 
 > Remove IPLD Nodes by the given `cids`
 
- - `cids` (`Iterable<CID>`): the CIDs of the IPLD Nodes that should be retrieved.
+ - `cids` (`Iterable<CID>`): the CIDs of the IPLD Nodes that should be removed.
 
 Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.
 
 
+### `.tree(cid, [path], [options])`
+
+> Returns all the paths that can be resolved into.
+
+ - `cid` (`CID`, required): the CID to get the paths from.
+ - `path` (`IPLD Path`, default: ''): the path to start to retrieve the other paths from.
+ - `options`:
+   - `recursive` (`bool`, default: false): whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
+
+Returns an async iterator of all the paths (as Strings) you could resolve into.
+
+
 ### `.addFormat(ipldFormatImplementation)`
 
-> Add support to another IPLD Format
+> Add support for an IPLD Format
 
  - `ipldFormatImplementation` (`IPLD Format`, required): the implementation of an IPLD Format.
 
 
 ### `.removeFormat(codec)`
 
-> Removes support of an IPLD Format
+> Remove support for an IPLD Format
 
- - `codec` (`multicodec`, required): the IPLD Format the should be removed.
-
-
-### `.remove(cids)`
-
-> Remove IPLD Nodes by the given `cids`
-
-`cids` is an iterable — most often an array — with CIDs of the Blocks that should be removed.
-
-Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.
+ - `codec` (`multicodec`, required): the codec of the IPLD Format to remove.
 
 
 ### Properties
