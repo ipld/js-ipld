@@ -42,7 +42,7 @@ Want to get started? Check our examples folder. You can check the development st
       - [`options.blockService`](#optionsblockservice)
       - [`options.formats`](#optionsformats)
       - [`options.loadFormat(codec)`](#optionsloadformatcodec)
-  - [`.put(nodes, options)`](#putnodes-options)
+  - [`.put(nodes, format, options)`](#putnodes-format-options)
   - [`.resolve(cid, path)`](#resolvecid-path)
   - [`.get(cids)`](#getcids)
   - [`.remove(cids)`](#removecids)
@@ -155,16 +155,15 @@ const ipld = new Ipld({
 })
 ```
 
-### `.put(nodes, options)`
+### `.put(nodes, format, options)`
 
 > Stores the given IPLD Nodes of a recognized IPLD Format.
 
  - `nodes` (`Iterable<Object>`): deserialized IPLD nodes that should be inserted.
-
+ - `format` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
  - `options` is applied to any of the `nodes` and is an object with the following properties:
-   - `format` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
    - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
-   - `version` (`number`, default: 1): the CID version to use.
+   - `cidVersion` (`number`, default: 1): the CID version to use.
    - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
 
 Returns an async iterator with the CIDs of the serialized IPLD Nodes.
