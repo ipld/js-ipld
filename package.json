@@ -34,7 +34,7 @@
   "license": "MIT",
   "devDependencies": {
     "aegir": "^18.2.1",
-    "bitcoinjs-lib": "^4.0.2",
+    "bitcoinjs-lib": "^4.0.3",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
