@@ -9,7 +9,6 @@ const BlockService = require('ipfs-block-service')
 const ipldGit = require('ipld-git')
 const multihash = require('multihashes')
 const series = require('async/series')
-const each = require('async/each')
 const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
@@ -141,20 +140,6 @@ module.exports = (repo) => {
 
         done()
       }
-    })
-
-    describe('internals', () => {
-      it('resolver._put', (done) => {
-        each([
-          { node: blobNode, cid: blobCid },
-          { node: treeNode, cid: treeCid },
-          { node: commitNode, cid: commitCid },
-          { node: commit2Node, cid: commit2Cid },
-          { node: tagNode, cid: tagCid }
-        ], (nc, cb) => {
-          resolver._put(nc.cid, nc.node, cb)
-        }, done)
-      })
     })
 
     describe('public api', () => {

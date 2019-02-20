@@ -10,7 +10,6 @@ const ipldZcash = require('ipld-zcash')
 const ZcashBlockHeader = require('zcash-bitcore-lib').BlockHeader
 const multihash = require('multihashes')
 const series = require('async/series')
-const each = require('async/each')
 const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
@@ -95,18 +94,6 @@ module.exports = (repo) => {
 
         done()
       }
-    })
-
-    describe('internals', () => {
-      it('resolver._put', (done) => {
-        each([
-          { node: node1, cid: cid1 },
-          { node: node2, cid: cid2 },
-          { node: node3, cid: cid3 }
-        ], (nc, cb) => {
-          resolver._put(nc.cid, nc.node, cb)
-        }, done)
-      })
     })
 
     describe('public api', () => {

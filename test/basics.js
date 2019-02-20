@@ -64,22 +64,6 @@ module.exports = (repo) => {
       expect(() => r.put([null])).to.be.throw('`put` requires a format')
     })
 
-    it('_put - errors on unknown resolver', (done) => {
-      const bs = new BlockService(repo)
-      const r = new IPLDResolver({ blockService: bs })
-      // choosing a format that is not supported
-      const cid = new CID(
-        1,
-        'blake2b-8',
-        multihash.encode(Buffer.from('abcd', 'hex'), 'sha1')
-      )
-      r._put(cid, null, (err, result) => {
-        expect(err).to.exist()
-        expect(err.message).to.eql('No resolver found for codec "blake2b-8"')
-        done()
-      })
-    })
-
     it('tree - errors on unknown resolver', async () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })

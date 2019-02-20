@@ -4,7 +4,6 @@ const promisify = require('util').promisify
 
 const Block = require('ipfs-block')
 const CID = require('cids')
-const waterfall = require('async/waterfall')
 const mergeOptions = require('merge-options')
 const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
@@ -12,8 +11,6 @@ const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
 const typical = require('typical')
 const { fancyIterator } = require('./util')
-
-function noop () {}
 
 class IPLDResolver {
   constructor (userOptions) {
@@ -198,53 +195,39 @@ class IPLDResolver {
     let options
     let formatImpl
 
-    const next = () => {
+    const next = async () => {
       // End iteration if there are no more nodes to put
       if (nodes.length === 0) {
-        return Promise.resolve({ done: true })
+        return { done: true }
       }
 
-      return new Promise(async (resolve, reject) => {
-        // Lazy load the options not when the iterator is initialized, but
-        // when we hit the first iteration. This way the constructor can be
-        // a synchronous function.
-        if (options === undefined) {
-          try {
-            formatImpl = await this._getFormat(format)
-          } catch (err) {
-            return reject(err)
-          }
-          const defaultOptions = {
-            hashAlg: formatImpl.defaultHashAlg,
-            cidVersion: 1,
-            onlyHash: false
-          }
-          options = mergeOptions(defaultOptions, userOptions)
+      // Lazy load the options not when the iterator is initialized, but
+      // when we hit the first iteration. This way the constructor can be
+      // a synchronous function.
+      if (options === undefined) {
+        formatImpl = await this._getFormat(format)
+        const defaultOptions = {
+          hashAlg: formatImpl.defaultHashAlg,
+          cidVersion: 1,
+          onlyHash: false
         }
+        options = mergeOptions(defaultOptions, userOptions)
+      }
 
-        const node = nodes.shift()
-        const cidOptions = {
-          version: options.cidVersion,
-          hashAlg: options.hashAlg,
-          onlyHash: options.onlyHash
-        }
-        formatImpl.util.cid(node, cidOptions, (err, cid) => {
-          if (err) {
-            return reject(err)
-          }
-
-          if (options.onlyHash) {
-            return resolve({ done: false, value: cid })
-          }
-
-          this._put(cid, node, (err, cid) => {
-            if (err) {
-              return reject(err)
-            }
-            return resolve({ done: false, value: cid })
-          })
-        })
-      })
+      const node = nodes.shift()
+      const cidOptions = {
+        version: options.cidVersion,
+        hashAlg: options.hashAlg,
+        onlyHash: options.onlyHash
+      }
+      const cid = await promisify(formatImpl.util.cid)(node, cidOptions)
+      if (!options.onlyHash) {
+        await this._store(cid, node)
+      }
+      return {
+        done: false,
+        value: cid
+      }
     }
 
     return fancyIterator(next)
@@ -430,24 +413,11 @@ class IPLDResolver {
     return format
   }
 
-  _put (cid, node, callback) {
-    callback = callback || noop
-
-    waterfall([
-      (cb) => {
-        this._getFormat(cid.codec).then(
-          (format) => cb(null, format),
-          (error) => cb(error)
-        )
-      },
-      (format, cb) => format.util.serialize(node, cb),
-      (buf, cb) => this.bs.put(new Block(buf, cid), cb)
-    ], (err) => {
-      if (err) {
-        return callback(err)
-      }
-      callback(null, cid)
-    })
+  async _store (cid, node) {
+    const format = await this._getFormat(cid.codec)
+    const serialized = await promisify(format.util.serialize)(node)
+    const block = new Block(serialized, cid)
+    await promisify(this.bs.put.bind(this.bs))(block)
   }
 
   /**
