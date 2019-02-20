@@ -173,7 +173,7 @@ class IPLDResolver {
 
       return new Promise(async (resolve, reject) => {
         // Lazy load block.
-        // Currntly the BlockService return all nodes as an array. In the
+        // Currently the BlockService return all nodes as an array. In the
         // future this will also be an iterator
         if (blocks === undefined) {
           const cidsArray = Array.from(cids)
