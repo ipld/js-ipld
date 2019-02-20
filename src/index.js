@@ -1,5 +1,7 @@
 'use strict'
 
+const promisify = require('util').promisify
+
 const Block = require('ipfs-block')
 const CID = require('cids')
 const waterfall = require('async/waterfall')
@@ -94,57 +96,37 @@ class IPLDResolver {
       throw new Error('`path` argument must be a string')
     }
 
-    const next = () => {
+    const next = async () => {
       // End iteration if there isn't a CID to follow anymore
       if (cid === null) {
-        return Promise.resolve({ done: true })
+        return { done: true }
       }
 
-      return new Promise(async (resolve, reject) => {
-        let format
-        try {
-          format = await this._getFormat(cid.codec)
-        } catch (err) {
-          return reject(err)
+      const format = await this._getFormat(cid.codec)
+
+      // get block
+      // use local resolver
+      // update path value
+      const block = await promisify(this.bs.get.bind(this.bs))(cid)
+      const result = await promisify(format.resolver.resolve)(block.data, path)
+
+      // Prepare for the next iteration if there is a `remainderPath`
+      path = result.remainderPath
+      let value = result.value
+      // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
+      // CIDs yet. Hence try to convert old style links to CIDs
+      if (Object.keys(value).length === 1 && '/' in value) {
+        value = new CID(value['/'])
+      }
+      cid = CID.isCID(value) ? value : null
+
+      return {
+        done: false,
+        value: {
+          remainderPath: path,
+          value
         }
-
-        // get block
-        // use local resolver
-        // update path value
-        this.bs.get(cid, (err, block) => {
-          if (err) {
-            return reject(err)
-          }
-
-          format.resolver.resolve(block.data, path, (err, result) => {
-            if (err) {
-              return reject(err)
-            }
-
-            // Prepare for the next iteration if there is a `remainderPath`
-            path = result.remainderPath
-            let value = result.value
-            // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
-            // CIDs yet. Hence try to convert old style links to CIDs
-            if (Object.keys(value).length === 1 && '/' in value) {
-              value = new CID(value['/'])
-            }
-            if (CID.isCID(value)) {
-              cid = value
-            } else {
-              cid = null
-            }
-
-            return resolve({
-              done: false,
-              value: {
-                remainderPath: path,
-                value
-              }
-            })
-          })
-        })
-      })
+      }
     }
 
     return fancyIterator(next)
