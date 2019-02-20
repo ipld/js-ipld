@@ -25,7 +25,7 @@ class IPLDResolver {
     // Object with current list of active resolvers
     this.resolvers = {}
 
-    if (options.loadFormat === undefined) {
+    if (typeof options.loadFormat !== 'function') {
       this.loadFormat = async (codec) => {
         const codecName = multicodec.print[codec]
         throw new Error(`No resolver found for codec "${codecName}"`)
