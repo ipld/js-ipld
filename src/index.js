@@ -145,43 +145,28 @@ class IPLDResolver {
     }
 
     let blocks
-    const next = () => {
+    const next = async () => {
       // End of iteration if there aren't any blocks left to return
       if (cids.length === 0 ||
         (blocks !== undefined && blocks.length === 0)
       ) {
-        return Promise.resolve({ done: true })
+        return { done: true }
       }
 
-      return new Promise(async (resolve, reject) => {
-        // Lazy load block.
-        // Currently the BlockService return all nodes as an array. In the
-        // future this will also be an iterator
-        if (blocks === undefined) {
-          const cidsArray = Array.from(cids)
-          this.bs.getMany(cidsArray, async (err, returnedBlocks) => {
-            if (err) {
-              return reject(err)
-            }
-            blocks = returnedBlocks
-            const block = blocks.shift()
-            try {
-              const node = await this._deserialize(block)
-              return resolve({ done: false, value: node })
-            } catch (err) {
-              return reject(err)
-            }
-          })
-        } else {
-          const block = blocks.shift()
-          try {
-            const node = await this._deserialize(block)
-            return resolve({ done: false, value: node })
-          } catch (err) {
-            return reject(err)
-          }
-        }
-      })
+      // Lazy load block.
+      // Currently the BlockService return all nodes as an array. In the
+      // future this will also be an iterator
+      if (blocks === undefined) {
+        const cidsArray = Array.from(cids)
+        blocks = await promisify(this.bs.getMany.bind(this.bs))(cidsArray)
+      }
+      const block = blocks.shift()
+      const node = await this._deserialize(block)
+
+      return {
+        done: false,
+        value: node
+      }
     }
 
     return fancyIterator(next)
@@ -472,20 +457,8 @@ class IPLDResolver {
    * @return {Object} = Returns the deserialized node
    */
   async _deserialize (block) {
-    return new Promise((resolve, reject) => {
-      this._getFormat(block.cid.codec).then((format) => {
-        // TODO vmx 2018-12-11: Make this one async/await once
-        // `util.serialize()` is a Promise
-        format.util.deserialize(block.data, (err, deserialized) => {
-          if (err) {
-            return reject(err)
-          }
-          return resolve(deserialized)
-        })
-      }).catch((err) => {
-        return reject(err)
-      })
-    })
+    const format = await this._getFormat(block.cid.codec)
+    return promisify(format.util.deserialize)(block.data)
   }
 
   /**
