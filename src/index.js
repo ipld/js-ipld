@@ -44,7 +44,7 @@ class IPLDResolver {
    * Add support for an IPLD Format.
    *
    * @param {Object} format - The implementation of an IPLD Format.
-   * @returns {void}
+   * @returns {this}
    */
   addFormat (format) {
     // IPLD Formats are using strings instead of constants for the multicodec
@@ -59,18 +59,22 @@ class IPLDResolver {
       resolver: format.resolver,
       util: format.util
     }
+
+    return this
   }
 
   /**
    * Remove support for an IPLD Format.
    *
    * @param {number} codec - The codec of the IPLD Format to remove.
-   * @returns {void}
+   * @returns {this}
    */
   removeFormat (codec) {
     if (this.resolvers[codec]) {
       delete this.resolvers[codec]
     }
+
+    return this
   }
 
   /**
