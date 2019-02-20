@@ -455,7 +455,7 @@ class IPLDResolver {
 
     // If not supported, attempt to dynamically load this format
     const format = await this.loadFormat(codec)
-    this.resolvers[codec] = format
+    this.addFormat(format)
     return format
   }
 
