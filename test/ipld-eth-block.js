@@ -11,7 +11,6 @@ const BlockService = require('ipfs-block-service')
 const ipldEthBlock = require('ipld-ethereum').ethBlock
 const EthBlockHeader = require('ethereumjs-block/header')
 const multihash = require('multihashes')
-const each = require('async/each')
 const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
@@ -49,18 +48,6 @@ module.exports = (repo) => {
       const nodes = [node1, node2, node3]
       const result = resolver.put(nodes, multicodec.ETH_BLOCK)
       ;[cid1, cid2, cid3] = await result.all()
-    })
-
-    describe('internals', () => {
-      it('resolver._put', (done) => {
-        each([
-          { node: node1, cid: cid1 },
-          { node: node2, cid: cid2 },
-          { node: node3, cid: cid3 }
-        ], (nc, cb) => {
-          resolver._put(nc.cid, nc.node, cb)
-        }, done)
-      })
     })
 
     describe('public api', () => {
