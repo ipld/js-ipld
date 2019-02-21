@@ -287,47 +287,19 @@ class IPLDResolver {
     }
     const options = mergeOptions(defaultOptions, userOptions)
 
-    // Get available paths from a block
-    const getPaths = (cid) => {
-      return new Promise(async (resolve, reject) => {
-        let format
-        try {
-          format = await this._getFormat(cid.codec)
-        } catch (error) {
-          return reject(error)
-        }
-        this.bs.get(cid, (err, block) => {
-          if (err) {
-            return reject(err)
-          }
-          format.resolver.tree(block.data, (err, paths) => {
-            if (err) {
-              return reject(err)
-            }
-            return resolve({ paths, block })
-          })
-        })
-      })
-    }
-
     // If a path is a link then follow it and return its CID
-    const maybeRecurse = (block, treePath) => {
-      return new Promise(async (resolve, reject) => {
-        // A treepath we might want to follow recursively
-        const format = await this._getFormat(block.cid.codec)
-        format.resolver.isLink(block.data, treePath, (err, link) => {
-          if (err) {
-            return reject(err)
-          }
-          // Something to follow recusively, hence push it into the queue
-          if (link) {
-            const cid = IPLDResolver._maybeCID(link)
-            resolve(cid)
-          } else {
-            resolve(null)
-          }
-        })
-      })
+    const maybeRecurse = async (block, treePath) => {
+      // A treepath we might want to follow recursively
+      const format = await this._getFormat(block.cid.codec)
+      const link = await promisify(
+        format.resolver.isLink)(block.data, treePath)
+      // Something to follow recusively, hence push it into the queue
+      if (link) {
+        const cid = IPLDResolver._maybeCID(link)
+        return cid
+      } else {
+        return null
+      }
     }
 
     // The list of paths that will get returned
@@ -341,7 +313,7 @@ class IPLDResolver {
     // The path that was already traversed
     let basePath
 
-    const next = () => {
+    const next = async () => {
       // End of iteration if there aren't any paths left to return or
       // if we don't want to traverse recursively and have already
       // returne the first level
@@ -349,42 +321,41 @@ class IPLDResolver {
         return { done: true }
       }
 
-      return new Promise(async (resolve, reject) => {
-        // There aren't any paths left, get them from the given CID
-        if (treePaths.length === 0 && queue.length > 0) {
-          ({ cid, basePath } = queue.shift())
+      // There aren't any paths left, get them from the given CID
+      if (treePaths.length === 0 && queue.length > 0) {
+        ({ cid, basePath } = queue.shift())
+        const format = await this._getFormat(cid.codec)
+        block = await promisify(this.bs.get.bind(this.bs))(cid)
 
-          let paths
-          try {
-            ({ block, paths } = await getPaths(cid))
-          } catch (error) {
-            return reject(error)
-          }
-          treePaths.push(...paths)
-        }
-        const treePath = treePaths.shift()
-        let fullPath = basePath + treePath
+        const paths = await promisify(format.resolver.tree)(block.data)
+        treePaths.push(...paths)
+      }
 
-        // Only follow links if recursion is intended
-        if (options.recursive) {
-          cid = await maybeRecurse(block, treePath)
-          if (cid !== null) {
-            queue.push({ cid, basePath: fullPath + '/' })
-          }
-        }
+      const treePath = treePaths.shift()
+      let fullPath = basePath + treePath
 
-        // Return it if it matches the given offset path, but is not the
-        // offset path itself
-        if (fullPath.startsWith(offsetPath) &&
-            fullPath.length > offsetPath.length) {
-          if (offsetPath.length > 0) {
-            fullPath = fullPath.slice(offsetPath.length + 1)
-          }
-          return resolve({ done: false, value: fullPath })
-        } else { // Else move on to the next iteration before returning
-          return resolve(next())
+      // Only follow links if recursion is intended
+      if (options.recursive) {
+        cid = await maybeRecurse(block, treePath)
+        if (cid !== null) {
+          queue.push({ cid, basePath: fullPath + '/' })
         }
-      })
+      }
+
+      // Return it if it matches the given offset path, but is not the
+      // offset path itself
+      if (fullPath.startsWith(offsetPath) &&
+          fullPath.length > offsetPath.length) {
+        if (offsetPath.length > 0) {
+          fullPath = fullPath.slice(offsetPath.length + 1)
+        }
+        return {
+          done: false,
+          value: fullPath
+        }
+      } else { // Else move on to the next iteration before returning
+        return next()
+      }
     }
 
     return fancyIterator(next)
