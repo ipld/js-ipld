@@ -141,32 +141,16 @@ class IPLDResolver {
       throw new Error('`cids` must be an iterable of CIDs')
     }
 
-    let blocks
-    const next = async () => {
-      // End of iteration if there aren't any blocks left to return
-      if (cids.length === 0 ||
-        (blocks !== undefined && blocks.length === 0)
-      ) {
-        return { done: true }
+    const generator = async function * () {
+      for await (const cid of cids) {
+        const block = await promisify(this.bs.get.bind(this.bs))(cid)
+        const format = await this._getFormat(block.cid.codec)
+        const node = await promisify(format.util.deserialize)(block.data)
+        yield node
       }
+    }.bind(this)
 
-      // Lazy load block.
-      // Currently the BlockService return all nodes as an array. In the
-      // future this will also be an iterator
-      if (blocks === undefined) {
-        const cidsArray = Array.from(cids)
-        blocks = await promisify(this.bs.getMany.bind(this.bs))(cidsArray)
-      }
-      const block = blocks.shift()
-      const node = await this._deserialize(block)
-
-      return {
-        done: false,
-        value: node
-      }
-    }
-
-    return fancyIterator(next)
+    return extendIterator(generator())
   }
 
   /**
