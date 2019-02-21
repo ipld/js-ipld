@@ -139,28 +139,25 @@ module.exports = (repo) => {
 
       it('resolves a value within nested scope (1 level)', async () => {
         const result = resolver.resolve(cid2, 'Links/0/Hash/Data')
+        const [node1, node2] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('Data')
         expect(node1.value).to.eql(cid1.toV0())
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value).to.eql(Buffer.from('I am 1'))
       })
 
       it('resolves value within nested scope (2 levels)', async () => {
         const result = resolver.resolve(cid3, 'Links/1/Hash/Links/0/Hash/Data')
+        const [node1, node2, node3] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('Links/0/Hash/Data')
         expect(node1.value).to.eql(cid2.toV0())
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('Data')
         expect(node2.value).to.eql(cid1.toV0())
 
-        const node3 = await result.first()
         expect(node3.remainderPath).to.eql('')
         expect(node3.value).to.eql(Buffer.from('I am 1'))
       })

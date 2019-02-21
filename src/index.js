@@ -93,40 +93,35 @@ class IPLDResolver {
       throw new Error('`path` argument must be a string')
     }
 
-    const next = async () => {
+    const generator = async function * () {
       // End iteration if there isn't a CID to follow anymore
-      if (cid === null) {
-        return { done: true }
-      }
+      while (cid !== null) {
+        const format = await this._getFormat(cid.codec)
 
-      const format = await this._getFormat(cid.codec)
+        // get block
+        // use local resolver
+        // update path value
+        const block = await promisify(this.bs.get.bind(this.bs))(cid)
+        const result = await promisify(format.resolver.resolve)(block.data, path)
 
-      // get block
-      // use local resolver
-      // update path value
-      const block = await promisify(this.bs.get.bind(this.bs))(cid)
-      const result = await promisify(format.resolver.resolve)(block.data, path)
+        // Prepare for the next iteration if there is a `remainderPath`
+        path = result.remainderPath
+        let value = result.value
+        // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
+        // CIDs yet. Hence try to convert old style links to CIDs
+        if (Object.keys(value).length === 1 && '/' in value) {
+          value = new CID(value['/'])
+        }
+        cid = CID.isCID(value) ? value : null
 
-      // Prepare for the next iteration if there is a `remainderPath`
-      path = result.remainderPath
-      let value = result.value
-      // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
-      // CIDs yet. Hence try to convert old style links to CIDs
-      if (Object.keys(value).length === 1 && '/' in value) {
-        value = new CID(value['/'])
-      }
-      cid = CID.isCID(value) ? value : null
-
-      return {
-        done: false,
-        value: {
+        yield {
           remainderPath: path,
           value
         }
       }
-    }
+    }.bind(this)
 
-    return fancyIterator(next)
+    return extendIterator(generator())
   }
 
   /**

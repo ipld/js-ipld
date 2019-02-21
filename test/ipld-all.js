@@ -71,12 +71,11 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
 
   it('resolve through different formats', async () => {
     const result = resolver.resolve(cidCbor, 'pb/Data')
+    const [node1, node2] = await result.all()
 
-    const node1 = await result.first()
     expect(node1.remainderPath).to.eql('Data')
     expect(node1.value).to.eql(cidPb)
 
-    const node2 = await result.first()
     expect(node2.remainderPath).to.eql('')
     expect(node2.value).to.eql(Buffer.from('I am inside a Protobuf'))
   })

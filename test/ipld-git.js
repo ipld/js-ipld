@@ -174,41 +174,39 @@ module.exports = (repo) => {
 
       it('resolves value within nested node scope (commit/tree)', async () => {
         const result = resolver.resolve(commitCid, 'tree/somefile/mode')
+        const [node1, node2] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('somefile/mode')
         expect(node1.value).to.eql(treeCid)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value).to.eql('100644')
       })
 
       it('resolves value within nested node scope (commit/tree/blob)', async () => {
         const result = resolver.resolve(commitCid, 'tree/somefile/hash')
+        const [node1, node2, node3] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('somefile/hash')
         expect(node1.value).to.eql(treeCid)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value).to.eql(blobCid)
 
-        const node3 = await result.first()
         expect(node3.remainderPath).to.eql('')
         expect(node3.value).to.eql(blobNode)
       })
 
       it('resolves value within nested node scope (commit/commit/tree/blob)', async () => {
         const result = resolver.resolve(commit2Cid, 'parents/0/tree/somefile/hash')
+        const nodes = await result.all()
 
-        const node1 = await result.first()
+        const node1 = nodes.shift()
         expect(node1.remainderPath).to.eql('tree/somefile/hash')
         expect(node1.value).to.eql(commitCid)
 
         // The nodes in between were already tested by some other test
-        const last = await result.last()
+        const last = await nodes.pop()
         expect(last.remainderPath).to.eql('')
         expect(last.value).to.eql(blobNode)
       })
@@ -216,13 +214,14 @@ module.exports = (repo) => {
       it('resolves value within nested node scope (tag/commit/commit/tree/blob)', async () => {
         const result = resolver.resolve(tagCid,
           'object/parents/0/tree/somefile/hash')
+        const nodes = await result.all()
 
-        const node1 = await result.first()
+        const node1 = nodes.shift()
         expect(node1.remainderPath).to.eql('parents/0/tree/somefile/hash')
         expect(node1.value).to.eql(commit2Cid)
 
         // The nodes in between were already tested by some other test
-        const last = await result.last()
+        const last = nodes.pop()
         expect(last.remainderPath).to.eql('')
         expect(last.value).to.eql(blobNode)
       })

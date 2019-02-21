@@ -82,28 +82,25 @@ module.exports = (repo) => {
 
       it('resolves value within nested scope (1 level)', async () => {
         const result = resolver.resolve(cid2, 'parent/number')
+        const [node1, node2] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('number')
         expect(node1.value).to.eql(cid1)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value.toString('hex')).to.eql('01')
       })
 
       it('resolves value within nested scope (2 levels)', async () => {
         const result = resolver.resolve(cid3, 'parent/parent/number')
+        const [node1, node2, node3] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('parent/number')
         expect(node1.value).to.eql(cid2)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('number')
         expect(node2.value).to.eql(cid1)
 
-        const node3 = await result.first()
         expect(node3.remainderPath).to.eql('')
         expect(node3.value.toString('hex')).to.eql('01')
       })
