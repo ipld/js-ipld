@@ -22,15 +22,6 @@ exports.all = async (iterator) => {
   return values
 }
 
-exports.fancyIterator = (next) => {
-  const iterator = { next }
-  iterator[Symbol.asyncIterator] = function () { return this }
-  iterator.first = () => exports.first(iterator)
-  iterator.last = () => exports.last(iterator)
-  iterator.all = () => exports.all(iterator)
-  return iterator
-}
-
 exports.extendIterator = (iterator) => {
   iterator.first = () => exports.first(iterator)
   iterator.last = () => exports.last(iterator)
