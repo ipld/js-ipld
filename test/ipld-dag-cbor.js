@@ -110,40 +110,36 @@ module.exports = (repo) => {
 
       it('resolves value within nested scope (0 level)', async () => {
         const result = resolver.resolve(cid2, 'one')
+        const [node1, node2] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('')
         expect(node1.value).to.eql(cid1)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value).to.eql({ someData: 'I am 1' })
       })
 
       it('resolves value within nested scope (1 level)', async () => {
         const result = resolver.resolve(cid2, 'one/someData')
+        const [node1, node2] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('someData')
         expect(node1.value).to.eql(cid1)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value).to.eql('I am 1')
       })
 
       it('resolves value within nested scope (2 levels)', async () => {
         const result = resolver.resolve(cid3, 'two/one/someData')
+        const [node1, node2, node3] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('one/someData')
         expect(node1.value).to.eql(cid2)
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('someData')
         expect(node2.value).to.eql(cid1)
 
-        const node3 = await result.first()
         expect(node3.remainderPath).to.eql('')
         expect(node3.value).to.eql('I am 1')
       })

@@ -90,11 +90,10 @@ module.exports = (repo) => {
       it('block-to-block', async () => {
         const child = await ethObjs.child
         const result = resolver.resolve(child.cid, 'parent')
+        const [node1, node2] = await result.all()
 
-        const node1 = await result.first()
         expect(node1.remainderPath).to.eql('')
 
-        const node2 = await result.first()
         expect(node2.remainderPath).to.eql('')
         expect(node2.value.number.toString('hex')).to.eql('302516')
       })
