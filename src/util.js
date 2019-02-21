@@ -30,3 +30,10 @@ exports.fancyIterator = (next) => {
   iterator.all = () => exports.all(iterator)
   return iterator
 }
+
+exports.extendIterator = (iterator) => {
+  iterator.first = () => exports.first(iterator)
+  iterator.last = () => exports.last(iterator)
+  iterator.all = () => exports.all(iterator)
+  return iterator
+}
