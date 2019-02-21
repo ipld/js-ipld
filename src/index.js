@@ -10,7 +10,7 @@ const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
 const typical = require('typical')
-const { fancyIterator } = require('./util')
+const { extendIterator, fancyIterator } = require('./util')
 
 class IPLDResolver {
   constructor (userOptions) {
@@ -195,42 +195,35 @@ class IPLDResolver {
     let options
     let formatImpl
 
-    const next = async () => {
-      // End iteration if there are no more nodes to put
-      if (nodes.length === 0) {
-        return { done: true }
-      }
-
-      // Lazy load the options not when the iterator is initialized, but
-      // when we hit the first iteration. This way the constructor can be
-      // a synchronous function.
-      if (options === undefined) {
-        formatImpl = await this._getFormat(format)
-        const defaultOptions = {
-          hashAlg: formatImpl.defaultHashAlg,
-          cidVersion: 1,
-          onlyHash: false
+    const generator = async function * () {
+      for await (const node of nodes) {
+        // Lazy load the options not when the iterator is initialized, but
+        // when we hit the first iteration. This way the constructor can be
+        // a synchronous function.
+        if (options === undefined) {
+          formatImpl = await this._getFormat(format)
+          const defaultOptions = {
+            hashAlg: formatImpl.defaultHashAlg,
+            cidVersion: 1,
+            onlyHash: false
+          }
+          options = mergeOptions(defaultOptions, userOptions)
         }
-        options = mergeOptions(defaultOptions, userOptions)
-      }
 
-      const node = nodes.shift()
-      const cidOptions = {
-        version: options.cidVersion,
-        hashAlg: options.hashAlg,
-        onlyHash: options.onlyHash
+        const cidOptions = {
+          version: options.cidVersion,
+          hashAlg: options.hashAlg,
+          onlyHash: options.onlyHash
+        }
+        const cid = await promisify(formatImpl.util.cid)(node, cidOptions)
+        if (!options.onlyHash) {
+          await this._store(cid, node)
+        }
+        yield cid
       }
-      const cid = await promisify(formatImpl.util.cid)(node, cidOptions)
-      if (!options.onlyHash) {
-        await this._store(cid, node)
-      }
-      return {
-        done: false,
-        value: cid
-      }
-    }
+    }.bind(this)
 
-    return fancyIterator(next)
+    return extendIterator(generator())
   }
 
   /**
