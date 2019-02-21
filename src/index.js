@@ -10,7 +10,7 @@ const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
 const typical = require('typical')
-const { extendIterator, fancyIterator } = require('./util')
+const { extendIterator } = require('./util')
 
 class IPLDResolver {
   constructor (userOptions) {
@@ -266,63 +266,57 @@ class IPLDResolver {
       }
     }
 
-    // The list of paths that will get returned
-    let treePaths = []
-    // The current block, needed to call `isLink()` on every interation
-    let block
-    // The list of items we want to follow recursively. The items are
-    // an object consisting of the CID and the currently already resolved
-    // path
-    const queue = [{ cid, basePath: '' }]
-    // The path that was already traversed
-    let basePath
+    const generator = async function * () {
+      // The list of paths that will get returned
+      const treePaths = []
+      // The current block, needed to call `isLink()` on every interation
+      let block
+      // The list of items we want to follow recursively. The items are
+      // an object consisting of the CID and the currently already resolved
+      // path
+      const queue = [{ cid, basePath: '' }]
+      // The path that was already traversed
+      let basePath
 
-    const next = async () => {
       // End of iteration if there aren't any paths left to return or
       // if we don't want to traverse recursively and have already
       // returne the first level
-      if (treePaths.length === 0 && queue.length === 0) {
-        return { done: true }
-      }
+      while (treePaths.length > 0 || queue.length > 0) {
+        // There aren't any paths left, get them from the given CID
+        if (treePaths.length === 0 && queue.length > 0) {
+          ({ cid, basePath } = queue.shift())
+          const format = await this._getFormat(cid.codec)
+          block = await promisify(this.bs.get.bind(this.bs))(cid)
 
-      // There aren't any paths left, get them from the given CID
-      if (treePaths.length === 0 && queue.length > 0) {
-        ({ cid, basePath } = queue.shift())
-        const format = await this._getFormat(cid.codec)
-        block = await promisify(this.bs.get.bind(this.bs))(cid)
+          const paths = await promisify(format.resolver.tree)(block.data)
+          treePaths.push(...paths)
+        }
 
-        const paths = await promisify(format.resolver.tree)(block.data)
-        treePaths.push(...paths)
-      }
+        const treePath = treePaths.shift()
+        let fullPath = basePath + treePath
 
-      const treePath = treePaths.shift()
-      let fullPath = basePath + treePath
+        // Only follow links if recursion is intended
+        if (options.recursive) {
+          cid = await maybeRecurse(block, treePath)
+          if (cid !== null) {
+            queue.push({ cid, basePath: fullPath + '/' })
+          }
+        }
 
-      // Only follow links if recursion is intended
-      if (options.recursive) {
-        cid = await maybeRecurse(block, treePath)
-        if (cid !== null) {
-          queue.push({ cid, basePath: fullPath + '/' })
+        // Return it if it matches the given offset path, but is not the
+        // offset path itself
+        if (fullPath.startsWith(offsetPath) &&
+            fullPath.length > offsetPath.length) {
+          if (offsetPath.length > 0) {
+            fullPath = fullPath.slice(offsetPath.length + 1)
+          }
+
+          yield fullPath
         }
       }
+    }.bind(this)
 
-      // Return it if it matches the given offset path, but is not the
-      // offset path itself
-      if (fullPath.startsWith(offsetPath) &&
-          fullPath.length > offsetPath.length) {
-        if (offsetPath.length > 0) {
-          fullPath = fullPath.slice(offsetPath.length + 1)
-        }
-        return {
-          done: false,
-          value: fullPath
-        }
-      } else { // Else move on to the next iteration before returning
-        return next()
-      }
-    }
-
-    return fancyIterator(next)
+    return extendIterator(generator())
   }
 
   /*           */
