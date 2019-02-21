@@ -220,22 +220,14 @@ class IPLDResolver {
       throw new Error('`cids` must be an iterable of CIDs')
     }
 
-    const next = async () => {
-      // End iteration if there are no more nodes to remove
-      if (cids.length === 0) {
-        return { done: true }
+    const generator = async function * () {
+      for await (const cid of cids) {
+        await promisify(this.bs.delete.bind(this.bs))(cid)
+        yield cid
       }
+    }.bind(this)
 
-      const cid = cids.shift()
-      await promisify(this.bs.delete.bind(this.bs))(cid)
-
-      return {
-        done: false,
-        value: cid
-      }
-    }
-
-    return fancyIterator(next)
+    return extendIterator(generator())
   }
 
   /**
