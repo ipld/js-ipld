@@ -109,7 +109,11 @@ class IPLDResolver {
         // NOTE vmx 2018-11-29: Not all IPLD Formats return links as
         // CIDs yet. Hence try to convert old style links to CIDs
         if (Object.keys(value).length === 1 && '/' in value) {
-          value = new CID(value['/'])
+          try {
+            value = new CID(value['/'])
+          } catch (_error) {
+            value = null
+          }
         }
         cid = CID.isCID(value) ? value : null
 
