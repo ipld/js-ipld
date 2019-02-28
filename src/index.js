@@ -1,7 +1,5 @@
 'use strict'
 
-const promisify = require('util').promisify
-
 const Block = require('ipfs-block')
 const CID = require('cids')
 const mergeOptions = require('merge-options')
@@ -9,6 +7,7 @@ const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
+const promisify = require('promisify-es6')
 const typical = require('typical')
 const { extendIterator } = require('./util')
 
