@@ -63,7 +63,7 @@
     "merge-options": "^1.0.1",
     "multicodec": "~0.5.0",
     "promisify-es6": "^1.0.3",
-    "typical": "^3.0.0"
+    "typical": "^3.0.2"
   },
   "contributors": [
     "Alan Shaw <alan.shaw@protocol.ai>",
