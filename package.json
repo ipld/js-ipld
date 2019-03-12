@@ -56,7 +56,7 @@
     "async": "^2.6.1",
     "cids": "github:multiformats/js-cid#refactor/cidv1base32-default",
     "ipfs-block": "github:ipfs/js-ipfs-block#refactor/cidv1base32-default",
-    "ipld-dag-cbor": "github:ipld/js-ipld-dag-pb#refactor/cidv1base32-default",
+    "ipld-dag-cbor": "github:ipld/js-ipld-dag-cbor#refactor/cidv1base32-default",
     "ipld-dag-pb": "github:ipld/js-ipld-dag-pb#refactor/cidv1b32-default",
     "ipld-raw": "github:ipld/js-ipld-raw#refactor/cidv1base32-default",
     "merge-options": "^1.0.1",
