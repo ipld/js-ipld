@@ -100,7 +100,7 @@ module.exports = (repo) => {
 
       async function store () {
         const nodes = [node1, node2, node3]
-        const result = resolver.put(nodes, multicodec.DAG_PB)
+        const result = resolver.putMany(nodes, multicodec.DAG_PB)
         ;[cid1, cid2, cid3] = await result.all()
 
         done()
@@ -109,8 +109,7 @@ module.exports = (repo) => {
 
     describe('public api', () => {
       it('resolver.put with format', async () => {
-        const result = resolver.put([node1], multicodec.DAG_PB)
-        const cid = await result.first()
+        const cid = await resolver.put(node1, multicodec.DAG_PB)
         expect(cid.version).to.equal(1)
         expect(cid.codec).to.equal('dag-pb')
         expect(cid.multihash).to.exist()
@@ -119,10 +118,9 @@ module.exports = (repo) => {
       })
 
       it('resolver.put with format + hashAlg', async () => {
-        const result = resolver.put([node1], multicodec.DAG_PB, {
+        const cid = await resolver.put(node1, multicodec.DAG_PB, {
           hashAlg: multicodec.SHA3_512
         })
-        const cid = await result.first()
         expect(cid.version).to.equal(1)
         expect(cid.codec).to.equal('dag-pb')
         expect(cid.multihash).to.exist()
@@ -163,10 +161,8 @@ module.exports = (repo) => {
       })
 
       it('resolver.get round-trip', async () => {
-        const resultPut = resolver.put([node1], multicodec.DAG_PB)
-        const cid = await resultPut.first()
-        const resultGet = resolver.get([cid])
-        const node = await resultGet.first()
+        const cid = await resolver.put(node1, multicodec.DAG_PB)
+        const node = await resolver.get(cid)
         // `size` is lazy, without a call to it a deep equal check would fail
         const _ = node.size // eslint-disable-line no-unused-vars
         expect(node).to.deep.equal(node1)
@@ -187,22 +183,17 @@ module.exports = (repo) => {
           })
         })
         const node = await createNode
-        const resultPut = resolver.put([node], multicodec.DAG_PB)
-        const cid = await resultPut.first()
-        const resultGet = resolver.get([cid])
-        const sameAsNode = await resultGet.first()
+        const cid = await resolver.put(node, multicodec.DAG_PB)
+        const sameAsNode = await resolver.get(cid)
         // `size` is lazy, without a call to it a deep equal check would fail
         const _ = sameAsNode.size // eslint-disable-line no-unused-vars
         expect(sameAsNode.data).to.deep.equal(node.data)
         return remove()
 
         async function remove () {
-          const resultRemove = resolver.remove([cid])
-          // The items are deleted through iteration
-          await resultRemove.last()
+          await resolver.remove(cid)
           // Verify that the item got really deleted
-          const resultGet = resolver.get([cid])
-          await expect(resultGet.next()).to.eventually.be.rejected()
+          await expect(resolver.get(cid)).to.eventually.be.rejected()
         }
       })
     })

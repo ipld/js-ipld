@@ -75,8 +75,7 @@ module.exports = (repo) => {
           default: throw new Error('Unknown type!')
         }
 
-        const result = resolver.put([node], type)
-        const cid = await result.first()
+        const cid = await resolver.put(node, type)
 
         return {
           raw: rawData,

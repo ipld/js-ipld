@@ -53,15 +53,29 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })
       // choosing a format that is not supported
-      const result = r.put([null], multicodec.BLAKE2B_8)
+      await expect(r.put(null, multicodec.BLAKE2B_8)).to.be.rejectedWith(
+        'No resolver found for codec "blake2b-8"')
+    })
+
+    it('put - errors if no format is provided', async () => {
+      const bs = new BlockService(repo)
+      const r = new IPLDResolver({ blockService: bs })
+      await expect(r.put(null)).to.be.rejectedWith('`put` requires a format')
+    })
+
+    it('putMany - errors on unknown resolver', async () => {
+      const bs = new BlockService(repo)
+      const r = new IPLDResolver({ blockService: bs })
+      // choosing a format that is not supported
+      const result = r.putMany([null], multicodec.BLAKE2B_8)
       await expect(result.next()).to.be.rejectedWith(
         'No resolver found for codec "blake2b-8"')
     })
 
-    it('put - errors if no format is provided', () => {
+    it('putMany - errors if no format is provided', () => {
       const bs = new BlockService(repo)
       const r = new IPLDResolver({ blockService: bs })
-      expect(() => r.put([null])).to.be.throw('`put` requires a format')
+      expect(() => r.putMany([null])).to.be.throw('`put` requires a format')
     })
 
     it('tree - errors on unknown resolver', async () => {

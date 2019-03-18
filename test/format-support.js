@@ -23,8 +23,7 @@ module.exports = (repo) => {
 
       data = { now: Date.now() }
 
-      const result = resolver.put([data], multicodec.DAG_CBOR)
-      cid = await result.last()
+      cid = await resolver.put(data, multicodec.DAG_CBOR)
     })
 
     describe('Dynamic format loading', () => {
