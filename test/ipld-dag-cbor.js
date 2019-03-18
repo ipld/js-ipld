@@ -70,7 +70,7 @@ module.exports = (repo) => {
 
       async function store () {
         const nodes = [node1, node2, node3]
-        const result = resolver.put(nodes, multicodec.DAG_CBOR)
+        const result = resolver.putMany(nodes, multicodec.DAG_CBOR)
         ;[cid1, cid2, cid3] = await result.all()
 
         done()
@@ -79,8 +79,7 @@ module.exports = (repo) => {
 
     describe('public api', () => {
       it('resolver.put with format', async () => {
-        const result = resolver.put([node1], multicodec.DAG_CBOR)
-        const cid = await result.first()
+        const cid = await resolver.put(node1, multicodec.DAG_CBOR)
         expect(cid.version).to.equal(1)
         expect(cid.codec).to.equal('dag-cbor')
         expect(cid.multihash).to.exist()
@@ -89,10 +88,9 @@ module.exports = (repo) => {
       })
 
       it('resolver.put with format + hashAlg', async () => {
-        const result = resolver.put([node1], multicodec.DAG_CBOR, {
+        const cid = await resolver.put(node1, multicodec.DAG_CBOR, {
           hashAlg: multicodec.SHA3_512
         })
-        const cid = await result.first()
         expect(cid).to.exist()
         expect(cid.version).to.equal(1)
         expect(cid.codec).to.equal('dag-cbor')
@@ -151,10 +149,8 @@ module.exports = (repo) => {
       })
 
       it('resolver.get round-trip', async () => {
-        const resultPut = resolver.put([node1], multicodec.DAG_CBOR)
-        const cid = await resultPut.first()
-        const resultGet = resolver.get([cid])
-        const node = await resultGet.first()
+        const cid = await resolver.put(node1, multicodec.DAG_CBOR)
+        const node = await resolver.get(cid)
         expect(node).to.deep.equal(node1)
       })
 
@@ -205,20 +201,15 @@ module.exports = (repo) => {
       })
 
       it('resolver.remove', async () => {
-        const resultPut = resolver.put([node1], multicodec.DAG_CBOR)
-        const cid = await resultPut.first()
-        const resultGet = resolver.get([cid])
-        const sameAsNode1 = await resultGet.first()
+        const cid = await resolver.put(node1, multicodec.DAG_CBOR)
+        const sameAsNode1 = await resolver.get(cid)
         expect(sameAsNode1).to.deep.equal(node1)
         return remove()
 
         async function remove () {
-          const resultRemove = resolver.remove([cid])
-          // The items are deleted through iteration
-          await resultRemove.last()
+          await resolver.remove(cid)
           // Verify that the item got really deleted
-          const resultGet = resolver.get([cid])
-          await expect(resultGet.next()).to.eventually.be.rejected()
+          await expect(resolver.get(cid)).to.eventually.be.rejected()
         }
       })
     })

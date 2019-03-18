@@ -128,12 +128,26 @@ class IPLDResolver {
   }
 
   /**
+   * Get a node by CID.
+   *
+   * @param {CID} cid - The CID of the IPLD Node that should be retrieved.
+   * @returns {Promise.<Object>} - Returns a Promise with the IPLD Node that correspond to the given `cid`.
+   */
+  async get (cid) {
+    const block = await promisify(this.bs.get.bind(this.bs))(cid)
+    const format = await this._getFormat(block.cid.codec)
+    const node = await promisify(format.util.deserialize)(block.data)
+
+    return node
+  }
+
+  /**
    * Get multiple nodes back from an array of CIDs.
    *
    * @param {Iterable.<CID>} cids - The CIDs of the IPLD Nodes that should be retrieved.
    * @returns {Iterable.<Promise.<Object>>} - Returns an async iterator with the IPLD Nodes that correspond to the given `cids`.
    */
-  get (cids) {
+  getMany (cids) {
     if (!typical.isIterable(cids) || typical.isString(cids) ||
         Buffer.isBuffer(cids)) {
       throw new Error('`cids` must be an iterable of CIDs')
@@ -141,14 +155,52 @@ class IPLDResolver {
 
     const generator = async function * () {
       for await (const cid of cids) {
-        const block = await promisify(this.bs.get.bind(this.bs))(cid)
-        const format = await this._getFormat(block.cid.codec)
-        const node = await promisify(format.util.deserialize)(block.data)
-        yield node
+        yield this.get(cid)
       }
     }.bind(this)
 
     return extendIterator(generator())
+  }
+
+  /**
+   * Stores the given IPLD Node of a recognized IPLD Format.
+   *
+   * @param {Object} node - The deserialized IPLD node that should be inserted.
+   * @param {number} format - The multicodec of the format that IPLD Node should be encoded in.
+   * @param {Object} [userOptions] -  Options is an object with the following properties.
+   * @param {number} [userOtions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
+   * @param {number} [userOptions.cidVersion=1] - The CID version to use.
+   * @param {boolean} [userOptions.onlyHash=false] - If true the serialized form of the IPLD Node will not be passed to the underlying block store.
+   * @returns {Promise.<CID>} - Returns the CID of the serialized IPLD Nodes.
+   */
+  async put (node, format, userOptions) {
+    if (format === undefined) {
+      throw new Error('`put` requires a format')
+    }
+    if (typeof format !== 'number') {
+      throw new Error('`format` parameter must be number (multicodec)')
+    }
+
+    const formatImpl = await this._getFormat(format)
+    const defaultOptions = {
+      hashAlg: formatImpl.defaultHashAlg,
+      cidVersion: 1,
+      onlyHash: false
+    }
+    const options = mergeOptions(defaultOptions, userOptions)
+
+    const cidOptions = {
+      version: options.cidVersion,
+      hashAlg: options.hashAlg,
+      onlyHash: options.onlyHash
+    }
+    const cid = await promisify(formatImpl.util.cid)(node, cidOptions)
+
+    if (!options.onlyHash) {
+      await this._store(cid, node)
+    }
+
+    return cid
   }
 
   /**
@@ -158,11 +210,11 @@ class IPLDResolver {
    * @param {number} format - The multicodec of the format that IPLD Node should be encoded in.
    * @param {Object} [userOptions] -  Options are applied to any of the `nodes` and is an object with the following properties.
    * @param {number} [userOtions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
-   * @param {number} [userOptions.cidVersion=1]`- The CID version to use.
+   * @param {number} [userOptions.cidVersion=1] - The CID version to use.
    * @param {boolean} [userOptions.onlyHash=false] - If true the serialized form of the IPLD Node will not be passed to the underlying block store.
    * @returns {Iterable.<Promise.<CID>>} - Returns an async iterator with the CIDs of the serialized IPLD Nodes.
    */
-  put (nodes, format, userOptions) {
+  putMany (nodes, format, userOptions) {
     if (!typical.isIterable(nodes) || typical.isString(nodes) ||
         Buffer.isBuffer(nodes)) {
       throw new Error('`nodes` must be an iterable')
@@ -192,20 +244,21 @@ class IPLDResolver {
           options = mergeOptions(defaultOptions, userOptions)
         }
 
-        const cidOptions = {
-          version: options.cidVersion,
-          hashAlg: options.hashAlg,
-          onlyHash: options.onlyHash
-        }
-        const cid = await promisify(formatImpl.util.cid)(node, cidOptions)
-        if (!options.onlyHash) {
-          await this._store(cid, node)
-        }
-        yield cid
+        yield this.put(node, format, options)
       }
     }.bind(this)
 
     return extendIterator(generator())
+  }
+
+  /**
+   * Remove an IPLD Node by the given CID.
+   *
+   * @param {CID} cid - The CID of the IPLD Node that should be removed.
+   * @return {Promise.<CID>} The CID of the removed IPLD Node.
+   */
+  async remove (cid) {
+    return promisify(this.bs.delete.bind(this.bs))(cid)
   }
 
   /**
@@ -214,10 +267,10 @@ class IPLDResolver {
    * Throws an error if any of the Blocks can’t be removed. This operation is
    * *not* atomic, some Blocks might have already been removed.
    *
-   * @param {Iterable.<CID>} cids - The CIDs of the IPLD Nodes that should be removed
-   * @return {void}
+   * @param {Iterable.<CID>} cids - The CIDs of the IPLD Nodes that should be removed.
+   * @return {Iterable.<Promise.<CID>>} Returns an async iterator with the CIDs of the removed IPLD Nodes.
    */
-  remove (cids) {
+  removeMany (cids) {
     if (!typical.isIterable(cids) || typical.isString(cids) ||
         Buffer.isBuffer(cids)) {
       throw new Error('`cids` must be an iterable of CIDs')
@@ -225,8 +278,7 @@ class IPLDResolver {
 
     const generator = async function * () {
       for await (const cid of cids) {
-        await promisify(this.bs.delete.bind(this.bs))(cid)
-        yield cid
+        yield this.remove(cid)
       }
     }.bind(this)
 

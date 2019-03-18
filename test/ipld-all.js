@@ -58,9 +58,9 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
           { node: nodePb, format: multicodec.DAG_PB, cidVersion: 0 },
           { node: nodeCbor, format: multicodec.DAG_CBOR, cidVersion: 1 }
         ], (nac, cb) => {
-          resolver.put([nac.node], nac.format, {
+          resolver.put(nac.node, nac.format, {
             cidVersion: nac.cidVersion
-          }).first().then(
+          }).then(
             () => cb(null),
             (error) => cb(error)
           )
@@ -84,12 +84,11 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     waterfall([
       (cb) => dagPB.DAGNode.create(Buffer.from('Some data here'), cb),
       (node, cb) => {
-        const result = resolver.put([node], multicodec.DAG_PB, {
+        resolver.put(node, multicodec.DAG_PB, {
           onlyHash: true,
           cidVersion: 1,
           hashAlg: multicodec.SHA2_256
-        })
-        result.first().then(
+        }).then(
           (cid) => cb(null, cid),
           (error) => cb(error)
         )
@@ -107,21 +106,21 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
 
   describe('get', () => {
     it('should return nodes correctly', async () => {
-      const result = resolver.get([cidCbor, cidPb])
+      const result = resolver.getMany([cidCbor, cidPb])
       const [node1, node2] = await result.all()
       expect(node1).to.eql(nodeCbor)
       expect(node2).to.eql(nodePb)
     })
 
     it('should return nodes in input order', async () => {
-      const result = resolver.get([cidPb, cidCbor])
+      const result = resolver.getMany([cidPb, cidCbor])
       const [node1, node2] = await result.all()
       expect(node1).to.eql(nodePb)
       expect(node2).to.eql(nodeCbor)
     })
 
     it('should return error on invalid CID', async () => {
-      const result = resolver.get([cidCbor, 'invalidcid'])
+      const result = resolver.getMany([cidCbor, 'invalidcid'])
       // First node is valid
       await result.next()
       // Second one is not
@@ -131,7 +130,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     it('should return error on non-existent CID', async () => {
       const nonExistentCid = new CID(
         'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
-      const result = resolver.get([cidCbor, nonExistentCid])
+      const result = resolver.getMany([cidCbor, nonExistentCid])
       // First node is valid
       await result.next()
       // Second one is not
@@ -139,7 +138,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     })
 
     it('should return error on invalid input', () => {
-      expect(() => resolver.get('astring')).to.throw(
+      expect(() => resolver.getMany('astring')).to.throw(
         '`cids` must be an iterable of CIDs')
     })
   })
