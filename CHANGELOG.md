@@ -1,3 +1,146 @@
+<a name="0.22.0"></a>
+# [0.22.0](https://github.com/ipld/js-ipld/compare/v0.21.1...v0.22.0) (2019-03-21)
+
+
+### Bug Fixes
+
+* add dynamically loaded format via addFormat() ([95536cd](https://github.com/ipld/js-ipld/commit/95536cd))
+* don't throw if it's not a proper old-style link ([38be898](https://github.com/ipld/js-ipld/commit/38be898))
+* error if loadFormat() is not a function ([4ad1ee4](https://github.com/ipld/js-ipld/commit/4ad1ee4))
+* use a version of typical where async iterators are supported ([43176ca](https://github.com/ipld/js-ipld/commit/43176ca))
+* use promisify-es6 instead of Nodes.js' promisify ([79e521c](https://github.com/ipld/js-ipld/commit/79e521c))
+
+
+### Code Refactoring
+
+* make `_getFormat()` async/await ([996e9dc](https://github.com/ipld/js-ipld/commit/996e9dc))
+* store codecs by their code ([d797667](https://github.com/ipld/js-ipld/commit/d797667))
+
+
+### Features
+
+* add single item functions ([945fc61](https://github.com/ipld/js-ipld/commit/945fc61))
+* implementation of the new `addFormat/removeFormat()` functions ([12b436b](https://github.com/ipld/js-ipld/commit/12b436b))
+* implementation of the new `get()` function ([743e679](https://github.com/ipld/js-ipld/commit/743e679))
+* implementation of the new `put()` function ([8b737b1](https://github.com/ipld/js-ipld/commit/8b737b1))
+* implementation of the new `remove()` function ([08c1e0e](https://github.com/ipld/js-ipld/commit/08c1e0e))
+* implementation of the new `resolve()` function ([162473b](https://github.com/ipld/js-ipld/commit/162473b))
+* implementation of the new `tree()` function ([9801765](https://github.com/ipld/js-ipld/commit/9801765))
+* make addFormat() and removeFormat() return the instance ([5f62fe0](https://github.com/ipld/js-ipld/commit/5f62fe0))
+
+
+### BREAKING CHANGES
+
+* put/get/remove functions are renamed
+
+This commit introduces single item functions which are called `put()`/`get()`,`remove()`.
+
+In order to put, get or remove multiple items you need to call
+`putMany()`,`getMany()`/`removeMany()` now.
+* This replaces the `treeStream()` function.
+
+The API docs for it:
+
+> Returns all the paths that can be resolved into.
+
+ - `cid` (`CID`, required): the CID to get the paths from.
+ - `path` (`IPLD Path`, default: ''): the path to start to retrieve the other paths from.
+ - `options`:
+   - `recursive` (`bool`, default: false): whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
+
+Returns an async iterator of all the paths (as Strings) you could resolve into.
+* They replace the `support.add()` and `support.rm()` functions.
+
+The API docs for it:
+
+`.addFormat(ipldFormatImplementation)`:
+
+> Add support for an IPLD Format
+
+ - `ipldFormatImplementation` (`IPLD Format`, required): the implementation of an IPLD Format.
+
+`.removeFormat(codec)`:
+
+> Remove support for an IPLD Format
+
+ - `codec` (`multicodec`, required): the codec of the IPLD Format to remove.
+* `remove()` has a new API.
+
+The API docs for it:
+
+> Remove IPLD Nodes by the given `cids`
+
+ - `cids` (`Iterable<CID>`): the CIDs of the IPLD Nodes that should be
+  removed.
+
+Throws an error if any of the Blocks can’t be removed. This operation is
+*not* atomic, some Blocks might have already been removed.
+* `get()` is replacing the `getMany()` function.
+
+The API docs for it:
+
+> Retrieve several IPLD Nodes at once.
+
+ - `cids` (`Iterable<CID>`): the CIDs of the IPLD Nodes that should be retrieved.
+
+Returns an async iterator with the IPLD Nodes that correspond to the given `cids`.
+
+Throws an error if a IPLD Node can’t be retrieved.
+* The API of `put()` changes.
+
+The API docs for it:
+
+> Stores the given IPLD Nodes of a recognized IPLD Format.
+
+ - `nodes` (`Iterable<Object>`): deserialized IPLD nodes that should be inserted.
+ - `format` (`multicodec`, required): the multicodec of the format that IPLD Node should be encoded in.
+ - `options` is applied to any of the `nodes` and is an object with the following properties:
+   - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
+   - `cidVersion` (`boolean`, default: 1): the CID version to use.
+   - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
+
+Returns an async iterator with the CIDs of the serialized IPLD Nodes.
+* The `codec` parameter in `options.loadFormat()` is a number
+
+Instead of returnign the name of the codec as string, the codec code (a number)
+is now returned.
+
+So if you e.g. check within the function for a certain format, it changes from:
+
+    async loadFormat (codec) {
+      if (codec !== 'dag-cbor') …
+    }
+
+To:
+
+    async loadFormat (codec) {
+      if (codec !== multicodec.DAG_CBOR) …
+    }
+* your custom format loading function needs
+to be an async now.
+
+So the signature for `options.loadFormat` is no longer:
+
+   function (codec, callback)
+
+but
+
+  async functiont (codec)
+* `resolve()` replaces parts of `get()`.
+
+The API docs for it:
+
+> Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
+
+ - `cid` (`CID`, required): the CID the resolving starts.
+ - `path` (`IPLD Path`, required): the path that should be resolved.
+
+Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
+ - `remainderPath` (`string`): the part of the path that wasn’t resolved yet.
+ - `value` (`*`): the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, `value` is the value the `path` points to. So if you need the CID of the IPLD Node you’re currently at, just take the `value` of the previously returned IPLD Node.
+
+
+
 <a name="0.21.1"></a>
 ## [0.21.1](https://github.com/ipld/js-ipld/compare/v0.21.0...v0.21.1) (2019-01-25)
 
