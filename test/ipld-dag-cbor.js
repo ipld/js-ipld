@@ -9,7 +9,6 @@ chai.use(dirtyChai)
 chai.use(chaiAsProised)
 const BlockService = require('ipfs-block-service')
 const dagCBOR = require('ipld-dag-cbor')
-const series = require('async/series')
 const multicodec = require('multicodec')
 const multihash = require('multihashes')
 
@@ -26,55 +25,32 @@ module.exports = (repo) => {
     let cid2
     let cid3
 
-    before((done) => {
+    before(async () => {
       const bs = new BlockService(repo)
-
       resolver = new IPLDResolver({ blockService: bs })
 
-      series([
-        (cb) => {
-          node1 = { someData: 'I am 1' }
-
-          dagCBOR.util.cid(node1, (err, cid) => {
-            expect(err).to.not.exist()
-            cid1 = cid
-            cb()
-          })
-        },
-        (cb) => {
-          node2 = {
-            someData: 'I am 2',
-            one: cid1
-          }
-
-          dagCBOR.util.cid(node2, (err, cid) => {
-            expect(err).to.not.exist()
-            cid2 = cid
-            cb()
-          })
-        },
-        (cb) => {
-          node3 = {
-            someData: 'I am 3',
-            one: cid1,
-            two: cid2
-          }
-
-          dagCBOR.util.cid(node3, (err, cid) => {
-            expect(err).to.not.exist()
-            cid3 = cid
-            cb()
-          })
-        }
-      ], store)
-
-      async function store () {
-        const nodes = [node1, node2, node3]
-        const result = resolver.putMany(nodes, multicodec.DAG_CBOR)
-        ;[cid1, cid2, cid3] = await result.all()
-
-        done()
+      node1 = { someData: 'I am 1' }
+      const serialized1 = dagCBOR.util.serialize(node1)
+      cid1 = await dagCBOR.util.cid(serialized1)
+      node2 = {
+        someData: 'I am 2',
+        one: cid1
       }
+
+      const serialized2 = dagCBOR.util.serialize(node2)
+      cid2 = await dagCBOR.util.cid(serialized2)
+      node3 = {
+        someData: 'I am 3',
+        one: cid1,
+        two: cid2
+      }
+
+      const serialized3 = dagCBOR.util.serialize(node3)
+      cid3 = await dagCBOR.util.cid(serialized3)
+
+      const nodes = [node1, node2, node3]
+      const result = resolver.putMany(nodes, multicodec.DAG_CBOR)
+      ;[cid1, cid2, cid3] = await result.all()
     })
 
     describe('public api', () => {
@@ -145,7 +121,7 @@ module.exports = (repo) => {
       it('fails resolving unavailable path', async () => {
         const result = resolver.resolve(cid3, `foo/${Date.now()}`)
         await expect(result.next()).to.be.rejectedWith(
-          'path not available at root')
+          "Object has no property 'foo'")
       })
 
       it('resolver.get round-trip', async () => {

@@ -9,7 +9,6 @@ const BlockService = require('ipfs-block-service')
 const ipldZcash = require('ipld-zcash')
 const ZcashBlockHeader = require('zcash-bitcore-lib').BlockHeader
 const multihash = require('multihashes')
-const series = require('async/series')
 const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
@@ -40,60 +39,40 @@ module.exports = (repo) => {
     let cid1
     let cid2
     let cid3
+    let serialized1
 
-    before((done) => {
+    before(async () => {
       const bs = new BlockService(repo)
       resolver = new IPLDResolver({
         blockService: bs,
         formats: [ipldZcash]
       })
 
-      series([
-        (cb) => {
-          node1 = buildZcashBlock({
-            version: 1
-          })
-          ipldZcash.util.cid(node1, (err, cid) => {
-            expect(err).to.not.exist()
-            cid1 = cid
-            cb()
-          })
-        },
-        (cb) => {
-          const prevHash = multihash.decode(cid1.multihash).digest
-          node2 = buildZcashBlock({
-            version: 2,
-            prevHash: prevHash
-          })
+      node1 = buildZcashBlock({
+        version: 1
+      })
+      serialized1 = ipldZcash.util.serialize(node1)
+      cid1 = await ipldZcash.util.cid(serialized1)
+      const prevHash1 = multihash.decode(cid1.multihash).digest
 
-          ipldZcash.util.cid(node2, (err, cid) => {
-            expect(err).to.not.exist()
-            cid2 = cid
-            cb()
-          })
-        },
-        (cb) => {
-          const prevHash = multihash.decode(cid2.multihash).digest
-          node3 = buildZcashBlock({
-            version: 3,
-            prevHash: prevHash
-          })
+      node2 = buildZcashBlock({
+        version: 2,
+        prevHash: prevHash1
+      })
+      const serialized2 = ipldZcash.util.serialize(node2)
+      cid2 = await ipldZcash.util.cid(serialized2)
+      const prevHash2 = multihash.decode(cid2.multihash).digest
 
-          ipldZcash.util.cid(node3, (err, cid) => {
-            expect(err).to.not.exist()
-            cid3 = cid
-            cb()
-          })
-        }
-      ], store)
+      node3 = buildZcashBlock({
+        version: 3,
+        prevHash: prevHash2
+      })
+      const serialized3 = ipldZcash.util.serialize(node3)
+      cid3 = await ipldZcash.util.cid(serialized3)
 
-      async function store () {
-        const nodes = [node1, node2, node3]
-        const result = resolver.putMany(nodes, multicodec.ZCASH_BLOCK)
-        ;[cid1, cid2, cid3] = await result.all()
-
-        done()
-      }
+      const nodes = [node1, node2, node3]
+      const result = resolver.putMany(nodes, multicodec.ZCASH_BLOCK)
+      ;[cid1, cid2, cid3] = await result.all()
     })
 
     describe('public api', () => {
@@ -150,22 +129,19 @@ module.exports = (repo) => {
       })
 
       it('resolver.get round-trip', async () => {
-        const cid = await resolver.put(node1, multicodec.ZCASH_BLOCK)
-        const node = await resolver.get(cid)
-        expect(node.toString()).to.deep.equal(node1.toString())
+        const expectedNode = ipldZcash.util.deserialize(serialized1)
+        const node = await resolver.get(cid1)
+        expect(node).to.deep.equal(expectedNode)
       })
 
       it('resolver.remove', async () => {
-        const cid = await resolver.put(node1, multicodec.ZCASH_BLOCK)
-        const sameAsNode1 = await resolver.get(cid)
-        expect(sameAsNode1).to.deep.equal(node1)
-        return remove()
+        const expectedNode = ipldZcash.util.deserialize(serialized1)
+        const sameAsNode1 = await resolver.get(cid1)
+        expect(sameAsNode1).to.deep.equal(expectedNode)
 
-        async function remove () {
-          await resolver.remove(cid)
-          // Verify that the item got really deleted
-          await expect(resolver.get(cid)).to.eventually.be.rejected()
-        }
+        await resolver.remove(cid1)
+        // Verify that the item got really deleted
+        await expect(resolver.get(cid1)).to.eventually.be.rejected()
       })
     })
   })

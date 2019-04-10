@@ -45,18 +45,13 @@ class IPLDResolver {
    * @returns {this}
    */
   addFormat (format) {
-    // IPLD Formats are using strings instead of constants for the multicodec
-    const codecBuffer = multicodec.getCodeVarint(format.resolver.multicodec)
-    const codec = multicodec.getCode(codecBuffer)
-    if (this.resolvers[codec]) {
+    const codec = format.codec
+    if (this.resolvers[format.format]) {
       const codecName = multicodec.print[codec]
       throw new Error(`Resolver already exists for codec "${codecName}"`)
     }
 
-    this.resolvers[codec] = {
-      resolver: format.resolver,
-      util: format.util
-    }
+    this.resolvers[codec] = format
 
     return this
   }
@@ -101,7 +96,7 @@ class IPLDResolver {
         // use local resolver
         // update path value
         const block = await promisify(this.bs.get.bind(this.bs))(cid)
-        const result = await promisify(format.resolver.resolve)(block.data, path)
+        const result = format.resolver.resolve(block.data, path)
 
         // Prepare for the next iteration if there is a `remainderPath`
         path = result.remainderPath
@@ -136,7 +131,7 @@ class IPLDResolver {
   async get (cid) {
     const block = await promisify(this.bs.get.bind(this.bs))(cid)
     const format = await this._getFormat(block.cid.codec)
-    const node = await promisify(format.util.deserialize)(block.data)
+    const node = format.util.deserialize(block.data)
 
     return node
   }
@@ -194,10 +189,12 @@ class IPLDResolver {
       hashAlg: options.hashAlg,
       onlyHash: options.onlyHash
     }
-    const cid = await promisify(formatImpl.util.cid)(node, cidOptions)
+    const serialized = formatImpl.util.serialize(node)
+    const cid = await formatImpl.util.cid(serialized, cidOptions)
 
     if (!options.onlyHash) {
-      await this._store(cid, node)
+      const block = new Block(serialized, cid)
+      await promisify(this.bs.put.bind(this.bs))(block)
     }
 
     return cid
@@ -310,12 +307,10 @@ class IPLDResolver {
     const maybeRecurse = async (block, treePath) => {
       // A treepath we might want to follow recursively
       const format = await this._getFormat(block.cid.codec)
-      const link = await promisify(
-        format.resolver.isLink)(block.data, treePath)
+      const result = format.resolver.resolve(block.data, treePath)
       // Something to follow recusively, hence push it into the queue
-      if (link) {
-        const cid = IPLDResolver._maybeCID(link)
-        return cid
+      if (CID.isCID(result.value)) {
+        return result.value
       } else {
         return null
       }
@@ -343,7 +338,7 @@ class IPLDResolver {
           const format = await this._getFormat(cid.codec)
           block = await promisify(this.bs.get.bind(this.bs))(cid)
 
-          const paths = await promisify(format.resolver.tree)(block.data)
+          const paths = format.resolver.tree(block.data)
           treePaths.push(...paths)
         }
 
@@ -393,43 +388,6 @@ class IPLDResolver {
     const format = await this.loadFormat(codec)
     this.addFormat(format)
     return format
-  }
-
-  async _store (cid, node) {
-    const format = await this._getFormat(cid.codec)
-    const serialized = await promisify(format.util.serialize)(node)
-    const block = new Block(serialized, cid)
-    await promisify(this.bs.put.bind(this.bs))(block)
-  }
-
-  /**
-   * Deserialize a given block
-   *
-   * @param {Object} block - The block to deserialize
-   * @return {Object} = Returns the deserialized node
-   */
-  async _deserialize (block) {
-    const format = await this._getFormat(block.cid.codec)
-    return promisify(format.util.deserialize)(block.data)
-  }
-
-  /**
-   * Return a CID instance if it is a link.
-   *
-   * If something is a link `{"/": "baseencodedcid"}` or a CID, then return
-   * a CID object, else return `null`.
-   *
-   * @param {*} link - The object to check
-   * @returns {?CID} - A CID instance
-   */
-  static _maybeCID (link) {
-    if (CID.isCID(link)) {
-      return link
-    }
-    if (link && link['/'] !== undefined) {
-      return new CID(link['/'])
-    }
-    return null
   }
 }
 

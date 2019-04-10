@@ -14,12 +14,10 @@ const expect = chai.expect
 chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const dagPB = require('ipld-dag-pb')
-const dagCBOR = require('ipld-dag-cbor')
-const each = require('async/each')
-const waterfall = require('async/waterfall')
 const CID = require('cids')
 const inMemory = require('ipld-in-memory')
 const multicodec = require('multicodec')
+const promisify = require('promisify-es6')
 
 const IPLDResolver = require('../src')
 
@@ -31,42 +29,23 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   let cidCbor
   let cidPb
 
-  before((done) => {
-    waterfall([
-      (cb) => inMemory(IPLDResolver, cb),
-      (res, cb) => {
-        resolver = res
-        dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'), cb)
-      },
-      (node, cb) => {
-        nodePb = node
-        dagPB.util.cid(nodePb, cb)
-      },
-      (cid, cb) => {
-        cidPb = cid
-        nodeCbor = {
-          someData: 'I am inside a Cbor object',
-          pb: cidPb
-        }
+  before(async () => {
+    resolver = await new Promise((resolve, reject) => {
+      inMemory(IPLDResolver, (error, res) => {
+        if (error) reject(error)
+        else resolve(res)
+      })
+    })
 
-        dagCBOR.util.cid(nodeCbor, cb)
-      },
-      (cid, cb) => {
-        cidCbor = cid
+    nodePb = dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'))
+    cidPb = await resolver.put(nodePb, multicodec.DAG_PB, { cidVersion: 0 })
 
-        each([
-          { node: nodePb, format: multicodec.DAG_PB, cidVersion: 0 },
-          { node: nodeCbor, format: multicodec.DAG_CBOR, cidVersion: 1 }
-        ], (nac, cb) => {
-          resolver.put(nac.node, nac.format, {
-            cidVersion: nac.cidVersion
-          }).then(
-            () => cb(null),
-            (error) => cb(error)
-          )
-        }, cb)
-      }
-    ], done)
+    nodeCbor = {
+      someData: 'I am inside a Cbor object',
+      pb: cidPb
+    }
+
+    cidCbor = await resolver.put(nodeCbor, multicodec.DAG_CBOR)
   })
 
   it('resolve through different formats', async () => {
@@ -74,41 +53,28 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     const [node1, node2] = await result.all()
 
     expect(node1.remainderPath).to.eql('Data')
-    expect(node1.value).to.eql(cidPb)
-
+    expect(node1.value.equals(cidPb)).to.be.true()
     expect(node2.remainderPath).to.eql('')
     expect(node2.value).to.eql(Buffer.from('I am inside a Protobuf'))
   })
 
-  it('does not store nodes when onlyHash is passed', (done) => {
-    waterfall([
-      (cb) => dagPB.DAGNode.create(Buffer.from('Some data here'), cb),
-      (node, cb) => {
-        resolver.put(node, multicodec.DAG_PB, {
-          onlyHash: true,
-          cidVersion: 1,
-          hashAlg: multicodec.SHA2_256
-        }).then(
-          (cid) => cb(null, cid),
-          (error) => cb(error)
-        )
-      },
-      (cid, cb) => resolver.bs._repo.blocks.has(cid, cb)
-    ], (error, result) => {
-      if (error) {
-        return done(error)
-      }
-
-      expect(result).to.be.false()
-      done()
+  it('does not store nodes when onlyHash is passed', async () => {
+    const node = dagPB.DAGNode.create(Buffer.from('Some data here'))
+    const cid = await resolver.put(node, multicodec.DAG_PB, {
+      onlyHash: true,
+      cidVersion: 1,
+      hashAlg: multicodec.SHA2_256
     })
+    const result = await promisify(resolver.bs._repo.blocks.has)(cid)
+    expect(result).to.be.false()
   })
 
   describe('get', () => {
     it('should return nodes correctly', async () => {
       const result = resolver.getMany([cidCbor, cidPb])
       const [node1, node2] = await result.all()
-      expect(node1).to.eql(nodeCbor)
+      expect(node1.someData).to.eql(nodeCbor.someData)
+      expect(node1.pb.equals(nodeCbor.pb)).to.be.true()
       expect(node2).to.eql(nodePb)
     })
 
@@ -116,7 +82,8 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
       const result = resolver.getMany([cidPb, cidCbor])
       const [node1, node2] = await result.all()
       expect(node1).to.eql(nodePb)
-      expect(node2).to.eql(nodeCbor)
+      expect(node2.someData).to.eql(nodeCbor.someData)
+      expect(node2.pb.equals(nodeCbor.pb)).to.be.true()
     })
 
     it('should return error on invalid CID', async () => {

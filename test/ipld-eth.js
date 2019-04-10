@@ -10,7 +10,6 @@ const BlockService = require('ipfs-block-service')
 const ipldEthBlock = require('ipld-ethereum').ethBlock
 const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie
 const loadFixture = require('aegir/fixtures')
-const async = require('async')
 const EthBlockHeader = require('ethereumjs-block/header')
 const EthTrieNode = require('merkle-patricia-tree/trieNode')
 const multicodec = require('multicodec')
@@ -23,7 +22,7 @@ module.exports = (repo) => {
 
     let ethObjs
 
-    before(function (done) {
+    before(function () {
       this.timeout(10 * 1000)
       const bs = new BlockService(repo)
       resolver = new IPLDResolver({
@@ -31,39 +30,28 @@ module.exports = (repo) => {
         formats: [ipldEthBlock, ipldEthStateTrie]
       })
 
-      async.waterfall([
-        readFilesFixture,
-        generateCids
-      ], done)
-
-      function readFilesFixture (cb) {
-        async.parallel({
-          child: (cb) => cb(null, loadFixture('test/fixtures/block_302517')),
-          block: (cb) => cb(null, loadFixture('test/fixtures/block_302516')),
-          stateRoot: (cb) => cb(null, loadFixture('test/fixtures/state_r_302516')),
-          state0: (cb) => cb(null, loadFixture('test/fixtures/state_0_302516')),
-          state00: (cb) => cb(null, loadFixture('test/fixtures/state_00_302516')),
-          state000: (cb) => cb(null, loadFixture('test/fixtures/state_000_302516')),
-          state0000: (cb) => cb(null, loadFixture('test/fixtures/state_0000_302516')),
-          state00001: (cb) => cb(null, loadFixture('test/fixtures/state_00001_302516')),
-          state000017: (cb) => cb(null, loadFixture('test/fixtures/state_000017_302516'))
-        }, cb)
+      const fileData = {
+        child: loadFixture('test/fixtures/block_302517'),
+        block: loadFixture('test/fixtures/block_302516'),
+        stateRoot: loadFixture('test/fixtures/state_r_302516'),
+        state0: loadFixture('test/fixtures/state_0_302516'),
+        state00: loadFixture('test/fixtures/state_00_302516'),
+        state000: loadFixture('test/fixtures/state_000_302516'),
+        state0000: loadFixture('test/fixtures/state_0000_302516'),
+        state00001: loadFixture('test/fixtures/state_00001_302516'),
+        state000017: loadFixture('test/fixtures/state_000017_302516')
       }
 
-      function generateCids (fileData, cb) {
-        ethObjs = {
-          child: generateForType('child', multicodec.ETH_BLOCK, fileData.child),
-          block: generateForType('block', multicodec.ETH_BLOCK, fileData.block),
-          stateRoot: generateForType('stateRoot', multicodec.ETH_STATE_TRIE, fileData.stateRoot),
-          state0: generateForType('state0', multicodec.ETH_STATE_TRIE, fileData.state0),
-          state00: generateForType('state00', multicodec.ETH_STATE_TRIE, fileData.state00),
-          state000: generateForType('state000', multicodec.ETH_STATE_TRIE, fileData.state000),
-          state0000: generateForType('state0000', multicodec.ETH_STATE_TRIE, fileData.state0000),
-          state00001: generateForType('state00001', multicodec.ETH_STATE_TRIE, fileData.state00001),
-          state000017: generateForType('state000017', multicodec.ETH_STATE_TRIE, fileData.state000017)
-        }
-
-        cb()
+      ethObjs = {
+        child: generateForType('child', multicodec.ETH_BLOCK, fileData.child),
+        block: generateForType('block', multicodec.ETH_BLOCK, fileData.block),
+        stateRoot: generateForType('stateRoot', multicodec.ETH_STATE_TRIE, fileData.stateRoot),
+        state0: generateForType('state0', multicodec.ETH_STATE_TRIE, fileData.state0),
+        state00: generateForType('state00', multicodec.ETH_STATE_TRIE, fileData.state00),
+        state000: generateForType('state000', multicodec.ETH_STATE_TRIE, fileData.state000),
+        state0000: generateForType('state0000', multicodec.ETH_STATE_TRIE, fileData.state0000),
+        state00001: generateForType('state00001', multicodec.ETH_STATE_TRIE, fileData.state00001),
+        state000017: generateForType('state000017', multicodec.ETH_STATE_TRIE, fileData.state000017)
       }
 
       async function generateForType (label, type, rawData) {
@@ -75,7 +63,7 @@ module.exports = (repo) => {
           default: throw new Error('Unknown type!')
         }
 
-        const cid = await resolver.put(node, type)
+        const cid = await resolver.put({ _ethObj: node }, type)
 
         return {
           raw: rawData,

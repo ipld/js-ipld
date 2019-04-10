@@ -33,17 +33,23 @@ module.exports = (repo) => {
         formats: [ipldEthBlock]
       })
 
-      node1 = new EthBlockHeader({
-        number: 1
-      })
-      node2 = new EthBlockHeader({
-        number: 2,
-        parentHash: node1.hash()
-      })
-      node3 = new EthBlockHeader({
-        number: 3,
-        parentHash: node2.hash()
-      })
+      node1 = {
+        _ethObj: new EthBlockHeader({
+          number: 1
+        })
+      }
+      node2 = {
+        _ethObj: new EthBlockHeader({
+          number: 2,
+          parentHash: node1._ethObj.hash()
+        })
+      }
+      node3 = {
+        _ethObj: new EthBlockHeader({
+          number: 3,
+          parentHash: node2._ethObj.hash()
+        })
+      }
 
       const nodes = [node1, node2, node3]
       const result = resolver.putMany(nodes, multicodec.ETH_BLOCK)
