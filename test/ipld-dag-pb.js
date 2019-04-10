@@ -9,7 +9,6 @@ chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
-const series = require('async/series')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
 const IPLDResolver = require('../src')
@@ -24,87 +23,36 @@ module.exports = (repo) => {
     let cid2
     let cid3
 
-    before((done) => {
+    before(async () => {
       const bs = new BlockService(repo)
-
       resolver = new IPLDResolver({ blockService: bs })
 
-      series([
-        (cb) => {
-          dagPB.DAGNode.create(Buffer.from('I am 1'), (err, node) => {
-            expect(err).to.not.exist()
-            node1 = node
-            cb()
-          })
-        },
-        (cb) => {
-          dagPB.DAGNode.create(Buffer.from('I am 2'), (err, node) => {
-            expect(err).to.not.exist()
-            node2 = node
-            cb()
-          })
-        },
-        (cb) => {
-          dagPB.DAGNode.create(Buffer.from('I am 3'), (err, node) => {
-            expect(err).to.not.exist()
-            node3 = node
-            cb()
-          })
-        },
-        (cb) => {
-          dagPB.util.cid(node1, (err, cid) => {
-            expect(err).to.not.exist()
+      node1 = dagPB.DAGNode.create(Buffer.from('I am 1'))
+      node2 = dagPB.DAGNode.create(Buffer.from('I am 2'))
+      node3 = dagPB.DAGNode.create(Buffer.from('I am 3'))
+      const serialized1 = dagPB.util.serialize(node1)
+      cid1 = await dagPB.util.cid(serialized1)
+      node2 = await dagPB.DAGNode.addLink(node2, {
+        name: '1',
+        size: node1.Tsize,
+        cid: cid1
+      })
+      node3 = await dagPB.DAGNode.addLink(node3, {
+        name: '1',
+        size: node1.size,
+        cid: cid1
+      })
+      const serialized2 = dagPB.util.serialize(node2)
+      cid2 = await dagPB.util.cid(serialized2)
+      node3 = await dagPB.DAGNode.addLink(node3, {
+        name: '2',
+        size: node2.size,
+        cid: cid2
+      })
 
-            dagPB.DAGNode.addLink(node2, {
-              name: '1',
-              size: node1.size,
-              cid
-            }, (err, node) => {
-              expect(err).to.not.exist()
-              node2 = node
-              cb()
-            })
-          })
-        },
-        (cb) => {
-          dagPB.util.cid(node1, (err, cid) => {
-            expect(err).to.not.exist()
-
-            dagPB.DAGNode.addLink(node3, {
-              name: '1',
-              size: node1.size,
-              cid
-            }, (err, node) => {
-              expect(err).to.not.exist()
-              node3 = node
-              cb()
-            })
-          })
-        },
-        (cb) => {
-          dagPB.util.cid(node2, (err, cid) => {
-            expect(err).to.not.exist()
-
-            dagPB.DAGNode.addLink(node3, {
-              name: '2',
-              size: node2.size,
-              cid
-            }, (err, node) => {
-              expect(err).to.not.exist()
-              node3 = node
-              cb()
-            })
-          })
-        }
-      ], store)
-
-      async function store () {
-        const nodes = [node1, node2, node3]
-        const result = resolver.putMany(nodes, multicodec.DAG_PB)
-        ;[cid1, cid2, cid3] = await result.all()
-
-        done()
-      }
+      const nodes = [node1, node2, node3]
+      const result = resolver.putMany(nodes, multicodec.DAG_PB)
+      ;[cid1, cid2, cid3] = await result.all()
     })
 
     describe('public api', () => {
@@ -140,7 +88,7 @@ module.exports = (repo) => {
         const [node1, node2] = await result.all()
 
         expect(node1.remainderPath).to.eql('Data')
-        expect(node1.value).to.eql(cid1.toV0())
+        expect(node1.value.equals(cid1)).to.be.true()
 
         expect(node2.remainderPath).to.eql('')
         expect(node2.value).to.eql(Buffer.from('I am 1'))
@@ -151,10 +99,10 @@ module.exports = (repo) => {
         const [node1, node2, node3] = await result.all()
 
         expect(node1.remainderPath).to.eql('Links/0/Hash/Data')
-        expect(node1.value).to.eql(cid2.toV0())
+        expect(node1.value.equals(cid2)).to.be.true()
 
         expect(node2.remainderPath).to.eql('Data')
-        expect(node2.value).to.eql(cid1.toV0())
+        expect(node2.value.equals(cid1)).to.be.true()
 
         expect(node3.remainderPath).to.eql('')
         expect(node3.value).to.eql(Buffer.from('I am 1'))
@@ -173,16 +121,7 @@ module.exports = (repo) => {
         // seems to be some race condition with inserting and removing items.
         // Hence create a unique item for this test. Though the tests
         // should really be independent so that there are no race conditions.
-        const createNode = new Promise((resolve, reject) => {
-          const data = Buffer.from('a dag-pb node')
-          dagPB.DAGNode.create(data, (err, node) => {
-            if (err) {
-              return reject(err)
-            }
-            return resolve(node)
-          })
-        })
-        const node = await createNode
+        const node = dagPB.DAGNode.create(Buffer.from('a dag-pb node'))
         const cid = await resolver.put(node, multicodec.DAG_PB)
         const sameAsNode = await resolver.get(cid)
         // `size` is lazy, without a call to it a deep equal check would fail

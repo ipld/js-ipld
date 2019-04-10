@@ -8,7 +8,6 @@ chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const ipldGit = require('ipld-git')
 const multihash = require('multihashes')
-const series = require('async/series')
 const multicodec = require('multicodec')
 
 const IPLDResolver = require('../src')
@@ -29,7 +28,7 @@ module.exports = (repo) => {
     let commit2Cid
     let tagCid
 
-    before((done) => {
+    before(async () => {
       const bs = new BlockService(repo)
 
       resolver = new IPLDResolver({
@@ -37,109 +36,76 @@ module.exports = (repo) => {
         formats: [ipldGit]
       })
 
-      series([
-        (cb) => {
-          blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
+      blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
+      blobCid = await ipldGit.util.cid(blobNode)
 
-          ipldGit.util.cid(blobNode, (err, cid) => {
-            expect(err).to.not.exist()
-            blobCid = cid
-            cb()
-          })
-        },
-        (cb) => {
-          treeNode = {
-            somefile: {
-              hash: { '/': blobCid.buffer },
-              mode: '100644'
-            }
-          }
-
-          ipldGit.util.cid(treeNode, (err, cid) => {
-            expect(err).to.not.exist()
-            treeCid = cid
-            cb()
-          })
-        },
-        (cb) => {
-          commitNode = {
-            gitType: 'commit',
-            tree: { '/': treeCid.buffer },
-            parents: [],
-            author: {
-              name: 'John Doe',
-              email: 'johndoe@example.com',
-              date: '1497302532 +0200'
-            },
-            committer: {
-              name: 'John Doe',
-              email: 'johndoe@example.com',
-              date: '1497302532 +0200'
-            },
-            message: 'Initial commit\n'
-          }
-
-          ipldGit.util.cid(commitNode, (err, cid) => {
-            expect(err).to.not.exist()
-            commitCid = cid
-            cb()
-          })
-        },
-        (cb) => {
-          commit2Node = {
-            gitType: 'commit',
-            tree: { '/': treeCid.buffer },
-            parents: [
-              { '/': commitCid.buffer }
-            ],
-            author: {
-              name: 'John Doe',
-              email: 'johndoe@example.com',
-              date: '1497302533 +0200'
-            },
-            committer: {
-              name: 'John Doe',
-              email: 'johndoe@example.com',
-              date: '1497302533 +0200'
-            },
-            message: 'Change nothing\n'
-          }
-
-          ipldGit.util.cid(commit2Node, (err, cid) => {
-            expect(err).to.not.exist()
-            commit2Cid = cid
-            cb()
-          })
-        },
-        (cb) => {
-          tagNode = {
-            gitType: 'tag',
-            object: { '/': commit2Cid.buffer },
-            type: 'commit',
-            tag: 'v0.0.0',
-            tagger: {
-              name: 'John Doe',
-              email: 'johndoe@example.com',
-              date: '1497302534 +0200'
-            },
-            message: 'First release\n'
-          }
-
-          ipldGit.util.cid(tagNode, (err, cid) => {
-            expect(err).to.not.exist()
-            tagCid = cid
-            cb()
-          })
+      treeNode = {
+        somefile: {
+          hash: blobCid,
+          mode: '100644'
         }
-      ], store)
-
-      async function store () {
-        const nodes = [blobNode, treeNode, commitNode, commit2Node, tagNode]
-        const result = resolver.putMany(nodes, multicodec.GIT_RAW)
-        ;[blobCid, treeCid, commitCid, commit2Cid, tagCid] = await result.all()
-
-        done()
       }
+      const treeBlob = ipldGit.util.serialize(treeNode)
+      treeCid = await ipldGit.util.cid(treeBlob)
+
+      commitNode = {
+        gitType: 'commit',
+        tree: treeCid,
+        parents: [],
+        author: {
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          date: '1497302532 +0200'
+        },
+        committer: {
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          date: '1497302532 +0200'
+        },
+        message: 'Initial commit\n'
+      }
+      const commitBlob = ipldGit.util.serialize(commitNode)
+      commitCid = await ipldGit.util.cid(commitBlob)
+
+      commit2Node = {
+        gitType: 'commit',
+        tree: treeCid,
+        parents: [
+          commitCid
+        ],
+        author: {
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          date: '1497302533 +0200'
+        },
+        committer: {
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          date: '1497302533 +0200'
+        },
+        message: 'Change nothing\n'
+      }
+      const commit2Blob = ipldGit.util.serialize(commit2Node)
+      commit2Cid = await ipldGit.util.cid(commit2Blob)
+
+      tagNode = {
+        gitType: 'tag',
+        object: commit2Cid,
+        type: 'commit',
+        tag: 'v0.0.0',
+        tagger: {
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          date: '1497302534 +0200'
+        },
+        message: 'First release\n'
+      }
+      const tagBlob = ipldGit.util.serialize(tagNode)
+      tagCid = await ipldGit.util.cid(tagBlob)
+
+      const nodes = [blobNode, treeNode, commitNode, commit2Node, tagNode]
+      const result = resolver.putMany(nodes, multicodec.GIT_RAW)
+      ;[blobCid, treeCid, commitCid, commit2Cid, tagCid] = await result.all()
     })
 
     describe('public api', () => {

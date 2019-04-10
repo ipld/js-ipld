@@ -1,10 +1,9 @@
 /* eslint-env mocha */
 'use strict'
 
-const ncp = require('ncp').ncp
-const rimraf = require('rimraf')
+const fs = require('fs-extra')
 const IPFSRepo = require('ipfs-repo')
-const series = require('async/series')
+const promisify = require('promisify-es6')
 const os = require('os')
 
 describe('Node.js', () => {
@@ -12,18 +11,17 @@ describe('Node.js', () => {
   const repoTests = os.tmpdir() + '/t-r-' + Date.now()
   const repo = new IPFSRepo(repoTests)
 
-  before((done) => {
-    series([
-      (cb) => ncp(repoExample, repoTests, cb),
-      (cb) => repo.open(cb)
-    ], done)
+  const repoOpen = promisify(repo.open.bind(repo))
+  const repoClose = promisify(repo.close.bind(repo))
+
+  before(async () => {
+    await fs.copy(repoExample, repoTests)
+    await repoOpen()
   })
 
-  after((done) => {
-    series([
-      (cb) => repo.close(cb),
-      (cb) => rimraf(repoTests, cb)
-    ], done)
+  after(async () => {
+    await repoClose()
+    await fs.remove(repoTests)
   })
 
   require('./basics')(repo)
