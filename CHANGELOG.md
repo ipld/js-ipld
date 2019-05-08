@@ -1,3 +1,24 @@
+<a name="0.23.0"></a>
+# [0.23.0](https://github.com/ipld/js-ipld/compare/v0.22.0...v0.23.0) (2019-05-08)
+
+
+### Bug Fixes
+
+* use the cleaned up IPLD Format API ([108aef0](https://github.com/ipld/js-ipld/commit/108aef0))
+
+
+### BREAKING CHANGES
+
+* All formats now return data according to the [IPLD Data Model]
+
+The most important change is that now *all* formats return links as [CID instances]
+and no longer as the JSON representation (`{"/": "base-encoded-cid"}`.
+
+[IPLD Data Model]: https://github.com/ipld/specs/blob/master/IPLD-Data-Model-v1.md
+[CID instances]: https://github.com/multiformats/js-cid/
+
+
+
 <a name="0.22.0"></a>
 # [0.22.0](https://github.com/ipld/js-ipld/compare/v0.21.1...v0.22.0) (2019-03-21)
 
