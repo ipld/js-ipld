@@ -143,7 +143,7 @@ class IPLDResolver {
    * @returns {Iterable.<Promise.<Object>>} - Returns an async iterator with the IPLD Nodes that correspond to the given `cids`.
    */
   getMany (cids) {
-    if (!typical.isIterable(cids) || typical.isString(cids) ||
+    if (!typical.isIterable(cids) || typeof cids === 'string' ||
         Buffer.isBuffer(cids)) {
       throw new Error('`cids` must be an iterable of CIDs')
     }
@@ -212,7 +212,7 @@ class IPLDResolver {
    * @returns {Iterable.<Promise.<CID>>} - Returns an async iterator with the CIDs of the serialized IPLD Nodes.
    */
   putMany (nodes, format, userOptions) {
-    if (!typical.isIterable(nodes) || typical.isString(nodes) ||
+    if (!typical.isIterable(nodes) || typeof nodes === 'string' ||
         Buffer.isBuffer(nodes)) {
       throw new Error('`nodes` must be an iterable')
     }
@@ -268,7 +268,7 @@ class IPLDResolver {
    * @return {Iterable.<Promise.<CID>>} Returns an async iterator with the CIDs of the removed IPLD Nodes.
    */
   removeMany (cids) {
-    if (!typical.isIterable(cids) || typical.isString(cids) ||
+    if (!typical.isIterable(cids) || typeof cids === 'string' ||
         Buffer.isBuffer(cids)) {
       throw new Error('`cids` must be an iterable of CIDs')
     }

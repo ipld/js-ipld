@@ -33,7 +33,7 @@
   "homepage": "https://github.com/ipld/js-ipld#readme",
   "license": "MIT",
   "devDependencies": {
-    "aegir": "^18.2.1",
+    "aegir": "^18.2.2",
     "bitcoinjs-lib": "^5.0.3",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
@@ -41,7 +41,7 @@
     "ethereumjs-block": "^2.2.0",
     "fs-extra": "^7.0.1",
     "ipfs-block-service": "~0.15.2",
-    "ipfs-repo": "~0.26.1",
+    "ipfs-repo": "~0.26.4",
     "ipld-bitcoin": "~0.2.0",
     "ipld-ethereum": "^3.0.0",
     "ipld-git": "~0.4.0",
@@ -49,19 +49,19 @@
     "ipld-zcash": "~0.2.0",
     "merkle-patricia-tree": "^3.0.0",
     "multihashes": "~0.4.14",
-    "rlp": "^2.2.2",
+    "rlp": "^2.2.3",
     "zcash-bitcore-lib": "~0.13.20-rc3"
   },
   "dependencies": {
-    "cids": "~0.5.7",
+    "cids": "~0.6.0",
     "ipfs-block": "~0.8.0",
     "ipld-dag-cbor": "~0.14.0",
     "ipld-dag-pb": "~0.16.0",
     "ipld-raw": "^3.0.0",
     "merge-options": "^1.0.1",
-    "multicodec": "~0.5.0",
+    "multicodec": "~0.5.1",
     "promisify-es6": "^1.0.3",
-    "typical": "^3.0.2"
+    "typical": "^5.0.0"
   },
   "contributors": [
     "Alan Shaw <alan.shaw@protocol.ai>",
