@@ -42,7 +42,7 @@
     "fs-extra": "^7.0.1",
     "ipfs-block-service": "~0.15.2",
     "ipfs-repo": "~0.26.4",
-    "ipld-bitcoin": "~0.2.0",
+    "ipld-bitcoin": "~0.3.0",
     "ipld-ethereum": "^3.0.0",
     "ipld-git": "~0.4.0",
     "ipld-in-memory": "^2.0.0",
