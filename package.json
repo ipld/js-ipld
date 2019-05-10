@@ -1,6 +1,6 @@
 {
   "name": "ipld",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -79,6 +79,7 @@
     "Richard Schneider <makaretu@gmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
     "achingbrain <alex@achingbrain.net>",
+    "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
     "greenkeeperio-bot <support@greenkeeper.io>",
     "jonkrone <jonathankrone@gmail.com>",
     "kumavis <kumavis@users.noreply.github.com>",
