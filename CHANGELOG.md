@@ -1,3 +1,22 @@
+<a name="0.24.0"></a>
+# [0.24.0](https://github.com/ipld/js-ipld/compare/v0.23.0...v0.24.0) (2019-05-10)
+
+
+### Chores
+
+* update dependencies ([7232eea](https://github.com/ipld/js-ipld/commit/7232eea))
+
+
+### BREAKING CHANGES
+
+* v1 CIDs now default to base32 encoding
+
+Previous versions returned a base58 encoded string when `toString()`/
+`toBaseEncodedString()` was called on a CIDv1. It now returns a base32
+encoded string.
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](https://github.com/ipld/js-ipld/compare/v0.22.0...v0.23.0) (2019-05-08)
 
