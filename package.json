@@ -57,7 +57,7 @@
     "ipfs-block": "~0.8.0",
     "ipld-dag-cbor": "~0.14.0",
     "ipld-dag-pb": "~0.16.0",
-    "ipld-raw": "^3.0.0",
+    "ipld-raw": "^4.0.0",
     "merge-options": "^1.0.1",
     "multicodec": "~0.5.1",
     "promisify-es6": "^1.0.3",
