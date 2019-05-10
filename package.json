@@ -46,7 +46,7 @@
     "ipld-ethereum": "^3.0.0",
     "ipld-git": "~0.4.0",
     "ipld-in-memory": "^2.0.0",
-    "ipld-zcash": "~0.2.0",
+    "ipld-zcash": "~0.3.0",
     "merkle-patricia-tree": "^3.0.0",
     "multihashes": "~0.4.14",
     "rlp": "^2.2.3",
