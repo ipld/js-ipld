@@ -39,7 +39,7 @@
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
     "ethereumjs-block": "^2.2.0",
-    "fs-extra": "^7.0.1",
+    "fs-extra": "^8.0.1",
     "ipfs-block-service": "~0.15.2",
     "ipfs-repo": "~0.26.5",
     "ipld-bitcoin": "~0.3.0",
