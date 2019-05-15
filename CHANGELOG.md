@@ -1,3 +1,13 @@
+<a name="0.24.1"></a>
+## [0.24.1](https://github.com/ipld/js-ipld/compare/v0.24.0...v0.24.1) (2019-05-15)
+
+
+### Bug Fixes
+
+* respect the `cidVersion` option ([b1a3a2a](https://github.com/ipld/js-ipld/commit/b1a3a2a))
+
+
+
 <a name="0.24.0"></a>
 # [0.24.0](https://github.com/ipld/js-ipld/compare/v0.23.0...v0.24.0) (2019-05-10)
 
