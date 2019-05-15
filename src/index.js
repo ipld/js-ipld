@@ -185,7 +185,7 @@ class IPLDResolver {
     const options = mergeOptions(defaultOptions, userOptions)
 
     const cidOptions = {
-      version: options.cidVersion,
+      cidVersion: options.cidVersion,
       hashAlg: options.hashAlg,
       onlyHash: options.onlyHash
     }
