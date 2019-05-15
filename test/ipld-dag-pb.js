@@ -135,6 +135,24 @@ module.exports = (repo) => {
           await expect(resolver.get(cid)).to.eventually.be.rejected()
         }
       })
+
+      it('should return a v0 CID when specified', async () => {
+        const node = dagPB.DAGNode.create(Buffer.from('a dag-pb node'))
+        const cid = await resolver.put(node, multicodec.DAG_PB, {
+          cidVersion: 0
+        })
+
+        expect(cid.version).to.equal(0)
+      })
+
+      it('should return a v1 CID when specified', async () => {
+        const node = dagPB.DAGNode.create(Buffer.from('a dag-pb node'))
+        const cid = await resolver.put(node, multicodec.DAG_PB, {
+          cidVersion: 1
+        })
+
+        expect(cid.version).to.equal(1)
+      })
     })
   })
 }
