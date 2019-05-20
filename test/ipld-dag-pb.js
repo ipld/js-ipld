@@ -108,6 +108,20 @@ module.exports = (repo) => {
         expect(node3.value).to.eql(Buffer.from('I am 1'))
       })
 
+      it('resolves value within nested scope (2 levels) with named links', async () => {
+        const result = resolver.resolve(cid3, '2/1/Data')
+        const [node1, node2, node3] = await result.all()
+
+        expect(node1.remainderPath).to.eql('1/Data')
+        expect(node1.value.equals(cid2)).to.be.true()
+
+        expect(node2.remainderPath).to.eql('Data')
+        expect(node2.value.equals(cid1)).to.be.true()
+
+        expect(node3.remainderPath).to.eql('')
+        expect(node3.value).to.eql(Buffer.from('I am 1'))
+      })
+
       it('resolver.get round-trip', async () => {
         const cid = await resolver.put(node1, multicodec.DAG_PB)
         const node = await resolver.get(cid)
