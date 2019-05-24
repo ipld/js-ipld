@@ -24,7 +24,7 @@ class IPLDResolver {
     this.resolvers = {}
 
     if (typeof options.loadFormat !== 'function') {
-      this.loadFormat = async (codec) => {
+      this.loadFormat = (codec) => {
         const codecName = multicodec.print[codec]
         throw new Error(`No resolver found for codec "${codecName}"`)
       }
@@ -254,7 +254,7 @@ class IPLDResolver {
    * @param {CID} cid - The CID of the IPLD Node that should be removed.
    * @return {Promise.<CID>} The CID of the removed IPLD Node.
    */
-  async remove (cid) {
+  async remove (cid) { // eslint-disable-line require-await
     return promisify(this.bs.delete.bind(this.bs))(cid)
   }
 
