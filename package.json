@@ -41,7 +41,7 @@
     "ethereumjs-block": "^2.2.0",
     "fs-extra": "^8.0.1",
     "ipfs-block-service": "~0.15.2",
-    "ipfs-repo": "~0.26.5",
+    "ipfs-repo": "~0.27.0",
     "ipld-bitcoin": "~0.3.0",
     "ipld-ethereum": "^4.0.0",
     "ipld-git": "~0.5.0",
