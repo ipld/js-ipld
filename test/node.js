@@ -3,7 +3,6 @@
 
 const fs = require('fs-extra')
 const IPFSRepo = require('ipfs-repo')
-const promisify = require('promisify-es6')
 const os = require('os')
 
 describe('Node.js', () => {
@@ -11,16 +10,13 @@ describe('Node.js', () => {
   const repoTests = os.tmpdir() + '/t-r-' + Date.now()
   const repo = new IPFSRepo(repoTests)
 
-  const repoOpen = promisify(repo.open.bind(repo))
-  const repoClose = promisify(repo.close.bind(repo))
-
   before(async () => {
     await fs.copy(repoExample, repoTests)
-    await repoOpen()
+    await repo.open()
   })
 
   after(async () => {
-    await repoClose()
+    await repo.close()
     await fs.remove(repoTests)
   })
 

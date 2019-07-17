@@ -23,8 +23,8 @@ module.exports = (repo) => {
       expect(r.bs).to.exist()
     })
 
-    it('creates an in memory repo if no blockService is passed', () => {
-      inMemory(IPLDResolver, (err, r) => {
+    it('creates an in memory repo if no blockService is passed', async () => {
+      await inMemory(IPLDResolver, (err, r) => {
         expect(err).to.not.exist()
         expect(r.bs).to.exist()
       })
