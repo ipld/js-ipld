@@ -40,12 +40,12 @@
     "dirty-chai": "^2.0.1",
     "ethereumjs-block": "^2.2.0",
     "fs-extra": "^8.0.1",
-    "ipfs-block-service": "~0.15.2",
-    "ipfs-repo": "~0.26.5",
+    "ipfs-block-service": "^0.16.0",
+    "ipfs-repo": "^0.27.0",
     "ipld-bitcoin": "~0.3.0",
     "ipld-ethereum": "^4.0.0",
     "ipld-git": "~0.5.0",
-    "ipld-in-memory": "^2.0.0",
+    "ipld-in-memory": "^3.0.0",
     "ipld-zcash": "~0.3.0",
     "merkle-patricia-tree": "^3.0.0",
     "multihashes": "~0.4.14",
@@ -60,7 +60,6 @@
     "ipld-raw": "^4.0.0",
     "merge-options": "^1.0.1",
     "multicodec": "~0.5.1",
-    "promisify-es6": "^1.0.3",
     "typical": "^5.0.0"
   },
   "contributors": [
