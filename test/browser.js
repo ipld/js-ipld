@@ -4,6 +4,7 @@
 'use strict'
 
 const IPFSRepo = require('ipfs-repo')
+const promisify = require('promisify-es6')
 
 const basePath = 'ipfs' + Math.random()
 
@@ -18,13 +19,17 @@ idb.deleteDatabase(basePath + '/blocks')
 describe('Browser', () => {
   const repo = new IPFSRepo(basePath)
 
+  const repoInit = promisify(repo.init.bind(repo))
+  const repoOpen = promisify(repo.open.bind(repo))
+  const repoClose = promisify(repo.close.bind(repo))
+
   before(async () => {
-    await repo.init({})
-    await repo.open()
+    await repoInit({})
+    await repoOpen()
   })
 
   after(async () => {
-    await repo.close()
+    await repoClose()
     idb.deleteDatabase(basePath)
     idb.deleteDatabase(basePath + '/blocks')
   })

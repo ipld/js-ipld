@@ -7,6 +7,7 @@ const ipldDagCbor = require('ipld-dag-cbor')
 const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
+const promisify = require('promisify-es6')
 const typical = require('typical')
 const { extendIterator } = require('./util')
 
@@ -94,7 +95,7 @@ class IPLDResolver {
         // get block
         // use local resolver
         // update path value
-        const block = await this.bs.get(cid)
+        const block = await promisify(this.bs.get.bind(this.bs))(cid)
         const result = format.resolver.resolve(block.data, path)
 
         // Prepare for the next iteration if there is a `remainderPath`
@@ -128,7 +129,7 @@ class IPLDResolver {
    * @returns {Promise.<Object>} - Returns a Promise with the IPLD Node that correspond to the given `cid`.
    */
   async get (cid) {
-    const block = await this.bs.get(cid)
+    const block = await promisify(this.bs.get.bind(this.bs))(cid)
     const format = await this._getFormat(block.cid.codec)
     const node = format.util.deserialize(block.data)
 
@@ -193,7 +194,7 @@ class IPLDResolver {
 
     if (!options.onlyHash) {
       const block = new Block(serialized, cid)
-      await this.bs.put(block)
+      await promisify(this.bs.put.bind(this.bs))(block)
     }
 
     return cid
@@ -254,7 +255,7 @@ class IPLDResolver {
    * @return {Promise.<CID>} The CID of the removed IPLD Node.
    */
   async remove (cid) { // eslint-disable-line require-await
-    return this.bs.delete(cid)
+    return promisify(this.bs.delete.bind(this.bs))(cid)
   }
 
   /**
@@ -335,7 +336,7 @@ class IPLDResolver {
         if (treePaths.length === 0 && queue.length > 0) {
           ({ cid, basePath } = queue.shift())
           const format = await this._getFormat(cid.codec)
-          block = await this.bs.get(cid)
+          block = await promisify(this.bs.get.bind(this.bs))(cid)
 
           const paths = format.resolver.tree(block.data)
           treePaths.push(...paths)
