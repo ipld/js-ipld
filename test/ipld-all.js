@@ -17,7 +17,6 @@ const dagPB = require('ipld-dag-pb')
 const CID = require('cids')
 const inMemory = require('ipld-in-memory')
 const multicodec = require('multicodec')
-const promisify = require('promisify-es6')
 
 const IPLDResolver = require('../src')
 
@@ -30,12 +29,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   let cidPb
 
   before(async () => {
-    resolver = await new Promise((resolve, reject) => {
-      inMemory(IPLDResolver, (error, res) => {
-        if (error) reject(error)
-        else resolve(res)
-      })
-    })
+    resolver = await inMemory(IPLDResolver)
 
     nodePb = dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'))
     cidPb = await resolver.put(nodePb, multicodec.DAG_PB, { cidVersion: 0 })
@@ -65,7 +59,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
       cidVersion: 1,
       hashAlg: multicodec.SHA2_256
     })
-    const result = await promisify(resolver.bs._repo.blocks.has)(cid)
+    const result = await resolver.bs._repo.blocks.has(cid)
     expect(result).to.be.false()
   })
 
