@@ -1,3 +1,28 @@
+<a name="0.25.0"></a>
+# [0.25.0](https://github.com/ipld/js-ipld/compare/v0.24.1...v0.25.0) (2019-08-01)
+
+
+### Code Refactoring
+
+* make code promisify free ([23de2e4](https://github.com/ipld/js-ipld/commit/23de2e4))
+
+
+### BREAKING CHANGES
+
+* Everyone upgrading to this release also needs to upgrade
+ipfs-block-service, ipfs-repo and ipld-in-memory.
+
+This commit uses the new async API of:
+
+ - ipfs-block-service >= 0.16.0
+ - ipfs-repo >=0.27.0
+ - ipld-in-memory >= 3.0.0
+
+If your library has a dependency on any of those, you likely also need
+to upgrade to at least those versions.
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](https://github.com/ipld/js-ipld/compare/v0.24.0...v0.24.1) (2019-05-15)
 
