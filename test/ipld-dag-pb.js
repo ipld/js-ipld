@@ -27,24 +27,24 @@ module.exports = (repo) => {
       const bs = new BlockService(repo)
       resolver = new IPLDResolver({ blockService: bs })
 
-      node1 = dagPB.DAGNode.create(Buffer.from('I am 1'))
-      node2 = dagPB.DAGNode.create(Buffer.from('I am 2'))
-      node3 = dagPB.DAGNode.create(Buffer.from('I am 3'))
+      node1 = new dagPB.DAGNode(Buffer.from('I am 1'))
+      node2 = new dagPB.DAGNode(Buffer.from('I am 2'))
+      node3 = new dagPB.DAGNode(Buffer.from('I am 3'))
       const serialized1 = dagPB.util.serialize(node1)
       cid1 = await dagPB.util.cid(serialized1)
-      node2 = await dagPB.DAGNode.addLink(node2, {
+      node2.addLink({
         name: '1',
         size: node1.Tsize,
         cid: cid1
       })
-      node3 = await dagPB.DAGNode.addLink(node3, {
+      node3.addLink({
         name: '1',
         size: node1.size,
         cid: cid1
       })
       const serialized2 = dagPB.util.serialize(node2)
       cid2 = await dagPB.util.cid(serialized2)
-      node3 = await dagPB.DAGNode.addLink(node3, {
+      node3.addLink({
         name: '2',
         size: node2.size,
         cid: cid2
@@ -135,7 +135,7 @@ module.exports = (repo) => {
         // seems to be some race condition with inserting and removing items.
         // Hence create a unique item for this test. Though the tests
         // should really be independent so that there are no race conditions.
-        const node = dagPB.DAGNode.create(Buffer.from('a dag-pb node'))
+        const node = new dagPB.DAGNode(Buffer.from('a dag-pb node'))
         const cid = await resolver.put(node, multicodec.DAG_PB)
         const sameAsNode = await resolver.get(cid)
         // `size` is lazy, without a call to it a deep equal check would fail
@@ -151,7 +151,7 @@ module.exports = (repo) => {
       })
 
       it('should return a v0 CID when specified', async () => {
-        const node = dagPB.DAGNode.create(Buffer.from('a dag-pb node'))
+        const node = new dagPB.DAGNode(Buffer.from('a dag-pb node'))
         const cid = await resolver.put(node, multicodec.DAG_PB, {
           cidVersion: 0
         })
@@ -160,7 +160,7 @@ module.exports = (repo) => {
       })
 
       it('should return a v1 CID when specified', async () => {
-        const node = dagPB.DAGNode.create(Buffer.from('a dag-pb node'))
+        const node = new dagPB.DAGNode(Buffer.from('a dag-pb node'))
         const cid = await resolver.put(node, multicodec.DAG_PB, {
           cidVersion: 1
         })

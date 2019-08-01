@@ -31,7 +31,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   before(async () => {
     resolver = await inMemory(IPLDResolver)
 
-    nodePb = dagPB.DAGNode.create(Buffer.from('I am inside a Protobuf'))
+    nodePb = new dagPB.DAGNode(Buffer.from('I am inside a Protobuf'))
     cidPb = await resolver.put(nodePb, multicodec.DAG_PB, { cidVersion: 0 })
 
     nodeCbor = {
@@ -53,7 +53,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   })
 
   it('does not store nodes when onlyHash is passed', async () => {
-    const node = dagPB.DAGNode.create(Buffer.from('Some data here'))
+    const node = new dagPB.DAGNode(Buffer.from('Some data here'))
     const cid = await resolver.put(node, multicodec.DAG_PB, {
       onlyHash: true,
       cidVersion: 1,
