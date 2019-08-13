@@ -90,7 +90,7 @@ const initIpld = (ipfsRepoPath, callback) => {
   })
 }
 
-initIpld('/tmp/ifpsrepo', (err, ipld) => {
+initIpld('/tmp/ipfsrepo', (err, ipld) => {
   // Do something with the `ipld`, e.g. `ipld.get(…)`
 })
 ```
