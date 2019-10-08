@@ -168,6 +168,17 @@ class IPLDResolver {
    * @returns {Promise.<CID>} - Returns the CID of the serialized IPLD Nodes.
    */
   async put (node, format, userOptions) {
+    const [cid, serialized, options] = await this.serialize(node, format, userOptions)
+
+    if (!options.onlyHash) {
+      const block = new Block(serialized, cid)
+      await this.bs.put(block)
+    }
+
+    return cid
+  }
+
+  async serialize (node, format, userOptions) {
     if (format === undefined) {
       throw new Error('`put` requires a format')
     }
@@ -176,27 +187,22 @@ class IPLDResolver {
     }
 
     const formatImpl = await this._getFormat(format)
-    const defaultOptions = {
+    const options = mergeOptions({
       hashAlg: formatImpl.defaultHashAlg,
       cidVersion: 1,
       onlyHash: false
-    }
-    const options = mergeOptions(defaultOptions, userOptions)
+    }, userOptions)
 
-    const cidOptions = {
-      cidVersion: options.cidVersion,
-      hashAlg: options.hashAlg,
-      onlyHash: options.onlyHash
-    }
     const serialized = formatImpl.util.serialize(node)
-    const cid = await formatImpl.util.cid(serialized, cidOptions)
+    const cid = await formatImpl.util.cid(serialized, options)
+    return [cid, serialized, options]
+  }
 
+  putBatch (blocks, options) {
     if (!options.onlyHash) {
-      const block = new Block(serialized, cid)
-      await this.bs.put(block)
+      return this.bs.putMany(blocks)
     }
-
-    return cid
+    return Promise.resolve()
   }
 
   /**
