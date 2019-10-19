@@ -58,7 +58,7 @@
     "ipld-dag-cbor": "~0.15.0",
     "ipld-dag-pb": "~0.18.1",
     "ipld-raw": "^4.0.0",
-    "merge-options": "^1.0.1",
+    "merge-options": "^2.0.0",
     "multicodec": "~0.5.5",
     "typical": "^5.1.0"
   },
