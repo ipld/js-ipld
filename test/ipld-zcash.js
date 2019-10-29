@@ -1,141 +1,92 @@
 /* eslint-env mocha */
 'use strict'
 
+const Block = require('ipfs-block')
 const chai = require('chai')
+const chaiAsProised = require('chai-as-promised')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
+chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const BlockService = require('ipfs-block-service')
 const ipldZcash = require('ipld-zcash')
-const ZcashBlockHeader = require('zcash-bitcore-lib').BlockHeader
-const multihash = require('multihashes')
-const multicodec = require('multicodec')
+const loadFixture = require('aegir/fixtures')
 
 const IPLDResolver = require('../src')
 
-const buildZcashBlock = (header) => {
-  // All these fields have a fixed size, if they are not defined, fill them
-  // with zeros with the corresponding size
-  header.version = header.version || 0
-  header.prevHash = header.prevHash || Buffer.alloc(32)
-  header.merkleRoot = header.merkleRoot || Buffer.alloc(32)
-  header.reserved = header.reserved || Buffer.alloc(32)
-  header.time = header.time || 0
-  header.bits = header.bits || 0
-  header.nonce = header.nonce || Buffer.alloc(32)
-  header.solution = header.solution || Buffer.alloc(1344)
-
-  const blockHeader = ZcashBlockHeader(header)
-  return blockHeader
-}
+const BLOCK1_HEADER = loadFixture(
+  'test/fixtures/000000000026fffdf2c88f2b98df7d23ef739c9dab619e3c050ab30283b3b958.bin'
+).subarray(0, ipldZcash.util.ZCASH_BLOCK_HEADER_SIZE)
+const BLOCK2_HEADER = loadFixture(
+  'test/fixtures/00000000019e6de0fbc1bc402f70496e1d65d7ccd8e019853112efd5e2b6c409.bin'
+).subarray(0, ipldZcash.util.ZCASH_BLOCK_HEADER_SIZE)
+const BLOCK3_HEADER = loadFixture(
+  'test/fixtures/0000000000751b170c51ae79dfbcf88f1fe93a5a78e83b4bed459f53a7e738a1.bin'
+).subarray(0, ipldZcash.util.ZCASH_BLOCK_HEADER_SIZE)
 
 module.exports = (repo) => {
   describe('IPLD Resolver with ipld-zcash', () => {
     let resolver
 
-    let node1
-    let node2
-    let node3
     let cid1
     let cid2
     let cid3
-    let serialized1
 
     before(async () => {
+      // Put the fixtures directly into the repo as Zcash blocks currently
+      // cannot be serialized
+      cid1 = await ipldZcash.util.cid(BLOCK1_HEADER)
+      await repo.blocks.put(new Block(BLOCK1_HEADER, cid1))
+      cid2 = await ipldZcash.util.cid(BLOCK2_HEADER)
+      await repo.blocks.put(new Block(BLOCK2_HEADER, cid2))
+      cid3 = await ipldZcash.util.cid(BLOCK3_HEADER)
+      await repo.blocks.put(new Block(BLOCK3_HEADER, cid3))
+
       const bs = new BlockService(repo)
       resolver = new IPLDResolver({
         blockService: bs,
         formats: [ipldZcash]
       })
-
-      node1 = buildZcashBlock({
-        version: 1
-      })
-      serialized1 = ipldZcash.util.serialize(node1)
-      cid1 = await ipldZcash.util.cid(serialized1)
-      const prevHash1 = multihash.decode(cid1.multihash).digest
-
-      node2 = buildZcashBlock({
-        version: 2,
-        prevHash: prevHash1
-      })
-      const serialized2 = ipldZcash.util.serialize(node2)
-      cid2 = await ipldZcash.util.cid(serialized2)
-      const prevHash2 = multihash.decode(cid2.multihash).digest
-
-      node3 = buildZcashBlock({
-        version: 3,
-        prevHash: prevHash2
-      })
-      const serialized3 = ipldZcash.util.serialize(node3)
-      cid3 = await ipldZcash.util.cid(serialized3)
-
-      const nodes = [node1, node2, node3]
-      const result = resolver.putMany(nodes, multicodec.ZCASH_BLOCK)
-      ;[cid1, cid2, cid3] = await result.all()
     })
 
     describe('public api', () => {
-      it('resolver.put with format', async () => {
-        const cid = await resolver.put(node1, multicodec.ZCASH_BLOCK)
-        expect(cid.version).to.equal(1)
-        expect(cid.codec).to.equal('zcash-block')
-        expect(cid.multihash).to.exist()
-        const mh = multihash.decode(cid.multihash)
-        expect(mh.name).to.equal('dbl-sha2-256')
-      })
-
-      it('resolver.put with format + hashAlg', async () => {
-        const cid = await resolver.put(node1, multicodec.ZCASH_BLOCK, {
-          hashAlg: multicodec.SHA3_512
-        })
-        expect(cid.version).to.equal(1)
-        expect(cid.codec).to.equal('zcash-block')
-        expect(cid.multihash).to.exist()
-        const mh = multihash.decode(cid.multihash)
-        expect(mh.name).to.equal('sha3-512')
-      })
+      // NOTE vmx 2019-10-29: There are no tests for putting Zcash blocks as
+      // serializtion currently isn't supported
 
       it('resolves value within 1st node scope', async () => {
-        const result = resolver.resolve(cid1, 'version')
+        const result = resolver.resolve(cid1, 'timestamp')
         const node = await result.first()
         expect(node.remainderPath).to.eql('')
-        expect(node.value).to.eql(1)
+        expect(node.value).to.eql(1565730024)
       })
 
       it('resolves value within nested scope (1 level)', async () => {
-        const result = resolver.resolve(cid2, 'parent/version')
+        const result = resolver.resolve(cid2, 'parent/timestamp')
         const [node1, node2] = await result.all()
 
-        expect(node1.remainderPath).to.eql('version')
+        expect(node1.remainderPath).to.eql('timestamp')
         expect(node1.value).to.eql(cid1)
 
         expect(node2.remainderPath).to.eql('')
-        expect(node2.value).to.eql(1)
+        expect(node2.value).to.eql(1565730024)
       })
 
       it('resolves value within nested scope (2 levels)', async () => {
-        const result = resolver.resolve(cid3, 'parent/parent/version')
+        const result = resolver.resolve(cid3, 'parent/parent/timestamp')
         const [node1, node2, node3] = await result.all()
 
-        expect(node1.remainderPath).to.eql('parent/version')
+        expect(node1.remainderPath).to.eql('parent/timestamp')
         expect(node1.value).to.eql(cid2)
 
-        expect(node2.remainderPath).to.eql('version')
+        expect(node2.remainderPath).to.eql('timestamp')
         expect(node2.value).to.eql(cid1)
 
         expect(node3.remainderPath).to.eql('')
-        expect(node3.value).to.eql(1)
-      })
-
-      it('resolver.get round-trip', async () => {
-        const expectedNode = ipldZcash.util.deserialize(serialized1)
-        const node = await resolver.get(cid1)
-        expect(node).to.deep.equal(expectedNode)
+        expect(node3.value).to.eql(1565730024)
       })
 
       it('resolver.remove', async () => {
-        const expectedNode = ipldZcash.util.deserialize(serialized1)
+        const expectedNode = ipldZcash.util.deserialize(BLOCK1_HEADER)
         const sameAsNode1 = await resolver.get(cid1)
         expect(sameAsNode1).to.deep.equal(expectedNode)
 
