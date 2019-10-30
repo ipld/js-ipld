@@ -1,6 +1,6 @@
 {
   "name": "ipld",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -65,6 +65,7 @@
     "Alan Shaw <alan.shaw@protocol.ai>",
     "Alan Shaw <alan@tableflip.io>",
     "Andrew Nesbitt <andrewnez@gmail.com>",
+    "Arron Mabrey <arron@mabreys.com>",
     "David Dias <daviddias.p@gmail.com>",
     "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
     "Henrique Dias <hacdias@gmail.com>",
