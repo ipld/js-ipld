@@ -1,3 +1,13 @@
+<a name="0.25.1"></a>
+## [0.25.1](https://github.com/ipld/js-ipld/compare/v0.25.0...v0.25.1) (2019-10-30)
+
+
+### Bug Fixes
+
+* **package:** update merge-options to version 2.0.0 ([c55c869](https://github.com/ipld/js-ipld/commit/c55c869))
+
+
+
 <a name="0.25.0"></a>
 # [0.25.0](https://github.com/ipld/js-ipld/compare/v0.24.1...v0.25.0) (2019-08-01)
 
