@@ -59,7 +59,7 @@
     "ipld-raw": "^4.0.0",
     "merge-options": "^2.0.0",
     "multicodec": "~0.5.5",
-    "typical": "^5.2.0"
+    "typical": "^6.0.0"
   },
   "contributors": [
     "Alan Shaw <alan.shaw@protocol.ai>",
