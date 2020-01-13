@@ -1,3 +1,14 @@
+<a name="0.25.3"></a>
+## [0.25.3](https://github.com/ipld/js-ipld/compare/v0.25.2...v0.25.3) (2020-01-13)
+
+
+### Bug Fixes
+
+* **package:** update multicodec to version 1.0.0 ([2b661da](https://github.com/ipld/js-ipld/commit/2b661da))
+* **package:** update typical to version 6.0.0 ([2a9506a](https://github.com/ipld/js-ipld/commit/2a9506a))
+
+
+
 <a name="0.25.2"></a>
 ## [0.25.2](https://github.com/ipld/js-ipld/compare/v0.25.1...v0.25.2) (2019-10-30)
 
