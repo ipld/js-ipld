@@ -1,13 +1,14 @@
 /* eslint-env mocha */
 'use strict'
 
+const path = require('path')
 const fs = require('fs-extra')
 const IPFSRepo = require('ipfs-repo')
 const os = require('os')
 
 describe('Node.js', () => {
-  const repoExample = process.cwd() + '/test/example-repo'
-  const repoTests = os.tmpdir() + '/t-r-' + Date.now()
+  const repoExample = path.join(process.cwd(), 'test/example-repo')
+  const repoTests = fs.mkdtempSync(path.join(os.tmpdir(), 'js-ipld-'))
   const repo = new IPFSRepo(repoTests)
 
   before(async () => {
