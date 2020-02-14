@@ -33,7 +33,7 @@
   "homepage": "https://github.com/ipld/js-ipld#readme",
   "license": "MIT",
   "devDependencies": {
-    "aegir": "^20.4.1",
+    "aegir": "^21.0.1",
     "bitcoinjs-lib": "^5.1.6",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
