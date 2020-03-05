@@ -19,13 +19,11 @@
 
 ## Project Status
 
-We've come a long way, but this project is still in Alpha, lots of development is happening, API might change, beware of the Dragons 🐉.
+This project is considered stable, but alpha quality implementation.  The IPLD strategy for persistence and integration with IPFS has evolved 
+since this package was created.  This package will be deprecated once the new strategy is fully implemented.  You can read more about 
+the new strategy in [Issue #260](https://github.com/ipld/js-ipld/issues/260)
 
-Want to get started? Check our examples folder. You can check the development status at the [js-ipld Waffle Board](https://waffle.io/ipld/js-ipld).
-
-[![Throughput Graph](https://graphs.waffle.io/ipld/js-ipld/throughput.svg)](https://waffle.io/ipld/js-ipld/metrics/throughput)
-
-[**`Weekly Core Dev Calls`**](https://github.com/ipfs/pm/issues/650)
+[**IPLD Team Management**](https://github.com/ipld/team-mgmt)
 
 ## Tech Lead
 
