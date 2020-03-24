@@ -52,7 +52,7 @@
     "rlp": "^2.2.3"
   },
   "dependencies": {
-    "cids": "~0.7.1",
+    "cids": "~0.8.0",
     "ipfs-block": "~0.8.1",
     "ipld-dag-cbor": "~0.15.0",
     "ipld-dag-pb": "~0.18.1",
