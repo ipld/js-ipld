@@ -33,6 +33,7 @@
   "homepage": "https://github.com/ipld/js-ipld#readme",
   "license": "MIT",
   "devDependencies": {
+    "abort-controller": "^3.0.0",
     "aegir": "^21.0.1",
     "bitcoinjs-lib": "^5.1.6",
     "chai": "^4.2.0",
