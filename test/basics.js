@@ -12,6 +12,7 @@ const CID = require('cids')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
 const inMemory = require('ipld-in-memory')
+const AbortController = require('abort-controller')
 
 const IPLDResolver = require('../src')
 
@@ -90,6 +91,103 @@ module.exports = (repo) => {
       const result = r.tree(cid)
       await expect(result.next()).to.be.rejectedWith(
         'No resolver found for codec "blake2b-8"')
+    })
+  })
+
+  describe('aborting requests', () => {
+    let abortedErr
+    let r
+
+    beforeEach(() => {
+      abortedErr = new Error('Aborted!')
+      const abortOnSignal = (...args) => {
+        const { signal } = args[args.length - 1]
+
+        return new Promise((resolve, reject) => {
+          signal.addEventListener('abort', () => {
+            reject(abortedErr)
+          })
+        })
+      }
+
+      const bs = {
+        put: abortOnSignal,
+        get: abortOnSignal,
+        delete: abortOnSignal
+      }
+      r = new IPLDResolver({ blockService: bs })
+    })
+
+    it('put - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.put(Buffer.from([0, 1, 2]), multicodec.RAW, {
+        signal: controller.signal
+      })).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('putMany - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.putMany([Buffer.from([0, 1, 2])], multicodec.RAW, {
+        signal: controller.signal
+      }).all()).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('get - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.get('cid', {
+        signal: controller.signal
+      })).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('getMany - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.getMany(['cid'], {
+        signal: controller.signal
+      }).all()).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('remove - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.remove('cid', {
+        signal: controller.signal
+      })).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('removeMany - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.removeMany(['cid'], {
+        signal: controller.signal
+      }).all()).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('tree - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.tree(new CID('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'), {
+        signal: controller.signal
+      }).all()).to.eventually.rejectedWith(abortedErr)
+    })
+
+    it('resolve - supports abort signals', async () => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 1)
+
+      await expect(r.resolve(new CID('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'), '', {
+        signal: controller.signal
+      }).all()).to.eventually.rejectedWith(abortedErr)
     })
   })
 }

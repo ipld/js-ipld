@@ -2,7 +2,7 @@
   <a href="https://ipld.io"><img src="https://ipld.io/img/ipld-logo.png" alt="IPLD hex logo" /></a>
 </div>
 
-# The JavaScript implementation of the IPLD
+# The JavaScript implementation of the IPLD <!-- omit in toc -->
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
 [![](https://img.shields.io/badge/project-ipld-blue.svg?style=flat-square)](http://ipld.io/)
@@ -17,23 +17,23 @@
 
 > The JavaScript implementation of the IPLD, InterPlanetary Linked-Data
 
-## Project Status
+## Project Status <!-- omit in toc -->
 
-This project is considered stable, but alpha quality implementation.  The IPLD strategy for persistence and integration with IPFS has evolved 
-since this package was created.  This package will be deprecated once the new strategy is fully implemented.  You can read more about 
+This project is considered stable, but alpha quality implementation.  The IPLD strategy for persistence and integration with IPFS has evolved
+since this package was created.  This package will be deprecated once the new strategy is fully implemented.  You can read more about
 the new strategy in [Issue #260](https://github.com/ipld/js-ipld/issues/260)
 
 [**IPLD Team Management**](https://github.com/ipld/team-mgmt)
 
-## Tech Lead
+## Tech Lead <!-- omit in toc -->
 
 [Volker Mische](https://github.com/vmx)
 
-## Lead Maintainer
+## Lead Maintainer <!-- omit in toc -->
 
 [Volker Mische](https://github.com/vmx)
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
 - [Install](#install)
 - [Usage](#usage)
@@ -43,12 +43,12 @@ the new strategy in [Issue #260](https://github.com/ipld/js-ipld/issues/260)
       - [`options.formats`](#optionsformats)
       - [`options.loadFormat(codec)`](#optionsloadformatcodec)
   - [`.put(node, format, options)`](#putnode-format-options)
-  - [`.putMany(nodes, format, options)`](#putmanynode-format-options)
-  - [`.resolve(cid, path)`](#resolvecid-path)
-  - [`.get(cid)`](#getcid)
-  - [`.getMany(cids)`](#getmanycids)
-  - [`.remove(cid)`](#removecid)
-  - [`.removeMany(cids)`](#removemanycids)
+  - [`.putMany(nodes, format, options)`](#putmanynodes-format-options)
+  - [`.resolve(cid, path, options)`](#resolvecid-path-options)
+  - [`.get(cid, options)`](#getcid-options)
+  - [`.getMany(cids, options)`](#getmanycids-options)
+  - [`.remove(cid, options)`](#removecid-options)
+  - [`.removeMany(cids, options)`](#removemanycids-options)
   - [`.tree(cid, [path], [options])`](#treecid-path-options)
   - [`.addFormat(ipldFormatImplementation)`](#addformatipldformatimplementation)
   - [`.removeFormat(codec)`](#removeformatcodec)
@@ -181,6 +181,7 @@ const ipld = new Ipld({
    - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
    - `cidVersion` (`number`, default: 1): the CID version to use.
    - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Returns a Promise with the CID of the serialized IPLD Node.
 
@@ -195,58 +196,69 @@ Returns a Promise with the CID of the serialized IPLD Node.
    - `hashAlg` (`multicodec`, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.
    - `cidVersion` (`number`, default: 1): the CID version to use.
    - `onlyHash` (`boolean`, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Returns an async iterator with the CIDs of the serialized IPLD Nodes. The iterator will throw an exception on the first error that occurs.
 
 
-### `.resolve(cid, path)`
+### `.resolve(cid, path, options)`
 
 > Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
 
  - `cid` (`CID`, required): the CID the resolving starts.
  - `path` (`IPLD Path`, required): the path that should be resolved.
+ - `options` an optional object that may have the following properties:
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
   - `remainderPath` (`string`): the part of the path that wasn’t resolved yet.
   - `value` (`*`): the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, `value` is the value the `path` points to. So if you need the CID of the IPLD Node you’re currently at, just take the `value` of the previously returned IPLD Node.
 
 
-### `.get(cid)`
+### `.get(cid, options)`
 
 > Retrieve an IPLD Node.
 
  - `cid` (`CID`): the CID of the IPLD Node that should be retrieved.
+ - `options` an optional object that may have the following properties:
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Returns a Promise with the IPLD Node that correspond to the given `cid`.
 
 Throws an error if the IPLD Node can’t be retrieved.
 
 
-### `.getMany(cids)`
+### `.getMany(cids, options)`
 
 > Retrieve several IPLD Nodes at once.
 
  - `cids` (`AsyncIterable<CID>`): the CIDs of the IPLD Nodes that should be retrieved.
+ - `options` an optional object that may have the following properties:
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Returns an async iterator with the IPLD Nodes that correspond to the given `cids`.
 
 Throws an error if a IPLD Node can’t be retrieved.
 
 
-### `.remove(cid)`
+### `.remove(cid, options)`
 
 > Remove an IPLD Node by the given `cid`
 
  - `cid` (`CID`): the CIDs of the IPLD Node that should be removed.
+ - `options` an optional object that may have the following properties:
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Throws an error if the IPLD Node can’t be removed.
 
 
-### `.removeMany(cids)`
+### `.removeMany(cids, options)`
 
 > Remove IPLD Nodes by the given `cids`
 
  - `cids` (`AsyncIterable<CID>`): the CIDs of the IPLD Nodes that should be removed.
+ - `options` an optional object that may have the following properties:
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.
 
@@ -259,6 +271,7 @@ Throws an error if any of the Blocks can’t be removed. This operation is not a
  - `path` (`IPLD Path`, default: ''): the path to start to retrieve the other paths from.
  - `options`:
    - `recursive` (`bool`, default: false): whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
+   - `signal` ([`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)): a signal that can be used to abort any long-lived operations that are started as a result of this operation.
 
 Returns an async iterator of all the paths (as Strings) you could resolve into.
 
