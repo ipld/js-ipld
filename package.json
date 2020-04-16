@@ -40,7 +40,7 @@
     "dirty-chai": "^2.0.1",
     "ethereumjs-block": "^2.2.0",
     "fs-extra": "^9.0.0",
-    "ipfs-block-service": "^0.16.0",
+    "ipfs-block-service": "^0.17.0",
     "ipfs-repo": "^1.0.0",
     "ipld-bitcoin": "~0.3.0",
     "ipld-ethereum": "^4.0.0",
