@@ -1,3 +1,15 @@
+<a name="0.25.4"></a>
+## [0.25.4](https://github.com/ipld/js-ipld/compare/v0.25.3...v0.25.4) (2020-04-22)
+
+
+### Bug Fixes
+
+* update deps and use ipld-block ([9bd8aee](https://github.com/ipld/js-ipld/commit/9bd8aee))
+* **package:** update cids to version 0.8.0 ([ee554e7](https://github.com/ipld/js-ipld/commit/ee554e7))
+* minor improvement to path handling in Node.js tests ([ea53bb3](https://github.com/ipld/js-ipld/commit/ea53bb3))
+
+
+
 <a name="0.25.3"></a>
 ## [0.25.3](https://github.com/ipld/js-ipld/compare/v0.25.2...v0.25.3) (2020-01-13)
 
