@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const Block = require('ipld-block')
+const Block = require('ipfs-block')
 const chai = require('chai')
 const chaiAsProised = require('chai-as-promised')
 const dirtyChai = require('dirty-chai')
