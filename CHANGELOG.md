@@ -1,3 +1,13 @@
+<a name="0.26.1"></a>
+## [0.26.1](https://github.com/ipld/js-ipld/compare/v0.26.0...v0.26.1) (2020-04-23)
+
+
+### Features
+
+* support passing AbortSignals to the configured blockservice ([89335da](https://github.com/ipld/js-ipld/commit/89335da))
+
+
+
 <a name="0.26.0"></a>
 # [0.26.0](https://github.com/ipld/js-ipld/compare/v0.25.5...v0.26.0) (2020-04-23)
 
