@@ -120,7 +120,7 @@ module.exports = (repo) => {
 
     it('put - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.put(Buffer.from([0, 1, 2]), multicodec.RAW, {
         signal: controller.signal
@@ -129,7 +129,7 @@ module.exports = (repo) => {
 
     it('putMany - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.putMany([Buffer.from([0, 1, 2])], multicodec.RAW, {
         signal: controller.signal
@@ -138,7 +138,7 @@ module.exports = (repo) => {
 
     it('get - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.get('cid', {
         signal: controller.signal
@@ -147,7 +147,7 @@ module.exports = (repo) => {
 
     it('getMany - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.getMany(['cid'], {
         signal: controller.signal
@@ -156,7 +156,7 @@ module.exports = (repo) => {
 
     it('remove - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.remove('cid', {
         signal: controller.signal
@@ -165,7 +165,7 @@ module.exports = (repo) => {
 
     it('removeMany - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.removeMany(['cid'], {
         signal: controller.signal
@@ -174,7 +174,7 @@ module.exports = (repo) => {
 
     it('tree - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.tree(new CID('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'), {
         signal: controller.signal
@@ -183,7 +183,7 @@ module.exports = (repo) => {
 
     it('resolve - supports abort signals', async () => {
       const controller = new AbortController()
-      setTimeout(() => controller.abort(), 1)
+      setTimeout(() => controller.abort(), 100)
 
       await expect(r.resolve(new CID('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'), '', {
         signal: controller.signal
