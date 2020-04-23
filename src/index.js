@@ -1,6 +1,6 @@
 'use strict'
 
-const Block = require('ipfs-block')
+const Block = require('ipld-block')
 const CID = require('cids')
 const mergeOptions = require('merge-options')
 const ipldDagCbor = require('ipld-dag-cbor')
