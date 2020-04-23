@@ -1,3 +1,18 @@
+<a name="0.26.0"></a>
+# [0.26.0](https://github.com/ipld/js-ipld/compare/v0.25.5...v0.26.0) (2020-04-23)
+
+
+* Revert "Revert "fix: update deps and use ipld-block"" ([4ec1f74](https://github.com/ipld/js-ipld/commit/4ec1f74))
+
+
+### BREAKING CHANGES
+
+* Use ipld-block instead of ipfs-block
+
+This reverts commit 6af9449eeaa215587a97c6b8963b93a1482341fe.
+
+
+
 <a name="0.25.5"></a>
 ## [0.25.5](https://github.com/ipld/js-ipld/compare/v0.25.4...v0.25.5) (2020-04-23)
 
