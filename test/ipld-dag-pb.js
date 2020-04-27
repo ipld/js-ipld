@@ -11,6 +11,7 @@ const BlockService = require('ipfs-block-service')
 const dagPB = require('ipld-dag-pb')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
+const { Buffer } = require('buffer')
 const IPLDResolver = require('../src')
 
 module.exports = (repo) => {

@@ -10,6 +10,7 @@ const ipldBitcoin = require('ipld-bitcoin')
 const BitcoinBlock = require('bitcoinjs-lib').Block
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
+const { Buffer } = require('buffer')
 
 const IPLDResolver = require('../src')
 

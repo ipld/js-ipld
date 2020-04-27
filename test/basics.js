@@ -13,6 +13,7 @@ const multihash = require('multihashes')
 const multicodec = require('multicodec')
 const inMemory = require('ipld-in-memory')
 const AbortController = require('abort-controller')
+const { Buffer } = require('buffer')
 
 const IPLDResolver = require('../src')
 

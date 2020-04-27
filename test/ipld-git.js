@@ -9,6 +9,7 @@ const BlockService = require('ipfs-block-service')
 const ipldGit = require('ipld-git')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
+const { Buffer } = require('buffer')
 
 const IPLDResolver = require('../src')
 
