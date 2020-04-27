@@ -17,6 +17,7 @@ const dagPB = require('ipld-dag-pb')
 const CID = require('cids')
 const inMemory = require('ipld-in-memory')
 const multicodec = require('multicodec')
+const { Buffer } = require('buffer')
 
 const IPLDResolver = require('../src')
 

@@ -8,6 +8,7 @@ const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
 const typical = require('typical')
+const { Buffer } = require('buffer')
 const { extendIterator } = require('./util')
 
 class IPLDResolver {
