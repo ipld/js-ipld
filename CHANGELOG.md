@@ -1,3 +1,13 @@
+<a name="0.26.2"></a>
+## [0.26.2](https://github.com/ipld/js-ipld/compare/v0.26.1...v0.26.2) (2020-04-27)
+
+
+### Bug Fixes
+
+* add buffer ([15307a1](https://github.com/ipld/js-ipld/commit/15307a1))
+
+
+
 <a name="0.26.1"></a>
 ## [0.26.1](https://github.com/ipld/js-ipld/compare/v0.26.0...v0.26.1) (2020-04-23)
 
