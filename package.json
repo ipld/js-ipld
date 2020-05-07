@@ -34,7 +34,7 @@
   "license": "MIT",
   "devDependencies": {
     "abort-controller": "^3.0.0",
-    "aegir": "^21.0.1",
+    "aegir": "^22.0.0",
     "bitcoinjs-lib": "^5.1.6",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
