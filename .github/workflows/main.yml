@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       # Lint
-      - run: npx aegir commitlint
+      #- run: npx aegir commitlint
       - run: npx aegir dep-check
       - run: npm run lint
 
