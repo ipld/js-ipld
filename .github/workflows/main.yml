@@ -9,9 +9,9 @@ jobs:
         #platform: [ubuntu-latest]
         #node-version: [12.x, 14.x]
         node-version: [12.x]
-        include:
-         - node-version: [14.x]
-           platform: [ububtu-latest]
+        #include:
+        # - node-version: [14.x]
+        #   platform: [ububtu-latest]
 
     runs-on: ${{ matrix.platform }}
 
