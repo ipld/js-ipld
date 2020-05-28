@@ -23,10 +23,10 @@ jobs:
       - name: Install
         run: npm install
 
-      - name: Lint
-        run: npx aegir commitlint
-        run: npx aegir dep-check
-        run: npm run lint
+      # Lint
+      - run: npx aegir commitlint
+      - run: npx aegir dep-check
+      - run: npm run lint
 
       - name: Test Chrome
         run: npx aegir test -t browser -t webworker
