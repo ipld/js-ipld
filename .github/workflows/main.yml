@@ -1,0 +1,35 @@
+name: Run tests
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        #platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest]
+        #node-version: [12.x, 14.x]
+        node-version: [12.x]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install
+        run: npm install
+
+      - name: Lint
+        run: npx aegir commitlint
+        run: npx aegir dep-check
+        run: npm run lint
+
+      - name: Test Chrome
+        run: npx aegir test -t browser -t webworker
+
+      - name: Test Firefox
+        run: npx aegir test -t browser -t webworker --browsers FirefoxHeadless
