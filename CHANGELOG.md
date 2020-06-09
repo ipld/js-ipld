@@ -1,3 +1,13 @@
+<a name="0.26.3"></a>
+## [0.26.3](https://github.com/ipld/js-ipld/compare/v0.26.2...v0.26.3) (2020-06-09)
+
+
+### Bug Fixes
+
+* **package:** update ipld-raw to version 5.0.0 ([75787e0](https://github.com/ipld/js-ipld/commit/75787e0))
+
+
+
 <a name="0.26.2"></a>
 ## [0.26.2](https://github.com/ipld/js-ipld/compare/v0.26.1...v0.26.2) (2020-04-27)
 
