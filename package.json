@@ -1,6 +1,6 @@
 {
   "name": "ipld",
-  "version": "0.26.2",
+  "version": "0.26.3",
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -64,8 +64,8 @@
     "typical": "^6.0.0"
   },
   "contributors": [
-    "David Dias <daviddias.p@gmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
+    "David Dias <daviddias.p@gmail.com>",
     "dignifiedquire <dignifiedquire@gmail.com>",
     "achingbrain <alex@achingbrain.net>",
     "nicola <me@nicola.io>",
