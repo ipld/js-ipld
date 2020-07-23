@@ -7,7 +7,10 @@ module.exports = {
       stream: true,
 
       // this is needed until core-util-is stops using node buffers in browser code
-      Buffer: true
+      Buffer: true,
+
+      // this is needed until webcrypto stops using node crypto in browser code
+      crypto: true
     }
   }
 }
