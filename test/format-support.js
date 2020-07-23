@@ -7,9 +7,9 @@ const chaiAsProised = require('chai-as-promised')
 const expect = chai.expect
 chai.use(dirtyChai)
 chai.use(chaiAsProised)
-const BlockService = require('ipfs-block-service')
 const dagCBOR = require('ipld-dag-cbor')
 const multicodec = require('multicodec')
+const inMemory = require('ipld-in-memory')
 
 const IPLDResolver = require('../src')
 
@@ -18,8 +18,7 @@ module.exports = (repo) => {
     let data, cid
 
     before(async () => {
-      const bs = new BlockService(repo)
-      const resolver = new IPLDResolver({ blockService: bs })
+      const resolver = await inMemory(IPLDResolver)
 
       data = { now: Date.now() }
 
@@ -28,9 +27,7 @@ module.exports = (repo) => {
 
     describe('Dynamic format loading', () => {
       it('should fail to dynamically load format', async () => {
-        const bs = new BlockService(repo)
-        const resolver = new IPLDResolver({
-          blockService: bs,
+        const resolver = await inMemory(IPLDResolver, {
           formats: []
         })
 
@@ -41,9 +38,7 @@ module.exports = (repo) => {
 
       it('should fail to dynamically load format via loadFormat option', async () => {
         const errMsg = 'BOOM' + Date.now()
-        const bs = new BlockService(repo)
-        const resolver = new IPLDResolver({
-          blockService: bs,
+        const resolver = await inMemory(IPLDResolver, {
           formats: [],
           loadFormat (codec) {
             if (codec !== multicodec.DAG_CBOR) {
@@ -58,9 +53,7 @@ module.exports = (repo) => {
       })
 
       it('should dynamically load missing format', async () => {
-        const bs = new BlockService(repo)
-        const resolver = new IPLDResolver({
-          blockService: bs,
+        const resolver = await inMemory(IPLDResolver, {
           formats: [],
           loadFormat (codec) {
             if (codec !== multicodec.DAG_CBOR) {
@@ -76,9 +69,7 @@ module.exports = (repo) => {
       })
 
       it('should not dynamically load format added statically', async () => {
-        const bs = new BlockService(repo)
-        const resolver = new IPLDResolver({
-          blockService: bs,
+        const resolver = await inMemory(IPLDResolver, {
           formats: [dagCBOR],
           loadFormat (codec) {
             throw new Error(`unexpected load format ${codec}`)
