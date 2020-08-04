@@ -1,18 +1,13 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const chaiAsProised = require('chai-as-promised')
-const expect = chai.expect
-chai.use(dirtyChai)
-chai.use(chaiAsProised)
+const { expect } = require('aegir/utils/chai')
 const CID = require('cids')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
 const inMemory = require('ipld-in-memory')
 const AbortController = require('abort-controller')
-const { Buffer } = require('buffer')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 const IPLDResolver = require('../src')
 
@@ -28,7 +23,7 @@ describe('validation', () => {
     const cid = new CID(
       1,
       'blake2b-8',
-      multihash.encode(Buffer.from('abcd', 'hex'), 'sha1')
+      multihash.encode(uint8ArrayFromString('abcd', 'base16'), 'sha1')
     )
     const result = r.resolve(cid, '')
     await expect(result.next()).to.be.rejectedWith(
@@ -61,7 +56,7 @@ describe('validation', () => {
     const cid = new CID(
       1,
       'blake2b-8',
-      multihash.encode(Buffer.from('abcd', 'hex'), 'sha1')
+      multihash.encode(uint8ArrayFromString('abcd', 'base16'), 'sha1')
     )
     const result = r.tree(cid)
     await expect(result.next()).to.be.rejectedWith(
@@ -97,7 +92,7 @@ describe('aborting requests', () => {
     const controller = new AbortController()
     setTimeout(() => controller.abort(), 100)
 
-    await expect(r.put(Buffer.from([0, 1, 2]), multicodec.RAW, {
+    await expect(r.put(Uint8Array.from([0, 1, 2]), multicodec.RAW, {
       signal: controller.signal
     })).to.eventually.rejectedWith(abortedErr)
   })
@@ -106,7 +101,7 @@ describe('aborting requests', () => {
     const controller = new AbortController()
     setTimeout(() => controller.abort(), 100)
 
-    await expect(r.putMany([Buffer.from([0, 1, 2])], multicodec.RAW, {
+    await expect(r.putMany([Uint8Array.from([0, 1, 2])], multicodec.RAW, {
       signal: controller.signal
     }).all()).to.eventually.rejectedWith(abortedErr)
   })

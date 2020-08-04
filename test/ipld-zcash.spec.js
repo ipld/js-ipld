@@ -1,13 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
+const { expect } = require('aegir/utils/chai')
 const Block = require('ipld-block')
-const chai = require('chai')
-const chaiAsProised = require('chai-as-promised')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(chaiAsProised)
-chai.use(dirtyChai)
 const ipldZcash = require('ipld-zcash')
 const loadFixture = require('aegir/fixtures')
 const inMemory = require('ipld-in-memory')

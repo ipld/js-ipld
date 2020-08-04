@@ -1,12 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const chaiAsProised = require('chai-as-promised')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(chaiAsProised)
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const ipldEthBlock = require('ipld-ethereum').ethBlock
 const EthBlockHeader = require('ethereumjs-block/header')
 const multihash = require('multihashes')

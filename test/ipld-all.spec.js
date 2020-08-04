@@ -7,17 +7,12 @@
  * Test data made of mixed data structures!
  */
 
-const chai = require('chai')
-const chaiAsProised = require('chai-as-promised')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(chaiAsProised)
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const dagPB = require('ipld-dag-pb')
 const CID = require('cids')
 const inMemory = require('ipld-in-memory')
 const multicodec = require('multicodec')
-const { Buffer } = require('buffer')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 const IPLDResolver = require('../src')
 
@@ -32,7 +27,7 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
   before(async () => {
     resolver = await inMemory(IPLDResolver)
 
-    nodePb = new dagPB.DAGNode(Buffer.from('I am inside a Protobuf'))
+    nodePb = new dagPB.DAGNode(uint8ArrayFromString('I am inside a Protobuf'))
     cidPb = await resolver.put(nodePb, multicodec.DAG_PB, { cidVersion: 0 })
 
     nodeCbor = {
@@ -50,11 +45,11 @@ describe('IPLD Resolver for dag-cbor + dag-pb', () => {
     expect(node1.remainderPath).to.eql('Data')
     expect(node1.value.equals(cidPb)).to.be.true()
     expect(node2.remainderPath).to.eql('')
-    expect(node2.value).to.eql(Buffer.from('I am inside a Protobuf'))
+    expect(node2.value).to.eql(uint8ArrayFromString('I am inside a Protobuf'))
   })
 
   it('does not store nodes when onlyHash is passed', async () => {
-    const node = new dagPB.DAGNode(Buffer.from('Some data here'))
+    const node = new dagPB.DAGNode(uint8ArrayFromString('Some data here'))
     const cid = await resolver.put(node, multicodec.DAG_PB, {
       onlyHash: true,
       cidVersion: 1,

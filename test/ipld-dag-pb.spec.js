@@ -1,16 +1,11 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const chaiAsProised = require('chai-as-promised')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(chaiAsProised)
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const dagPB = require('ipld-dag-pb')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
-const { Buffer } = require('buffer')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 const inMemory = require('ipld-in-memory')
 
 const IPLDResolver = require('../src')
@@ -27,9 +22,9 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
   before(async () => {
     resolver = await inMemory(IPLDResolver)
 
-    node1 = new dagPB.DAGNode(Buffer.from('I am 1'))
-    node2 = new dagPB.DAGNode(Buffer.from('I am 2'))
-    node3 = new dagPB.DAGNode(Buffer.from('I am 3'))
+    node1 = new dagPB.DAGNode(uint8ArrayFromString('I am 1'))
+    node2 = new dagPB.DAGNode(uint8ArrayFromString('I am 2'))
+    node3 = new dagPB.DAGNode(uint8ArrayFromString('I am 3'))
     const serialized1 = dagPB.util.serialize(node1)
     cid1 = await dagPB.util.cid(serialized1)
     node2.addLink({
@@ -80,7 +75,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
       const result = resolver.resolve(cid1, 'Data')
       const node = await result.first()
       expect(node.remainderPath).to.eql('')
-      expect(node.value).to.eql(Buffer.from('I am 1'))
+      expect(node.value).to.eql(uint8ArrayFromString('I am 1'))
     })
 
     it('resolves a value within nested scope (1 level)', async () => {
@@ -91,7 +86,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
       expect(node1.value.equals(cid1)).to.be.true()
 
       expect(node2.remainderPath).to.eql('')
-      expect(node2.value).to.eql(Buffer.from('I am 1'))
+      expect(node2.value).to.eql(uint8ArrayFromString('I am 1'))
     })
 
     it('resolves value within nested scope (2 levels)', async () => {
@@ -105,7 +100,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
       expect(node2.value.equals(cid1)).to.be.true()
 
       expect(node3.remainderPath).to.eql('')
-      expect(node3.value).to.eql(Buffer.from('I am 1'))
+      expect(node3.value).to.eql(uint8ArrayFromString('I am 1'))
     })
 
     it('resolves value within nested scope (2 levels) with named links', async () => {
@@ -119,7 +114,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
       expect(node2.value.equals(cid1)).to.be.true()
 
       expect(node3.remainderPath).to.eql('')
-      expect(node3.value).to.eql(Buffer.from('I am 1'))
+      expect(node3.value).to.eql(uint8ArrayFromString('I am 1'))
     })
 
     it('resolver.get round-trip', async () => {
@@ -135,7 +130,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
       // seems to be some race condition with inserting and removing items.
       // Hence create a unique item for this test. Though the tests
       // should really be independent so that there are no race conditions.
-      const node = new dagPB.DAGNode(Buffer.from('a dag-pb node'))
+      const node = new dagPB.DAGNode(uint8ArrayFromString('a dag-pb node'))
       const cid = await resolver.put(node, multicodec.DAG_PB)
       const sameAsNode = await resolver.get(cid)
       // `size` is lazy, without a call to it a deep equal check would fail
@@ -151,7 +146,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
     })
 
     it('should return a v0 CID when specified', async () => {
-      const node = new dagPB.DAGNode(Buffer.from('a dag-pb node'))
+      const node = new dagPB.DAGNode(uint8ArrayFromString('a dag-pb node'))
       const cid = await resolver.put(node, multicodec.DAG_PB, {
         cidVersion: 0
       })
@@ -160,7 +155,7 @@ describe('IPLD Resolver with dag-pb (MerkleDAG Protobuf)', () => {
     })
 
     it('should return a v1 CID when specified', async () => {
-      const node = new dagPB.DAGNode(Buffer.from('a dag-pb node'))
+      const node = new dagPB.DAGNode(uint8ArrayFromString('a dag-pb node'))
       const cid = await resolver.put(node, multicodec.DAG_PB, {
         cidVersion: 1
       })
