@@ -1,3 +1,20 @@
+<a name="0.27.0"></a>
+# [0.27.0](https://github.com/ipld/js-ipld/compare/v0.26.4...v0.27.0) (2020-08-05)
+
+
+### Bug Fixes
+
+* create buffers from decoded multihash digests ([#287](https://github.com/ipld/js-ipld/issues/287)) ([28ecc2f](https://github.com/ipld/js-ipld/commit/28ecc2f))
+* update all deps to versions that return uint8arrays ([#286](https://github.com/ipld/js-ipld/issues/286)) ([75037ea](https://github.com/ipld/js-ipld/commit/75037ea))
+
+
+### BREAKING CHANGES
+
+* - CIDs returned from `put*` methods have breaking API changes
+  See see https://github.com/multiformats/js-cid/pull/117 for changes
+
+
+
 <a name="0.26.4"></a>
 ## [0.26.4](https://github.com/ipld/js-ipld/compare/v0.26.3...v0.26.4) (2020-07-24)
 
