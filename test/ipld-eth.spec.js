@@ -1,10 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const rlp = require('rlp')
 const ipldEthBlock = require('ipld-ethereum').ethBlock
 const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie

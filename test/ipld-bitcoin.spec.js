@@ -1,10 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const ipldBitcoin = require('ipld-bitcoin')
 const BitcoinBlock = require('bitcoinjs-lib').Block
 const multihash = require('multihashes')

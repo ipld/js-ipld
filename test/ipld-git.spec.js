@@ -1,15 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const ipldGit = require('ipld-git')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
-const { Buffer } = require('buffer')
 const inMemory = require('ipld-in-memory')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 const IPLDResolver = require('../src')
 
@@ -33,7 +30,7 @@ describe('IPLD Resolver with ipld-git', () => {
       formats: [ipldGit]
     })
 
-    blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
+    blobNode = uint8ArrayFromString('626c6f62203800736f6d6564617461', 'base16') // blob 8\0somedata
     blobCid = await ipldGit.util.cid(blobNode)
 
     treeNode = {

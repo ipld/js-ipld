@@ -1,12 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const chaiAsProised = require('chai-as-promised')
-const expect = chai.expect
-chai.use(dirtyChai)
-chai.use(chaiAsProised)
+const { expect } = require('aegir/utils/chai')
 const dagCBOR = require('ipld-dag-cbor')
 const multicodec = require('multicodec')
 const multihash = require('multihashes')

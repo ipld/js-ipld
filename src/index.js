@@ -8,7 +8,6 @@ const ipldDagPb = require('ipld-dag-pb')
 const ipldRaw = require('ipld-raw')
 const multicodec = require('multicodec')
 const typical = require('typical')
-const { Buffer } = require('buffer')
 const { extendIterator } = require('./util')
 
 class IPLDResolver {
@@ -150,7 +149,7 @@ class IPLDResolver {
    */
   getMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
-        Buffer.isBuffer(cids)) {
+        cids instanceof Uint8Array) {
       throw new Error('`cids` must be an iterable of CIDs')
     }
 
@@ -221,7 +220,7 @@ class IPLDResolver {
    */
   putMany (nodes, format, userOptions) {
     if (!typical.isIterable(nodes) || typeof nodes === 'string' ||
-        Buffer.isBuffer(nodes)) {
+        nodes instanceof Uint8Array) {
       throw new Error('`nodes` must be an iterable')
     }
     if (format === undefined) {
@@ -281,7 +280,7 @@ class IPLDResolver {
    */
   removeMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
-        Buffer.isBuffer(cids)) {
+        cids instanceof Uint8Array) {
       throw new Error('`cids` must be an iterable of CIDs')
     }
 
