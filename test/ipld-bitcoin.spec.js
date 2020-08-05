@@ -14,8 +14,8 @@ const IPLDResolver = require('../src')
 const buildBitcoinBlock = (header) => {
   const block = new BitcoinBlock()
   block.version = header.version || 0
-  block.prevHash = header.prevHash || Buffer.alloc(32)
-  block.merkleRoot = header.merkleRoot || Buffer.alloc(32)
+  block.prevHash = header.prevHash ? Buffer.from(header.prevHash) : Buffer.alloc(32)
+  block.merkleRoot = header.merkleRoot ? Buffer.from(header.merkleRoot) : Buffer.alloc(32)
   block.timestamp = header.timestamp || 0
   block.bits = header.bits || 0
   block.nonce = header.nonce || 0
