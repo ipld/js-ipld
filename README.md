@@ -72,26 +72,21 @@ const Ipld = require('ipld')
 const IpfsRepo = require('ipfs-repo')
 const IpfsBlockService = require('ipfs-block-service')
 
-const initIpld = (ipfsRepoPath, callback) => {
+const initIpld = async (ipfsRepoPath) => {
   const repo = new IpfsRepo(ipfsRepoPath)
-  repo.init({}, (err) => {
-    if (err) {
-      return callback(err)
-    }
-    repo.open((err) => {
-      if (err) {
-        return callback(err)
-      }
-      const blockService = new IpfsBlockService(repo)
-      const ipld = new Ipld({blockService: blockService})
-      return callback(null, ipld)
-    })
-  })
+  await repo.init({})
+  await repo.open()
+  const blockService = new IpfsBlockService(repo)
+  return new Ipld({blockService: blockService})
 }
 
-initIpld('/tmp/ipfsrepo', (err, ipld) => {
-  // Do something with the `ipld`, e.g. `ipld.get(…)`
-})
+initIpld('/tmp/ipfsrepo2')
+  .then((ipld) => {
+    // Do something with the `ipld`, e.g. `ipld.get(…)`
+  })
+  .catch((error) => {
+    console.error(error)
+  })
 ```
 
 ## API
