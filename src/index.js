@@ -91,7 +91,7 @@ class IPLDResolver {
     const generator = async function * () {
       // End iteration if there isn't a CID to follow anymore
       while (cid !== null) {
-        const format = await this._getFormat(cid.codec)
+        const format = await this.getFormat(cid.codec)
 
         // get block
         // use local resolver
@@ -133,7 +133,7 @@ class IPLDResolver {
    */
   async get (cid, options) {
     const block = await this.bs.get(cid, options)
-    const format = await this._getFormat(block.cid.codec)
+    const format = await this.getFormat(block.cid.codec)
     const node = format.util.deserialize(block.data)
 
     return node
@@ -182,7 +182,7 @@ class IPLDResolver {
       throw new Error('`format` parameter must be number (multicodec)')
     }
 
-    const formatImpl = await this._getFormat(format)
+    const formatImpl = await this.getFormat(format)
     const defaultOptions = {
       hashAlg: formatImpl.defaultHashAlg,
       cidVersion: 1,
@@ -239,7 +239,7 @@ class IPLDResolver {
         // when we hit the first iteration. This way the constructor can be
         // a synchronous function.
         if (options === undefined) {
-          formatImpl = await this._getFormat(format)
+          formatImpl = await this.getFormat(format)
           const defaultOptions = {
             hashAlg: formatImpl.defaultHashAlg,
             cidVersion: 1,
@@ -318,7 +318,7 @@ class IPLDResolver {
     // If a path is a link then follow it and return its CID
     const maybeRecurse = async (block, treePath) => {
       // A treepath we might want to follow recursively
-      const format = await this._getFormat(block.cid.codec)
+      const format = await this.getFormat(block.cid.codec)
       const result = format.resolver.resolve(block.data, treePath)
       // Something to follow recusively, hence push it into the queue
       if (CID.isCID(result.value)) {
@@ -347,7 +347,7 @@ class IPLDResolver {
         // There aren't any paths left, get them from the given CID
         if (treePaths.length === 0 && queue.length > 0) {
           ({ cid, basePath } = queue.shift())
-          const format = await this._getFormat(cid.codec)
+          const format = await this.getFormat(cid.codec)
           block = await this.bs.get(cid, options)
 
           const paths = format.resolver.tree(block.data)
@@ -381,10 +381,7 @@ class IPLDResolver {
     return extendIterator(generator())
   }
 
-  /*           */
-  /* internals */
-  /*           */
-  async _getFormat (codec) {
+  async getFormat (codec) {
     // TODO vmx 2019-01-24: Once all CIDs support accessing the codec code
     // instead of the name, remove this part
     if (typeof codec === 'string') {
