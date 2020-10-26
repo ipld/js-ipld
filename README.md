@@ -51,6 +51,7 @@ the new strategy in [Issue #260](https://github.com/ipld/js-ipld/issues/260)
   - [`.removeMany(cids, options)`](#removemanycids-options)
   - [`.tree(cid, [path], [options])`](#treecid-path-options)
   - [`.addFormat(ipldFormatImplementation)`](#addformatipldformatimplementation)
+  - [`.getFormat(codec)`](#getformatcodec)
   - [`.removeFormat(codec)`](#removeformatcodec)
   - [Properties](#properties)
     - [`defaultOptions`](#defaultoptions)
@@ -284,6 +285,13 @@ Returns an async iterator of all the paths (as Strings) you could resolve into.
 
 Returns the IPLD instance. This way you can chain `addFormat()` calls.
 
+### `.getFormat(codec)`
+
+> Return the implementation for an IPLD Format
+
+- `codec` (`multicodec`, required): the codec of the IPLD Format to return the implementation from.
+
+If the implementation is not present in the current list of resolvers, the `loadFormat` function passed as an option to the constructor of this module will be invoked and it's output added to the list of available resolvers.
 
 ### `.removeFormat(codec)`
 
