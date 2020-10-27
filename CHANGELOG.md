@@ -1,3 +1,13 @@
+<a name="0.27.2"></a>
+## [0.27.2](https://github.com/ipld/js-ipld/compare/v0.27.1...v0.27.2) (2020-10-27)
+
+
+### Features
+
+* expose getFormat function ([78c8769](https://github.com/ipld/js-ipld/commit/78c8769))
+
+
+
 <a name="0.27.1"></a>
 ## [0.27.1](https://github.com/ipld/js-ipld/compare/v0.27.0...v0.27.1) (2020-08-05)
 
