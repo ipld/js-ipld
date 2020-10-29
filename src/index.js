@@ -45,7 +45,8 @@ class IPLDResolver {
    */
   addFormat (format) {
     const codec = format.codec
-    if (this.resolvers[format.format]) {
+
+    if (this.resolvers[format.codec]) {
       const codecName = multicodec.print[codec]
       throw new Error(`Resolver already exists for codec "${codecName}"`)
     }
