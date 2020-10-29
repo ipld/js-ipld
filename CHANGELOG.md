@@ -1,3 +1,13 @@
+<a name="0.27.3"></a>
+## [0.27.3](https://github.com/ipld/js-ipld/compare/v0.27.2...v0.27.3) (2020-10-29)
+
+
+### Bug Fixes
+
+* use correct property when checking if resolver exists ([b412899](https://github.com/ipld/js-ipld/commit/b412899))
+
+
+
 <a name="0.27.2"></a>
 ## [0.27.2](https://github.com/ipld/js-ipld/compare/v0.27.1...v0.27.2) (2020-10-27)
 
