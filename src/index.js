@@ -78,8 +78,8 @@ class IPLDResolver {
    * @param {Object} [options] -  Options is an object with the following properties.
    * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
    * @returns {Iterable.<Promise.<{remainderPath: string, value}>>} - Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
-   *   - `remainderPath`: the part of the path that wasn’t resolved yet.
-   *   - `value`: the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, value is the value the path points to. So if you need the CID of the IPLD Node you’re currently at, just take the value of the previously returned IPLD Node.
+   * - `remainderPath`: the part of the path that wasn’t resolved yet.
+   * - `value`: the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, value is the value the path points to. So if you need the CID of the IPLD Node you’re currently at, just take the value of the previously returned IPLD Node.
    */
   resolve (cid, path, options) {
     if (!CID.isCID(cid)) {
@@ -169,7 +169,7 @@ class IPLDResolver {
    * @param {Object} node - The deserialized IPLD node that should be inserted.
    * @param {number} format - The multicodec of the format that IPLD Node should be encoded in.
    * @param {Object} [userOptions] -  Options is an object with the following properties.
-   * @param {number} [userOtions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
+   * @param {number} [userOptions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
    * @param {number} [userOptions.cidVersion=1] - The CID version to use.
    * @param {boolean} [userOptions.onlyHash=false] - If true the serialized form of the IPLD Node will not be passed to the underlying block store.
    * @param {AbortSignal} [userOptions.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
@@ -213,7 +213,7 @@ class IPLDResolver {
    * @param {Iterable.<Object>} nodes - Deserialized IPLD nodes that should be inserted.
    * @param {number} format - The multicodec of the format that IPLD Node should be encoded in.
    * @param {Object} [userOptions] -  Options are applied to any of the `nodes` and is an object with the following properties.
-   * @param {number} [userOtions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
+   * @param {number} [userOptions.hashAlg=hash algorithm of the given multicodec] - The hashing algorithm that is used to calculate the CID.
    * @param {number} [userOptions.cidVersion=1] - The CID version to use.
    * @param {boolean} [userOptions.onlyHash=false] - If true the serialized form of the IPLD Node will not be passed to the underlying block store.
    * @param {AbortSignal} [userOptions.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
@@ -262,7 +262,7 @@ class IPLDResolver {
    * @param {CID} cid - The CID of the IPLD Node that should be removed.
    * @param {Object} [options] -  Options is an object with the following properties.
    * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-   * @return {Promise.<CID>} The CID of the removed IPLD Node.
+   * @returns {Promise.<CID>} The CID of the removed IPLD Node.
    */
   async remove (cid, options) { // eslint-disable-line require-await
     return this.bs.delete(cid, options)
@@ -277,7 +277,7 @@ class IPLDResolver {
    * @param {Iterable.<CID>} cids - The CIDs of the IPLD Nodes that should be removed.
    * @param {Object} [options] -  Options is an object with the following properties.
    * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-   * @return {Iterable.<Promise.<CID>>} Returns an async iterator with the CIDs of the removed IPLD Nodes.
+   * @returns {Iterable.<Promise.<CID>>} Returns an async iterator with the CIDs of the removed IPLD Nodes.
    */
   removeMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
@@ -302,7 +302,7 @@ class IPLDResolver {
    * @param {Object} [userOptions]
    * @param {number} [userOptions.recursive=false] - whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
    * @param {AbortSignal} [userOptions.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-   * @returns {Iterable.<Promise.<String>>} - Returns an async iterator with paths that can be resolved into
+   * @returns {Iterable.<Promise.<string>>} - Returns an async iterator with paths that can be resolved into
    */
   tree (cid, offsetPath, userOptions) {
     if (typeof offsetPath === 'object') {
