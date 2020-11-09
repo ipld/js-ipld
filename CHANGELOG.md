@@ -1,3 +1,19 @@
+<a name="0.28.0"></a>
+# [0.28.0](https://github.com/ipld/js-ipld/compare/v0.27.3...v0.28.0) (2020-11-09)
+
+
+### Chores
+
+* update deps ([10c3777](https://github.com/ipld/js-ipld/commit/10c3777))
+
+
+### BREAKING CHANGES
+
+* updates ipld-block to 0.11.0 which is not compatible
+with earlier versions (fails `expect(v11Block).to.deep.equal(v10Block)` for example)
+
+
+
 <a name="0.27.3"></a>
 ## [0.27.3](https://github.com/ipld/js-ipld/compare/v0.27.2...v0.27.3) (2020-10-29)
 
