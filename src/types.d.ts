@@ -4,6 +4,17 @@ import BlockService from 'ipfs-block-service'
 import { Format } from 'interface-ipld-format'
 import { CodecCode } from 'multicodec'
 
+export type LoadFormat = (code: CodecCode) => Promise<IPLDFormat>
+export interface Options {
+  blockService: BlockService
+  formats?: Format[]
+  loadFormat: LoadFormat
+}
+
+export interface ResolveOptions {
+  signal: AbortSignal
+}
+
 export interface PutOptions {
   hashAlg?: HashCode
   cidVersion?: CIDVersion
@@ -11,10 +22,15 @@ export interface PutOptions {
   signal?: AbortSignal
 }
 
-export interface Options {
-  blockService: BlockService
-  formats?: Format[]
-  loadFormat: LoadFormat
+export interface GetOptions {
+  signal: AbortSignal
 }
 
-export type LoadFormat = (code: CodecCode) => Promise<IPLDFormat>
+export interface RemoveOptions {
+  signal: AbortSignal
+}
+
+export interface TreeOptions {
+  recursive?: boolean
+  signal: AbortSignal
+}

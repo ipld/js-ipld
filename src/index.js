@@ -89,8 +89,7 @@ class IPLDResolver {
    *
    * @param {CID} cid - the CID the resolving starts.
    * @param {string} path - the path that should be resolved.
-   * @param {Object} [options] -  Options is an object with the following properties.
-   * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
+   * @param {import('./types').ResolveOptions} [options]
    */
   resolve (cid, path, options) {
     if (!CID.isCID(cid)) {
@@ -146,8 +145,7 @@ class IPLDResolver {
    * Get a node by CID.
    *
    * @param {CID} cid - The CID of the IPLD Node that should be retrieved.
-   * @param {Object} [options] -  Options is an object with the following properties.
-   * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
+   * @param {import('./types').GetOptions} [options]
    */
   async get (cid, options) {
     const block = await this.bs.get(cid, options)
@@ -161,8 +159,7 @@ class IPLDResolver {
    * Get multiple nodes back from an array of CIDs.
    *
    * @param {Iterable.<CID>} cids - The CIDs of the IPLD Nodes that should be retrieved.
-   * @param {Object} [options] -  Options is an object with the following properties.
-   * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
+   * @param {import('./types').GetOptions} [options]
    */
   getMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
@@ -272,8 +269,7 @@ class IPLDResolver {
    * Remove an IPLD Node by the given CID.
    *
    * @param {CID} cid - The CID of the IPLD Node that should be removed.
-   * @param {Object} [options] -  Options is an object with the following properties.
-   * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
+   * @param {import('./types').RemoveOptions} [options]
    */
   async remove (cid, options) { // eslint-disable-line require-await
     return this.bs.delete(cid, options)
@@ -286,8 +282,7 @@ class IPLDResolver {
    * *not* atomic, some Blocks might have already been removed.
    *
    * @param {Iterable<CID>} cids - The CIDs of the IPLD Nodes that should be removed.
-   * @param {Object} [options] -  Options is an object with the following properties.
-   * @param {AbortSignal} [options.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
+   * @param {import('./types').RemoveOptions} [options]
    */
   removeMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
@@ -311,9 +306,7 @@ class IPLDResolver {
    *
    * @param {CID} cid - The ID to get the paths from
    * @param {string} [offsetPath=''] - the path to start to retrieve the other paths from.
-   * @param {Object} [userOptions]
-   * @param {boolean} [userOptions.recursive=false] - whether to get the paths recursively or not. `false` resolves only the paths of the given CID.
-   * @param {AbortSignal} [userOptions.signal] - A signal that can be used to abort any long-lived operations that are started as a result of this operation.
+   * @param {import('./types').TreeOptions} [userOptions]
    */
   tree (cid, offsetPath, userOptions) {
     if (typeof offsetPath === 'object') {
