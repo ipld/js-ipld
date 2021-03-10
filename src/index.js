@@ -13,7 +13,6 @@ const { extendIterator } = require('./util')
 
 /**
  * @typedef {import('interface-ipld-format').Format<object>} IPLDFormat
- * @typedef {import('ipfs-block-service')} BlockService
  * @typedef {import('multicodec').CodecCode} CodecCode
  * @typedef {import('multihashes').HashCode} HashCode
  * @typedef {import('cids').CIDVersion} CIDVersion
@@ -22,10 +21,7 @@ const { extendIterator } = require('./util')
 
 class IPLDResolver {
   /**
-   * @param {object} userOptions
-   * @param {BlockService} userOptions.blockService
-   * @param {IPLDFormat[]} [userOptions.formats]
-   * @param {(code: CodecCode) => Promise<IPLDFormat>} [userOptions.loadFormat]
+   * @param {import('./types').Options} userOptions
    */
   constructor (userOptions) {
     const options = mergeOptions(IPLDResolver.defaultOptions, userOptions)
