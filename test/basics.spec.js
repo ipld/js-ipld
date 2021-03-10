@@ -6,7 +6,7 @@ const CID = require('cids')
 const multihash = require('multihashes')
 const multicodec = require('multicodec')
 const inMemory = require('ipld-in-memory')
-const AbortController = require('abort-controller')
+const { AbortController } = require('native-abort-controller')
 const uint8ArrayFromString = require('uint8arrays/from-string')
 
 const IPLDResolver = require('../src')

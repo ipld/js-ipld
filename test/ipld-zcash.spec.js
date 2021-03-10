@@ -4,7 +4,7 @@
 const { expect } = require('aegir/utils/chai')
 const Block = require('ipld-block')
 const ipldZcash = require('ipld-zcash')
-const loadFixture = require('aegir/fixtures')
+const loadFixture = require('aegir/utils/fixtures')
 const inMemory = require('ipld-in-memory')
 
 const IPLDResolver = require('../src')
