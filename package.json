@@ -4,6 +4,7 @@
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
+  "types": "./dist/src/index.d.ts",
   "pre-push": [
     "lint",
     "test"
