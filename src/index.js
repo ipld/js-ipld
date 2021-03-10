@@ -14,8 +14,6 @@ const { extendIterator } = require('./util')
 /**
  * @typedef {import('interface-ipld-format').Format<object>} IPLDFormat
  * @typedef {import('multicodec').CodecCode} CodecCode
- * @typedef {import('multihashes').HashCode} HashCode
- * @typedef {import('cids').CIDVersion} CIDVersion
  * @typedef {import('./types').PutOptions} PutOptions
  */
 
