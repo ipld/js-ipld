@@ -13,7 +13,7 @@ export interface Options {
 }
 
 export interface ResolveOptions {
-  signal: AbortSignal
+  signal?: AbortSignal
 }
 
 export interface PutOptions {
@@ -24,14 +24,14 @@ export interface PutOptions {
 }
 
 export interface GetOptions {
-  signal: AbortSignal
+  signal?: AbortSignal
 }
 
 export interface RemoveOptions {
-  signal: AbortSignal
+  signal?: AbortSignal
 }
 
 export interface TreeOptions {
   recursive?: boolean
-  signal: AbortSignal
+  signal?: AbortSignal
 }
