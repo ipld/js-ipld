@@ -107,7 +107,7 @@ class IPLDResolver {
 
     const generator = async function * () {
       // End iteration if there isn't a CID to follow any more
-      while (cid !== null) {
+      while (true) {
         const format = await ipld.getFormat(multicodec.getCodeFromName(cid.codec))
 
         // get block
