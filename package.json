@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "cids": "^1.1.6",
-    "interface-ipld-format": "0.0.2",
+    "interface-ipld-format": "ipld/js-ipld-dag-cbor#chore/add-definition",
     "ipfs-block-service": "^0.19.0",
     "ipld-block": "^0.11.1",
     "ipld-dag-cbor": "ipld/js-ipld-dag-cbor#chore/add-types",
