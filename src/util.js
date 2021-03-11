@@ -1,11 +1,21 @@
 'use strict'
 
+/**
+ * @template T
+ *
+ * @param {AsyncIterable<T>} iterator
+ */
 exports.first = async (iterator) => {
-  for await (const value of iterator) {
+  for await (const value of iterator) { // eslint-disable-line no-unreachable-loop
     return value
   }
 }
 
+/**
+ * @template T
+ *
+ * @param {AsyncIterable<T>} iterator
+ */
 exports.last = async (iterator) => {
   let value
   for await (value of iterator) {
@@ -14,6 +24,11 @@ exports.last = async (iterator) => {
   return value
 }
 
+/**
+ * @template T
+ *
+ * @param {AsyncIterable<T>} iterator
+ */
 exports.all = async (iterator) => {
   const values = []
   for await (const value of iterator) {
@@ -22,6 +37,21 @@ exports.all = async (iterator) => {
   return values
 }
 
+/**
+ * @template T
+ *
+ * @typedef {object} Extensions
+ * @property {() => Promise<T | undefined>} first
+ * @property {() => Promise<T | undefined>} last
+ * @property {() => Promise<T[]>} all
+ */
+
+/**
+ * @template T
+ *
+ * @param {any} iterator
+ * @returns {AsyncIterable<T> & Extensions<T> }
+ */
 exports.extendIterator = (iterator) => {
   iterator.first = () => exports.first(iterator)
   iterator.last = () => exports.last(iterator)

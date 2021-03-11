@@ -1,16 +1,36 @@
 'use strict'
 
-module.exports = {
-  webpack: {
-    node: {
-      // this is needed until keccak and cipher-base stop using node streams in browser code
-      stream: true,
+const path = require('path')
 
-      // this is needed until core-util-is stops using node buffers in browser code
-      Buffer: true,
-
-      // this is needed until webcrypto stops using node crypto in browser code
-      crypto: true
+/** @type {import('aegir').Options["build"]["config"]} */
+const esbuild = {
+  inject: [path.join(__dirname, './scripts/node-globals.js')],
+  plugins: [
+    {
+      name: 'node built ins',
+      setup (build) {
+        build.onResolve({ filter: /^stream$/ }, () => {
+          return { path: require.resolve('readable-stream') }
+        })
+        build.onResolve({ filter: /^crypto$/ }, () => {
+          return { path: require.resolve('crypto-browserify') }
+        })
+      }
     }
+  ]
+}
+
+/** @type {import('aegir').PartialOptions} */
+module.exports = {
+  test: {
+    browser: {
+      config: {
+        buildConfig: esbuild
+      }
+    },
+  },
+  build: {
+    bundlesizeMax: '63KB',
+    config: esbuild
   }
 }

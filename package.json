@@ -4,11 +4,17 @@
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
+  "types": "./dist/src/index.d.ts",
   "pre-push": [
     "lint",
     "test"
   ],
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
+    "prepare": "aegir build",
     "lint": "aegir lint",
     "build": "aegir build",
     "test": "aegir test",
@@ -34,29 +40,37 @@
   "license": "MIT",
   "devDependencies": {
     "abort-controller": "^3.0.0",
-    "aegir": "^28.1.0",
+    "aegir": "^31.0.4",
+    "assert": "^2.0.0",
     "bitcoinjs-lib": "^5.1.6",
     "buffer": "^6.0.1",
+    "crypto-browserify": "^3.12.0",
     "ethereumjs-block": "^2.2.0",
+    "events": "^3.3.0",
     "ipld-bitcoin": "^0.4.0",
     "ipld-ethereum": "^5.0.0",
     "ipld-git": "^0.6.1",
-    "ipld-in-memory": "^7.0.0",
+    "ipld-in-memory": "^8.0.0",
     "ipld-zcash": "^0.5.0",
     "merkle-patricia-tree": "^3.0.0",
-    "multihashes": "^3.0.1",
+    "native-abort-controller": "^1.0.3",
+    "readable-stream": "^3.6.0",
     "rlp": "^2.2.3",
-    "uint8arrays": "^1.0.0"
+    "uint8arrays": "^2.1.3",
+    "util": "^0.12.3"
   },
   "dependencies": {
-    "cids": "^1.0.0",
-    "ipld-block": "^0.11.0",
-    "ipld-dag-cbor": "^0.17.0",
-    "ipld-dag-pb": "^0.20.0",
-    "ipld-raw": "^6.0.0",
-    "merge-options": "^2.0.0",
-    "multicodec": "^2.0.0",
-    "typical": "^6.0.0"
+    "cids": "^1.1.6",
+    "interface-ipld-format": "^1.0.0",
+    "ipfs-block-service": "^0.19.0",
+    "ipld-block": "^0.11.1",
+    "ipld-dag-cbor": "^0.18.0",
+    "ipld-dag-pb": "^0.22.0",
+    "ipld-raw": "^7.0.0",
+    "merge-options": "^3.0.4",
+    "multicodec": "^3.0.1",
+    "multihashes": "^4.0.2",
+    "typical": "^6.0.1"
   },
   "contributors": [
     "Volker Mische <volker.mische@gmail.com>",
