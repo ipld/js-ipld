@@ -4,11 +4,12 @@ import BlockService from 'ipfs-block-service'
 import { Format } from 'interface-ipld-format'
 import { CodecCode } from 'multicodec'
 
-export type LoadFormat = (code: CodecCode) => Promise<IPLDFormat>
+export type LoadFormatFn = (code: CodecCode) => Promise<Format<any>>
+
 export interface Options {
   blockService: BlockService
-  formats?: Format[]
-  loadFormat: LoadFormat
+  formats?: Format<any>[]
+  loadFormat: LoadFormatFn
 }
 
 export interface ResolveOptions {

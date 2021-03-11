@@ -14,12 +14,18 @@ const { extendIterator } = require('./util')
 /**
  * @typedef {import('interface-ipld-format').Format<object>} IPLDFormat
  * @typedef {import('multicodec').CodecCode} CodecCode
+ * @typedef {import('./types').LoadFormatFn} LoadFormatFn
+ * @typedef {import('./types').Options} Options
  * @typedef {import('./types').PutOptions} PutOptions
+ * @typedef {import('./types').GetOptions} GetOptions
+ * @typedef {import('./types').ResolveOptions} ResolveOptions
+ * @typedef {import('./types').RemoveOptions} RemoveOptions
+ * @typedef {import('./types').TreeOptions} TreeOptions
  */
 
 class IPLDResolver {
   /**
-   * @param {import('./types').Options} userOptions
+   * @param {Options} userOptions
    */
   constructor (userOptions) {
     const options = mergeOptions(IPLDResolver.defaultOptions, userOptions)
@@ -30,12 +36,12 @@ class IPLDResolver {
     this.bs = options.blockService
 
     // Object with current list of active resolvers
-    /** @type {Partial<Record<CodecCode, IPLDFormat>>} */
+    /** @type {{ [key: number]: IPLDFormat}} */
     this.resolvers = {}
 
     if (typeof options.loadFormat !== 'function') {
       /**
-       * @param {CodecCode} codec
+       * @type {LoadFormatFn}
        */
       this.loadFormat = (codec) => {
         const codecName = multicodec.getNameFromCode(codec)
@@ -87,7 +93,7 @@ class IPLDResolver {
    *
    * @param {CID} cid - the CID the resolving starts.
    * @param {string} path - the path that should be resolved.
-   * @param {import('./types').ResolveOptions} [options]
+   * @param {ResolveOptions} [options]
    */
   resolve (cid, path, options) {
     if (!CID.isCID(cid)) {
@@ -143,7 +149,7 @@ class IPLDResolver {
    * Get a node by CID.
    *
    * @param {CID} cid - The CID of the IPLD Node that should be retrieved.
-   * @param {import('./types').GetOptions} [options]
+   * @param {GetOptions} [options]
    */
   async get (cid, options) {
     const block = await this.bs.get(cid, options)
@@ -157,7 +163,7 @@ class IPLDResolver {
    * Get multiple nodes back from an array of CIDs.
    *
    * @param {Iterable.<CID>} cids - The CIDs of the IPLD Nodes that should be retrieved.
-   * @param {import('./types').GetOptions} [options]
+   * @param {GetOptions} [options]
    */
   getMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
@@ -267,7 +273,7 @@ class IPLDResolver {
    * Remove an IPLD Node by the given CID.
    *
    * @param {CID} cid - The CID of the IPLD Node that should be removed.
-   * @param {import('./types').RemoveOptions} [options]
+   * @param {RemoveOptions} [options]
    */
   async remove (cid, options) { // eslint-disable-line require-await
     return this.bs.delete(cid, options)
@@ -280,7 +286,7 @@ class IPLDResolver {
    * *not* atomic, some Blocks might have already been removed.
    *
    * @param {Iterable<CID>} cids - The CIDs of the IPLD Nodes that should be removed.
-   * @param {import('./types').RemoveOptions} [options]
+   * @param {RemoveOptions} [options]
    */
   removeMany (cids, options) {
     if (!typical.isIterable(cids) || typeof cids === 'string' ||
@@ -304,7 +310,7 @@ class IPLDResolver {
    *
    * @param {CID} cid - The ID to get the paths from
    * @param {string} [offsetPath=''] - the path to start to retrieve the other paths from.
-   * @param {import('./types').TreeOptions} [userOptions]
+   * @param {TreeOptions} [userOptions]
    */
   tree (cid, offsetPath, userOptions) {
     if (typeof offsetPath === 'object') {
@@ -328,11 +334,9 @@ class IPLDResolver {
       // A treepath we might want to follow recursively
       const format = await this.getFormat(multicodec.getCodeFromName(block.cid.codec))
       const result = format.resolver.resolve(block.data, treePath)
-      // Something to follow recusively, hence push it into the queue
+      // Something to follow recursively, hence push it into the queue
       if (CID.isCID(result.value)) {
         return result.value
-      } else {
-        return null
       }
     }
 
@@ -341,7 +345,7 @@ class IPLDResolver {
     const generator = async function * () {
       // The list of paths that will get returned
       const treePaths = []
-      // The current block, needed to call `isLink()` on every interation
+      // The current block, needed to call `isLink()` on every iteration
       let block
       // The list of items we want to follow recursively. The items are
       // an object consisting of the CID and the currently already resolved
@@ -352,7 +356,7 @@ class IPLDResolver {
 
       // End of iteration if there aren't any paths left to return or
       // if we don't want to traverse recursively and have already
-      // returne the first level
+      // returns the first level
       while (treePaths.length > 0 || queue.length > 0) {
         // There aren't any paths left, get them from the given CID
         if (treePaths.length === 0 && queue.length > 0) {
@@ -368,13 +372,14 @@ class IPLDResolver {
           }
         }
 
-        const treePath = treePaths.shift()
+        const treePath = treePaths.shift() || ''
         let fullPath = basePath + treePath
 
         // Only follow links if recursion is intended
         if (options.recursive) {
-          cid = await maybeRecurse(block, treePath)
-          if (cid !== null) {
+          const cid = await maybeRecurse(block, treePath)
+
+          if (cid != null) {
             queue.push({ cid, basePath: fullPath + '/' })
           }
         }
