@@ -1,1368 +1,630 @@
 <!doctype html>
-<html lang="en">
+<html class="default no-js">
 <head>
-  <meta charset='utf-8'>
-  <title>ipld 0.28.0 | Documentation</title>
-  <meta name='description' content='The JavaScript Implementation of IPLD'>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='assets/bass.css' rel='stylesheet'>
-  <link href='assets/style.css' rel='stylesheet'>
-  <link href='assets/github.css' rel='stylesheet'>
-  <link href='assets/split.css' rel='stylesheet'>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ipld - v0.29.0</title>
+	<meta name="description" content="Documentation for ipld - v0.29.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
-<body class='documentation m0'>
-    <div class='flex'>
-      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
-        <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'>ipld</h3>
-          <div class='mb1'><code>0.28.0</code></div>
-          <input
-            placeholder='Filter'
-            id='filter-input'
-            class='col12 block input'
-            spellcheck='false'
-            autocapitalize='off'
-            autocorrect='off'
-            type='text' />
-          <div id='toc'>
-            <ul class='list-reset h5 py1-ul'>
-              
-                
-                <li><a
-                  href='#addformat'
-                  class="">
-                  addFormat
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#removeformat'
-                  class="">
-                  removeFormat
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#resolve'
-                  class="">
-                  resolve
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#get'
-                  class="">
-                  get
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#getmany'
-                  class="">
-                  getMany
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#put'
-                  class="">
-                  put
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#putmany'
-                  class="">
-                  putMany
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#remove'
-                  class="">
-                  remove
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#removemany'
-                  class="">
-                  removeMany
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#tree'
-                  class="">
-                  tree
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#defaultoptions'
-                  class="">
-                  defaultOptions
-                  
-                </a>
-                
-                </li>
-              
-            </ul>
-          </div>
-          <div class='mt1 h6 quiet'>
-            <a href='https://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
-          </div>
-        </div>
-      </div>
-      <div id='split-right' class='relative overflow-auto height-viewport-100'>
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='addformat'>
-      addFormat
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L46-L57'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Add support for an IPLD Format.</p>
-
-    <div class='pre p1 fill-light mt0'>addFormat(format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): this</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    The implementation of an IPLD Format.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>this</code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='removeformat'>
-      removeFormat
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L65-L71'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Remove support for an IPLD Format.</p>
-
-    <div class='pre p1 fill-light mt0'>removeFormat(codec: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): this</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>codec</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    The codec of the IPLD Format to remove.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>this</code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='resolve'>
-      resolve
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L84-L125'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Retrieves IPLD Nodes along the <code>path</code> that is rooted at <code>cid</code>.</p>
-
-    <div class='pre p1 fill-light mt0'>resolve(cid: CID, path: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;{remainderPath: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value}>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cid</span> <code class='quiet'>(CID)</code>
-	    the CID the resolving starts.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>path</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    the path that should be resolved.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;{remainderPath: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value}>></code>:
-        Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:
-<ul>
-<li><code>remainderPath</code>: the part of the path that wasn’t resolved yet.</li>
-<li><code>value</code>: the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, value is the value the path points to. So if you need the CID of the IPLD Node you’re currently at, just take the value of the previously returned IPLD Node.</li>
-</ul>
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='get'>
-      get
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L135-L141'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Get a node by CID.</p>
-
-    <div class='pre p1 fill-light mt0'>get(cid: CID, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cid</span> <code class='quiet'>(CID)</code>
-	    The CID of the IPLD Node that should be retrieved.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>></code>:
-        Returns a Promise with the IPLD Node that correspond to the given 
-<code>cid</code>
-.
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='getmany'>
-      getMany
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L151-L164'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Get multiple nodes back from an array of CIDs.</p>
-
-    <div class='pre p1 fill-light mt0'>getMany(cids: Iterable&#x3C;CID>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cids</span> <code class='quiet'>(Iterable&#x3C;CID>)</code>
-	    The CIDs of the IPLD Nodes that should be retrieved.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>>></code>:
-        Returns an async iterator with the IPLD Nodes that correspond to the given 
-<code>cids</code>
-.
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='put'>
-      put
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L178-L208'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Stores the given IPLD Node of a recognized IPLD Format.</p>
-
-    <div class='pre p1 fill-light mt0'>put(node: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, userOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>node</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    The deserialized IPLD node that should be inserted.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    The multicodec of the format that IPLD Node should be encoded in.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>userOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.hashAlg</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>hashalgorithmofthegivenmulticodec</code>)
-  </td>
-  <td class='break-word'><span>The hashing algorithm that is used to calculate the CID.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.cidVersion</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>1</code>)
-  </td>
-  <td class='break-word'><span>The CID version to use.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.onlyHash</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
-  
-    (default <code>false</code>)
-  </td>
-  <td class='break-word'><span>If true the serialized form of the IPLD Node will not be passed to the underlying block store.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID></code>:
-        Returns the CID of the serialized IPLD Nodes.
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='putmany'>
-      putMany
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L222-L257'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Stores the given IPLD Nodes of a recognized IPLD Format.</p>
-
-    <div class='pre p1 fill-light mt0'>putMany(nodes: Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>>, format: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, userOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>nodes</span> <code class='quiet'>(Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>>)</code>
-	    Deserialized IPLD nodes that should be inserted.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>format</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-	    The multicodec of the format that IPLD Node should be encoded in.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>userOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options are applied to any of the 
-<code>nodes</code>
- and is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.hashAlg</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>hashalgorithmofthegivenmulticodec</code>)
-  </td>
-  <td class='break-word'><span>The hashing algorithm that is used to calculate the CID.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.cidVersion</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>1</code>)
-  </td>
-  <td class='break-word'><span>The CID version to use.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.onlyHash</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
-  
-    (default <code>false</code>)
-  </td>
-  <td class='break-word'><span>If true the serialized form of the IPLD Node will not be passed to the underlying block store.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID>></code>:
-        Returns an async iterator with the CIDs of the serialized IPLD Nodes.
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='remove'>
-      remove
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L267-L269'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Remove an IPLD Node by the given CID.</p>
-
-    <div class='pre p1 fill-light mt0'>remove(cid: CID, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cid</span> <code class='quiet'>(CID)</code>
-	    The CID of the IPLD Node that should be removed.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID></code>:
-        The CID of the removed IPLD Node.
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='removemany'>
-      removeMany
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L282-L295'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Remove IPLD Nodes by the given CIDs.</p>
-<p>Throws an error if any of the Blocks can’t be removed. This operation is
-<em>not</em> atomic, some Blocks might have already been removed.</p>
-
-    <div class='pre p1 fill-light mt0'>removeMany(cids: Iterable&#x3C;CID>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cids</span> <code class='quiet'>(Iterable&#x3C;CID>)</code>
-	    The CIDs of the IPLD Nodes that should be removed.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	     Options is an object with the following properties.
-
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;CID>></code>:
-        Returns an async iterator with the CIDs of the removed IPLD Nodes.
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='tree'>
-      tree
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L307-L383'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Returns all the paths that can be resolved into.</p>
-
-    <div class='pre p1 fill-light mt0'>tree(cid: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, offsetPath: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, userOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cid</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    The ID to get the paths from
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>offsetPath</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-            = <code>&#39;&#39;</code>)</code>
-	    the path to start to retrieve the other paths from.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>userOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	    
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.recursive</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>false</code>)
-  </td>
-  <td class='break-word'><span>whether to get the paths recursively or not. 
-<code>false</code>
- resolves only the paths of the given CID.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>userOptions.signal</span> <code class='quiet'>AbortSignal?</code>
-  </td>
-  <td class='break-word'><span>A signal that can be used to abort any long-lived operations that are started as a result of this operation.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>Iterable&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>></code>:
-        Returns an async iterator with paths that can be resolved into
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='defaultoptions'>
-      defaultOptions
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipld/js-ipld-resolver/blob/548ec427d7c1a0d437b5764c8bec6250952dd3b2/src/index.js#L407-L409'>
-      <span>src/index.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Default options for IPLD.</p>
-
-    <div class='pre p1 fill-light mt0'>defaultOptions</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-      </div>
-    </div>
-  <script src='assets/anchor.js'></script>
-  <script src='assets/split.js'></script>
-  <script src='assets/site.js'></script>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">ipld - v0.29.0</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>ipld - v0.29.0</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<div align="center">
+					<a href="https://ipld.io"><img src="https://ipld.io/img/ipld-logo.png" alt="IPLD hex logo" /></a>
+				</div>
+				<a href="#the-javascript-implementation-of-the-ipld-" id="the-javascript-implementation-of-the-ipld-" style="color: inherit; text-decoration: none;">
+					<h1>The JavaScript implementation of the IPLD <!-- omit in toc --></h1>
+				</a>
+				<p><a href="http://protocol.ai"><img src="https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square" alt=""></a>
+					<a href="http://ipld.io/"><img src="https://img.shields.io/badge/project-ipld-blue.svg?style=flat-square" alt=""></a>
+					<a href="http://webchat.freenode.net/?channels=%23ipfs"><img src="https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square" alt=""></a>
+				<a href="https://waffle.io/ipld/js-ipld"><img src="https://img.shields.io/badge/pm-waffle-blue.svg?style=flat-square%22" alt=""></a></p>
+				<p><a href="https://travis-ci.com/ipld/js-ipld"><img src="https://flat.badgen.net/travis/ipld/js-ipld" alt="Travis CI"></a>
+					<a href="https://coveralls.io/github/ipld/js-ipld?branch=master"><img src="https://coveralls.io/repos/github/ipld/js-ipld/badge.svg?branch=master" alt="Coverage Status"></a>
+					<a href="https://david-dm.org/ipld/js-ipld"><img src="https://david-dm.org/ipld/js-ipld.svg?style=flat-square" alt="Dependency Status"></a>
+					<a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square" alt="js-standard-style"></a>
+				<a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/ipld/js-ipld.svg" alt="Greenkeeper badge"></a></p>
+				<blockquote>
+					<p>The JavaScript implementation of the IPLD, InterPlanetary Linked-Data</p>
+				</blockquote>
+				<a href="#project-status-" id="project-status-" style="color: inherit; text-decoration: none;">
+					<h2>Project Status <!-- omit in toc --></h2>
+				</a>
+				<p>This project is considered stable, but alpha quality implementation.  The IPLD strategy for persistence and integration with IPFS has evolved
+					since this package was created.  This package will be deprecated once the new strategy is fully implemented.  You can read more about
+				the new strategy in <a href="https://github.com/ipld/js-ipld/issues/260">Issue #260</a></p>
+				<p><a href="https://github.com/ipld/team-mgmt"><strong>IPLD Team Management</strong></a></p>
+				<a href="#tech-lead-" id="tech-lead-" style="color: inherit; text-decoration: none;">
+					<h2>Tech Lead <!-- omit in toc --></h2>
+				</a>
+				<p><a href="https://github.com/vmx">Volker Mische</a></p>
+				<a href="#lead-maintainer-" id="lead-maintainer-" style="color: inherit; text-decoration: none;">
+					<h2>Lead Maintainer <!-- omit in toc --></h2>
+				</a>
+				<p><a href="https://github.com/vmx">Volker Mische</a></p>
+				<a href="#table-of-contents-" id="table-of-contents-" style="color: inherit; text-decoration: none;">
+					<h2>Table of Contents <!-- omit in toc --></h2>
+				</a>
+				<ul>
+					<li><a href="#install">Install</a></li>
+					<li><a href="#usage">Usage</a></li>
+					<li><a href="#api">API</a><ul>
+							<li><a href="#ipld-constructor">IPLD constructor</a><ul>
+									<li><a href="#optionsblockservice"><code>options.blockService</code></a></li>
+									<li><a href="#optionsformats"><code>options.formats</code></a></li>
+									<li><a href="#optionsloadformatcodec"><code>options.loadFormat(codec)</code></a></li>
+								</ul>
+							</li>
+							<li><a href="#putnode-format-options"><code>.put(node, format, options)</code></a></li>
+							<li><a href="#putmanynodes-format-options"><code>.putMany(nodes, format, options)</code></a></li>
+							<li><a href="#resolvecid-path-options"><code>.resolve(cid, path, options)</code></a></li>
+							<li><a href="#getcid-options"><code>.get(cid, options)</code></a></li>
+							<li><a href="#getmanycids-options"><code>.getMany(cids, options)</code></a></li>
+							<li><a href="#removecid-options"><code>.remove(cid, options)</code></a></li>
+							<li><a href="#removemanycids-options"><code>.removeMany(cids, options)</code></a></li>
+							<li><a href="#treecid-path-options"><code>.tree(cid, [path], [options])</code></a></li>
+							<li><a href="#addformatipldformatimplementation"><code>.addFormat(ipldFormatImplementation)</code></a></li>
+							<li><a href="#getformatcodec"><code>.getFormat(codec)</code></a></li>
+							<li><a href="#removeformatcodec"><code>.removeFormat(codec)</code></a></li>
+							<li><a href="#properties">Properties</a><ul>
+									<li><a href="#defaultoptions"><code>defaultOptions</code></a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><a href="#packages">Packages</a></li>
+					<li><a href="#contribute">Contribute</a></li>
+					<li><a href="#license">License</a></li>
+				</ul>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">&gt; npm install --save ipld</span>
+</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">Ipld</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipld&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">IpfsRepo</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs-repo&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">IpfsBlockService</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs-block-service&#039;</span><span style="color: #000000">)</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">initIpld</span><span style="color: #000000"> = </span><span style="color: #0000FF">async</span><span style="color: #000000"> (</span><span style="color: #001080">ipfsRepoPath</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">repo</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">IpfsRepo</span><span style="color: #000000">(</span><span style="color: #001080">ipfsRepoPath</span><span style="color: #000000">)</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">repo</span><span style="color: #000000">.</span><span style="color: #795E26">init</span><span style="color: #000000">({})</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">repo</span><span style="color: #000000">.</span><span style="color: #795E26">open</span><span style="color: #000000">()</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">blockService</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">IpfsBlockService</span><span style="color: #000000">(</span><span style="color: #001080">repo</span><span style="color: #000000">)</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Ipld</span><span style="color: #000000">({</span><span style="color: #001080">blockService:</span><span style="color: #000000"> </span><span style="color: #001080">blockService</span><span style="color: #000000">})</span>
+<span style="color: #000000">}</span>
+
+<span style="color: #795E26">initIpld</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;/tmp/ipfsrepo2&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">then</span><span style="color: #000000">((</span><span style="color: #001080">ipld</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #008000">// Do something with the `ipld`, e.g. `ipld.get(…)`</span>
+<span style="color: #000000">  })</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">catch</span><span style="color: #000000">((</span><span style="color: #001080">error</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">)</span>
+<span style="color: #000000">  })</span>
+</code></pre>
+				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+					<h2>API</h2>
+				</a>
+				<p>The IPLD API works strictly with CIDs and deserialized IPLD Nodes. Interacting with the binary data happens on lower levels. To access the binary data directly, use the <a href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/BLOCK.md">Block API</a>.</p>
+				<p>All methods that return an async iterator return one that got extended with convenience methods:</p>
+				<ul>
+					<li><code>iter.first()</code>: Return the first item only</li>
+					<li><code>iter.last()</code>: Return the last item only</li>
+					<li><code>iter.all()</code>: Return all items as array</li>
+				</ul>
+				<p>Example:</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">result</span><span style="color: #000000"> = </span><span style="color: #001080">ipld</span><span style="color: #000000">.</span><span style="color: #795E26">getMany</span><span style="color: #000000">([</span><span style="color: #001080">cid1</span><span style="color: #000000">, </span><span style="color: #001080">cid2</span><span style="color: #000000">])</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">node1</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #795E26">first</span><span style="color: #000000">()</span>
+</code></pre>
+				<a href="#ipld-constructor" id="ipld-constructor" style="color: inherit; text-decoration: none;">
+					<h3>IPLD constructor</h3>
+				</a>
+				<blockquote>
+					<p>Creates and returns an instance of IPLD.</p>
+				</blockquote>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipld</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Ipld</span><span style="color: #000000">(</span><span style="color: #001080">options</span><span style="color: #000000">)</span>
+</code></pre>
+				<p>The <code>options</code> is an object with any of these properties:</p>
+				<a href="#optionsblockservice" id="optionsblockservice" style="color: inherit; text-decoration: none;">
+					<h5><code>options.blockService</code></h5>
+				</a>
+				<table>
+					<thead>
+						<tr>
+							<th>Type</th>
+							<th>Default</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><a href="https://github.com/ipfs/js-ipfs-block-service"><code>ipfs.BlockService</code></a> instance</td>
+							<td>Required (no default)</td>
+						</tr>
+				</tbody></table>
+				<p>Example:</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">blockService</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">IpfsBlockService</span><span style="color: #000000">(</span><span style="color: #001080">repo</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipld</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Ipld</span><span style="color: #000000">({</span><span style="color: #001080">blockService:</span><span style="color: #000000"> </span><span style="color: #001080">blockService</span><span style="color: #000000">})</span>
+</code></pre>
+				<a href="#optionsformats" id="optionsformats" style="color: inherit; text-decoration: none;">
+					<h5><code>options.formats</code></h5>
+				</a>
+				<table>
+					<thead>
+						<tr>
+							<th>Type</th>
+							<th>Default</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>Array of <a href="https://github.com/ipld/interface-ipld-format">IPLD Format</a> implementations</td>
+							<td><code>[require(&#39;ipld-dag-cbor&#39;), require(&#39;ipld-dag-pb&#39;), require(&#39;ipld-raw&#39;)]</code></td>
+						</tr>
+				</tbody></table>
+				<p>By default only the <a href="https://github.com/ipld/js-ipld-dag-cbor">dag-cbor</a>), <a href="https://github.com/ipld/js-ipld-dag-pb">dag-pb</a>) and <a href="https://github.com/ipld/js-ipld-raw">raw</a>) IPLD Formats are supported. Other formats need to be added manually. Here is an example if you want to have support for <a href="https://github.com/ipld/js-ipld-git">ipld-git</a> only:</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipldGit</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipld-git&#039;</span><span style="color: #000000">)</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipld</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Ipld</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">formats:</span><span style="color: #000000"> [</span><span style="color: #001080">ipldGit</span><span style="color: #000000">],</span>
+<span style="color: #000000">  …</span>
+<span style="color: #000000">})</span>
+</code></pre>
+				<a href="#optionsloadformatcodec" id="optionsloadformatcodec" style="color: inherit; text-decoration: none;">
+					<h5><code>options.loadFormat(codec)</code></h5>
+				</a>
+				<table>
+					<thead>
+						<tr>
+							<th>Type</th>
+							<th>Default</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>async Function</code></td>
+							<td><code>null</code></td>
+						</tr>
+				</tbody></table>
+				<p>Function to dynamically load an <a href="https://github.com/ipld/interface-ipld-format">IPLD Format</a>. It is passed a <code>codec</code>, the multicodec code of the IPLD format to load and returns an IPLD Format implementation. For example:</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">multicodec</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;multicodec&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipld</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Ipld</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">async</span><span style="color: #000000"> </span><span style="color: #795E26">loadFormat</span><span style="color: #000000"> (</span><span style="color: #001080">codec</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">codec</span><span style="color: #000000"> === </span><span style="color: #001080">multicodec</span><span style="color: #000000">.</span><span style="color: #0070C1">GIT_RAW</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipld-git&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">throw</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Error</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;unable to load format &#039;</span><span style="color: #000000"> + </span><span style="color: #001080">multicodec</span><span style="color: #000000">.</span><span style="color: #001080">print</span><span style="color: #000000">[</span><span style="color: #001080">codec</span><span style="color: #000000">])</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">})</span>
+</code></pre>
+				<a href="#putnode-format-options" id="putnode-format-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.put(node, format, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Stores the given IPLD Node of a recognized IPLD Format.</p>
+				</blockquote>
+				<ul>
+					<li><code>node</code> (<code>Object</code>): the deserialized IPLD node that should be inserted.</li>
+					<li><code>format</code> (<code>multicodec</code>, required): the multicodec of the format that IPLD Node should be encoded in.</li>
+					<li><code>options</code> is an object with the following properties:<ul>
+							<li><code>hashAlg</code> (<code>multicodec</code>, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.</li>
+							<li><code>cidVersion</code> (<code>number</code>, default: 1): the CID version to use.</li>
+							<li><code>onlyHash</code> (<code>boolean</code>, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.</li>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Returns a Promise with the CID of the serialized IPLD Node.</p>
+				<a href="#putmanynodes-format-options" id="putmanynodes-format-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.putMany(nodes, format, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Stores the given IPLD Nodes of a recognized IPLD Format.</p>
+				</blockquote>
+				<ul>
+					<li><code>nodes</code> (<code>AsyncIterable&lt;Object&gt;</code>): deserialized IPLD nodes that should be inserted.</li>
+					<li><code>format</code> (<code>multicodec</code>, required): the multicodec of the format that IPLD Node should be encoded in.</li>
+					<li><code>options</code> is applied to any of the <code>nodes</code> and is an object with the following properties:<ul>
+							<li><code>hashAlg</code> (<code>multicodec</code>, default: hash algorithm of the given multicodec): the hashing algorithm that is used to calculate the CID.</li>
+							<li><code>cidVersion</code> (<code>number</code>, default: 1): the CID version to use.</li>
+							<li><code>onlyHash</code> (<code>boolean</code>, default: false): if true the serialized form of the IPLD Node will not be passed to the underlying block store.</li>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Returns an async iterator with the CIDs of the serialized IPLD Nodes. The iterator will throw an exception on the first error that occurs.</p>
+				<a href="#resolvecid-path-options" id="resolvecid-path-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.resolve(cid, path, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Retrieves IPLD Nodes along the <code>path</code> that is rooted at <code>cid</code>.</p>
+				</blockquote>
+				<ul>
+					<li><code>cid</code> (<code>CID</code>, required): the CID the resolving starts.</li>
+					<li><code>path</code> (<code>IPLD Path</code>, required): the path that should be resolved.</li>
+					<li><code>options</code> an optional object that may have the following properties:<ul>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Returns an async iterator of all the IPLD Nodes that were traversed during the path resolving. Every element is an object with these fields:</p>
+				<ul>
+					<li><code>remainderPath</code> (<code>string</code>): the part of the path that wasn’t resolved yet.</li>
+					<li><code>value</code> (<code>*</code>): the value where the resolved path points to. If further traversing is possible, then the value is a CID object linking to another IPLD Node. If it was possible to fully resolve the path, <code>value</code> is the value the <code>path</code> points to. So if you need the CID of the IPLD Node you’re currently at, just take the <code>value</code> of the previously returned IPLD Node.</li>
+				</ul>
+				<a href="#getcid-options" id="getcid-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.get(cid, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Retrieve an IPLD Node.</p>
+				</blockquote>
+				<ul>
+					<li><code>cid</code> (<code>CID</code>): the CID of the IPLD Node that should be retrieved.</li>
+					<li><code>options</code> an optional object that may have the following properties:<ul>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Returns a Promise with the IPLD Node that correspond to the given <code>cid</code>.</p>
+				<p>Throws an error if the IPLD Node can’t be retrieved.</p>
+				<a href="#getmanycids-options" id="getmanycids-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.getMany(cids, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Retrieve several IPLD Nodes at once.</p>
+				</blockquote>
+				<ul>
+					<li><code>cids</code> (<code>AsyncIterable&lt;CID&gt;</code>): the CIDs of the IPLD Nodes that should be retrieved.</li>
+					<li><code>options</code> an optional object that may have the following properties:<ul>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Returns an async iterator with the IPLD Nodes that correspond to the given <code>cids</code>.</p>
+				<p>Throws an error if a IPLD Node can’t be retrieved.</p>
+				<a href="#removecid-options" id="removecid-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.remove(cid, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Remove an IPLD Node by the given <code>cid</code></p>
+				</blockquote>
+				<ul>
+					<li><code>cid</code> (<code>CID</code>): the CIDs of the IPLD Node that should be removed.</li>
+					<li><code>options</code> an optional object that may have the following properties:<ul>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Throws an error if the IPLD Node can’t be removed.</p>
+				<a href="#removemanycids-options" id="removemanycids-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.removeMany(cids, options)</code></h3>
+				</a>
+				<blockquote>
+					<p>Remove IPLD Nodes by the given <code>cids</code></p>
+				</blockquote>
+				<ul>
+					<li><code>cids</code> (<code>AsyncIterable&lt;CID&gt;</code>): the CIDs of the IPLD Nodes that should be removed.</li>
+					<li><code>options</code> an optional object that may have the following properties:<ul>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Throws an error if any of the Blocks can’t be removed. This operation is not atomic, some Blocks might have already been removed.</p>
+				<a href="#treecid-path-options" id="treecid-path-options" style="color: inherit; text-decoration: none;">
+					<h3><code>.tree(cid, [path], [options])</code></h3>
+				</a>
+				<blockquote>
+					<p>Returns all the paths that can be resolved into.</p>
+				</blockquote>
+				<ul>
+					<li><code>cid</code> (<code>CID</code>, required): the CID to get the paths from.</li>
+					<li><code>path</code> (<code>IPLD Path</code>, default: &#39;&#39;): the path to start to retrieve the other paths from.</li>
+					<li><code>options</code>:<ul>
+							<li><code>recursive</code> (<code>bool</code>, default: false): whether to get the paths recursively or not. <code>false</code> resolves only the paths of the given CID.</li>
+							<li><code>signal</code> (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>): a signal that can be used to abort any long-lived operations that are started as a result of this operation.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Returns an async iterator of all the paths (as Strings) you could resolve into.</p>
+				<a href="#addformatipldformatimplementation" id="addformatipldformatimplementation" style="color: inherit; text-decoration: none;">
+					<h3><code>.addFormat(ipldFormatImplementation)</code></h3>
+				</a>
+				<blockquote>
+					<p>Add support for an IPLD Format</p>
+				</blockquote>
+				<ul>
+					<li><code>ipldFormatImplementation</code> (<code>IPLD Format</code>, required): the implementation of an IPLD Format.</li>
+				</ul>
+				<p>Returns the IPLD instance. This way you can chain <code>addFormat()</code> calls.</p>
+				<a href="#getformatcodec" id="getformatcodec" style="color: inherit; text-decoration: none;">
+					<h3><code>.getFormat(codec)</code></h3>
+				</a>
+				<blockquote>
+					<p>Return the implementation for an IPLD Format</p>
+				</blockquote>
+				<ul>
+					<li><code>codec</code> (<code>multicodec</code>, required): the codec of the IPLD Format to return the implementation from.</li>
+				</ul>
+				<p>If the implementation is not present in the current list of resolvers, the <code>loadFormat</code> function passed as an option to the constructor of this module will be invoked and it&#39;s output added to the list of available resolvers.</p>
+				<a href="#removeformatcodec" id="removeformatcodec" style="color: inherit; text-decoration: none;">
+					<h3><code>.removeFormat(codec)</code></h3>
+				</a>
+				<blockquote>
+					<p>Remove support for an IPLD Format</p>
+				</blockquote>
+				<ul>
+					<li><code>codec</code> (<code>multicodec</code>, required): the codec of the IPLD Format to remove.</li>
+				</ul>
+				<p>Returns the IPLD instance. This way you can chain <code>removeFormat()</code> calls.</p>
+				<a href="#properties" id="properties" style="color: inherit; text-decoration: none;">
+					<h3>Properties</h3>
+				</a>
+				<a href="#defaultoptions" id="defaultoptions" style="color: inherit; text-decoration: none;">
+					<h4><code>defaultOptions</code></h4>
+				</a>
+				<blockquote>
+					<p>Default options for IPLD.</p>
+				</blockquote>
+				<a href="#packages" id="packages" style="color: inherit; text-decoration: none;">
+					<h2>Packages</h2>
+				</a>
+				<p>Listing of dependencies from the IPLD ecosystem.</p>
+				<blockquote>
+					<p>This table is generated using the module <code>package-table</code> with <code>package-table --data=package-list.json</code>.</p>
+				</blockquote>
+				<table>
+					<thead>
+						<tr>
+							<th>Package</th>
+							<th>Version</th>
+							<th>Deps</th>
+							<th>CI</th>
+							<th>Coverage</th>
+							<th>Lead Maintainer</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><strong>IPLD Formats</strong></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-bitcoin"><code>ipld-bitcoin</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-bitcoin/releases"><img src="https://img.shields.io/npm/v/ipld-bitcoin.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-bitcoin"><img src="https://david-dm.org/ipld/js-ipld-bitcoin.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-bitcoin"><img src="https://travis-ci.com/ipld/js-ipld-bitcoin.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-bitcoin"><img src="https://codecov.io/gh/ipld/js-ipld-bitcoin/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-dag-cbor"><code>ipld-dag-cbor</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-dag-cbor/releases"><img src="https://img.shields.io/npm/v/ipld-dag-cbor.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-dag-cbor"><img src="https://david-dm.org/ipld/js-ipld-dag-cbor.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-dag-cbor"><img src="https://travis-ci.com/ipld/js-ipld-dag-cbor.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-dag-cbor"><img src="https://codecov.io/gh/ipld/js-ipld-dag-cbor/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-dag-pb"><code>ipld-dag-pb</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-dag-pb/releases"><img src="https://img.shields.io/npm/v/ipld-dag-pb.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-dag-pb"><img src="https://david-dm.org/ipld/js-ipld-dag-pb.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-dag-pb"><img src="https://travis-ci.com/ipld/js-ipld-dag-pb.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-dag-pb"><img src="https://codecov.io/gh/ipld/js-ipld-dag-pb/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-ethereum"><code>ipld-ethereum</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-ethereum/releases"><img src="https://img.shields.io/npm/v/ipld-ethereum.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-ethereum"><img src="https://david-dm.org/ipld/js-ipld-ethereum.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-ethereum"><img src="https://travis-ci.com/ipld/js-ipld-ethereum.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-ethereum"><img src="https://codecov.io/gh/ipld/js-ipld-ethereum/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-git"><code>ipld-git</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-git/releases"><img src="https://img.shields.io/npm/v/ipld-git.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-git"><img src="https://david-dm.org/ipld/js-ipld-git.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-git"><img src="https://travis-ci.com/ipld/js-ipld-git.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-git"><img src="https://codecov.io/gh/ipld/js-ipld-git/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-raw"><code>ipld-raw</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-raw/releases"><img src="https://img.shields.io/npm/v/ipld-raw.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-raw"><img src="https://david-dm.org/ipld/js-ipld-raw.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-raw"><img src="https://travis-ci.com/ipld/js-ipld-raw.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-raw"><img src="https://codecov.io/gh/ipld/js-ipld-raw/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipld/js-ipld-zcash"><code>ipld-zcash</code></a></td>
+							<td><a href="//github.com/ipld/js-ipld-zcash/releases"><img src="https://img.shields.io/npm/v/ipld-zcash.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipld/js-ipld-zcash"><img src="https://david-dm.org/ipld/js-ipld-zcash.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipld/js-ipld-zcash"><img src="https://travis-ci.com/ipld/js-ipld-zcash.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipld/js-ipld-zcash"><img src="https://codecov.io/gh/ipld/js-ipld-zcash/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><strong>Data Types (non IPLD specific)</strong></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/multiformats/js-multihash"><code>multihashes</code></a></td>
+							<td><a href="//github.com/multiformats/js-multihash/releases"><img src="https://img.shields.io/npm/v/multihashes.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/multiformats/js-multihash"><img src="https://david-dm.org/multiformats/js-multihash.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/multiformats/js-multihash"><img src="https://travis-ci.com/multiformats/js-multihash.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/multiformats/js-multihash"><img src="https://codecov.io/gh/multiformats/js-multihash/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:daviddias@ipfs.io">David Dias</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipfs/js-ipfs-block"><code>ipfs-block</code></a></td>
+							<td><a href="//github.com/ipfs/js-ipfs-block/releases"><img src="https://img.shields.io/npm/v/ipfs-block.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipfs/js-ipfs-block"><img src="https://david-dm.org/ipfs/js-ipfs-block.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipfs/js-ipfs-block"><img src="https://travis-ci.com/ipfs/js-ipfs-block.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipfs/js-ipfs-block"><img src="https://codecov.io/gh/ipfs/js-ipfs-block/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+						<tr>
+							<td><strong>Storage</strong></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipfs/js-ipfs-repo"><code>ipfs-repo</code></a></td>
+							<td><a href="//github.com/ipfs/js-ipfs-repo/releases"><img src="https://img.shields.io/npm/v/ipfs-repo.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipfs/js-ipfs-repo"><img src="https://david-dm.org/ipfs/js-ipfs-repo.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipfs/js-ipfs-repo"><img src="https://travis-ci.com/ipfs/js-ipfs-repo.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipfs/js-ipfs-repo"><img src="https://codecov.io/gh/ipfs/js-ipfs-repo/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:jacobheun@gmail.com">Jacob Heun</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipfs/interface-datastore"><code>interface-datastore</code></a></td>
+							<td><a href="//github.com/ipfs/interface-datastore/releases"><img src="https://img.shields.io/npm/v/interface-datastore.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipfs/interface-datastore"><img src="https://david-dm.org/ipfs/interface-datastore.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipfs/interface-datastore"><img src="https://travis-ci.com/ipfs/interface-datastore.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipfs/interface-datastore"><img src="https://codecov.io/gh/ipfs/interface-datastore/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:i@pgte.me">Pedro Teixeira</a></td>
+						</tr>
+						<tr>
+							<td><a href="//github.com/ipfs/js-ipfs-block-service"><code>ipfs-block-service</code></a></td>
+							<td><a href="//github.com/ipfs/js-ipfs-block-service/releases"><img src="https://img.shields.io/npm/v/ipfs-block-service.svg?maxAge=86400&style=flat-square" alt="npm"></a></td>
+							<td><a href="https://david-dm.org/ipfs/js-ipfs-block-service"><img src="https://david-dm.org/ipfs/js-ipfs-block-service.svg?style=flat-square" alt="Deps"></a></td>
+							<td><a href="https://travis-ci.com/ipfs/js-ipfs-block-service"><img src="https://travis-ci.com/ipfs/js-ipfs-block-service.svg?branch=master" alt="Travis CI"></a></td>
+							<td><a href="https://codecov.io/gh/ipfs/js-ipfs-block-service"><img src="https://codecov.io/gh/ipfs/js-ipfs-block-service/branch/master/graph/badge.svg" alt="codecov"></a></td>
+							<td><a href="mailto:volker.mische@gmail.com">Volker Mische</a></td>
+						</tr>
+				</tbody></table>
+				<a href="#contribute" id="contribute" style="color: inherit; text-decoration: none;">
+					<h2>Contribute</h2>
+				</a>
+				<p>Feel free to join in. All welcome. Open an <a href="https://github.com/ipld/js-ipld-resolver/issues">issue</a>!</p>
+				<p>This repository falls under the IPFS <a href="https://github.com/ipfs/community/blob/master/code-of-conduct.md">Code of Conduct</a>.</p>
+				<p><a href="https://github.com/ipfs/community/blob/master/contributing.md"><img src="https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif" alt=""></a></p>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h2>License</h2>
+				</a>
+				<p><a href="LICENSE">MIT</a></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/ipldresolver.html" class="tsd-kind-icon">IPLDResolver</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#codeccode" class="tsd-kind-icon">Codec<wbr>Code</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#getoptions" class="tsd-kind-icon">Get<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#ipldformat" class="tsd-kind-icon">IPLDFormat</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#loadformatfn" class="tsd-kind-icon">Load<wbr>Format<wbr>Fn</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#options" class="tsd-kind-icon">Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#putoptions" class="tsd-kind-icon">Put<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#removeoptions" class="tsd-kind-icon">Remove<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#resolveoptions" class="tsd-kind-icon">Resolve<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#treeoptions" class="tsd-kind-icon">Tree<wbr>Options</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
 </body>
 </html>
