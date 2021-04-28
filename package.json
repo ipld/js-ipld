@@ -40,7 +40,7 @@
   "license": "MIT",
   "devDependencies": {
     "abort-controller": "^3.0.0",
-    "aegir": "^31.0.4",
+    "aegir": "^33.1.2",
     "assert": "^2.0.0",
     "bitcoinjs-lib": "^5.1.6",
     "buffer": "^6.0.1",
@@ -64,7 +64,7 @@
     "interface-ipld-format": "^1.0.0",
     "ipfs-block-service": "^0.19.0",
     "ipld-block": "^0.11.1",
-    "ipld-dag-cbor": "^0.18.0",
+    "ipld-dag-cbor": "^1.0.0",
     "ipld-dag-pb": "^0.22.0",
     "ipld-raw": "^7.0.0",
     "merge-options": "^3.0.4",
