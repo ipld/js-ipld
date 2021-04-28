@@ -1,3 +1,17 @@
+# [0.30.0](https://github.com/ipld/js-ipld/compare/v0.29.0...v0.30.0) (2021-04-28)
+
+
+### chore
+
+* update deps ([#298](https://github.com/ipld/js-ipld/issues/298)) ([60426a7](https://github.com/ipld/js-ipld/commit/60426a708bad737f0c76c501e5dcf410b99ae94a))
+
+
+### BREAKING CHANGES
+
+* buffer@6 removes support for IE and Safari < 10
+
+
+
 # [0.29.0](https://github.com/ipld/js-ipld/compare/v0.28.0...v0.29.0) (2021-03-11)
 
 
