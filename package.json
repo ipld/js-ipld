@@ -1,6 +1,6 @@
 {
   "name": "ipld",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "description": "The JavaScript Implementation of IPLD",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -87,12 +87,12 @@
     "Jacob Heun <jacobheun@gmail.com>",
     "Pedro Teixeira <i@pgte.me>",
     "jonkrone <jonathankrone@gmail.com>",
-    "Arron Mabrey <arron@mabreys.com>",
-    "Chris Hafey <chafey@gmail.com>",
-    "Henrique Dias <hacdias@gmail.com>",
-    "Oli Evans <oli@tableflip.io>",
     "Richard Littauer <richard.littauer@gmail.com>",
+    "Arron Mabrey <arron@mabreys.com>",
+    "Henrique Dias <hacdias@gmail.com>",
+    "Chris Hafey <chafey@gmail.com>",
+    "wanderer <mjbecze@gmail.com>",
     "Rod Vagg <rod@vagg.org>",
-    "wanderer <mjbecze@gmail.com>"
+    "Oli Evans <oli@tableflip.io>"
   ]
 }
