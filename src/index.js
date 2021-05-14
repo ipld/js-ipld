@@ -418,6 +418,8 @@ class IPLDResolver {
     const format = await this.loadFormat(codec)
     if (this.resolvers[codec] == null) {
       this.addFormat(format)
+    } else {
+      return this.resolvers[codec]
     }
     return format
   }
