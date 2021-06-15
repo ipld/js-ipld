@@ -416,7 +416,11 @@ class IPLDResolver {
 
     // If not supported, attempt to dynamically load this format
     const format = await this.loadFormat(codec)
-    this.addFormat(format)
+    if (this.resolvers[codec] == null) {
+      this.addFormat(format)
+    } else {
+      return this.resolvers[codec]
+    }
     return format
   }
 }
