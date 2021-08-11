@@ -1,3 +1,6 @@
+⛔️ DEPRECATED: This module has been superseded by [multiformats](https://github.com/multiformats/js-multiformats) <!-- omit in toc -->
+======
+
 <div align="center">
   <a href="https://ipld.io"><img src="https://ipld.io/img/ipld-logo.png" alt="IPLD hex logo" /></a>
 </div>
