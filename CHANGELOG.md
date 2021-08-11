@@ -1,3 +1,12 @@
+## [0.30.1](https://github.com/ipld/js-ipld/compare/v0.30.0...v0.30.1) (2021-08-11)
+
+
+### Bug Fixes
+
+* race condition in `getFormat` ([#299](https://github.com/ipld/js-ipld/issues/299)) ([a53ebcf](https://github.com/ipld/js-ipld/commit/a53ebcfc5c449548f5d35bc5b33e0a757cc59d5f)), closes [/github.com/ipld/js-ipld/blob/021b4195b2c1254c323a9f370507fbaa0a42a112/src/index.js#L65-L76](https://github.com//github.com/ipld/js-ipld/blob/021b4195b2c1254c323a9f370507fbaa0a42a112/src/index.js/issues/L65-L76)
+
+
+
 # [0.30.0](https://github.com/ipld/js-ipld/compare/v0.29.0...v0.30.0) (2021-04-28)
 
 
